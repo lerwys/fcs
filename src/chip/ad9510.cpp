@@ -1,0 +1,343 @@
+//============================================================================
+// Author      : Andrzej Wojenski
+// Version     : 1.0
+// Description : Software driver for AD9510 chip (clock distribution)
+//============================================================================
+#include "ad9510.h"
+
+#define MAX_REPEAT 10
+
+wb_data AD9510_drv::data_;
+commLink* AD9510_drv::commLink_;
+string AD9510_drv::spi_id_;
+
+void AD9510_drv::AD9510_setCommLink(commLink* comm, string spi_id) {
+
+  commLink_ = comm;
+  spi_id_ = spi_id;
+  data_.data_send.resize(1);
+  data_.extra.resize(2);
+
+}
+
+wb_data AD9510_drv::AD9510_spi_write(uint32_t chip_select, uint8_t reg, uint8_t val) {
+
+  //data->data_read.clear();
+  //data_.data_read.clear();
+
+  // chip address
+  data_.extra[0] = chip_select;
+  // number of bits to read/write
+  // 3 x 8 bits
+  data_.extra[1] = 0x18;
+
+  // SPI core - starts sending data from data_send[2] - first transmission byte
+  data_.data_send[0] = (0x00 << 16) | (reg << 8) | val; // data to write to register
+  //data_.data_send[1] = reg; // register address (instruction header)
+  //data_.data_send[2] = 0x00;// instruction header (write)
+
+  //return spi_int->int_send_data(&data_);
+  commLink_->fmc_send(spi_id_,&data_);
+
+  return data_;
+
+}
+
+wb_data AD9510_drv::AD9510_spi_read(uint32_t chip_select, uint8_t reg) {
+
+  data_.data_read.clear();
+
+  // chip address
+  data_.extra[0] = chip_select;
+  // number of bits to read/write
+  // 3 x 8 bits
+  data_.extra[1] = 0x18;
+
+  data_.data_send[0] = (0x80 << 16) | (reg << 8) | 0x00; // no data
+  //data_.data_send[1] = reg; // register address (instruction header)
+  //data_.data_send[2] = 0x80;// instruction header (read)
+
+  //cout << "data1234 " << hex << data_.data_send[0] << endl;
+
+  commLink_->fmc_send_read(spi_id_,&data_);
+
+  return data_;
+
+}
+
+// provide chip select and reg address
+int AD9510_drv::AD9510_reg_update(uint32_t chip_select) {
+
+  wb_data ad9510_data;
+  int repeat = 0;
+
+  AD9510_spi_write(chip_select, 0x5A, 0x01);
+
+  // check if updated
+  while (1) {
+    ad9510_data = AD9510_spi_read(chip_select, 0x5A);
+
+    if ( (ad9510_data.data_read[0] & 0x01) == 0)
+      break;
+
+    repeat++;
+
+    if (repeat > MAX_REPEAT) {
+      cout << "AD9510 update register error (MAX_REPEAT)" << endl;
+      return 1;
+    }
+  }
+
+  cout << "AD9510 reg updated" << endl;
+
+  return 0;
+}
+
+int AD9510_drv::AD9510_config_si570(uint32_t chip_select) {
+
+  //wb_data ad9510_data;
+  wb_data data;
+
+  // reset on startup done by function pin
+
+  // reset registers (don't turn off Long Instruction bit)
+  AD9510_spi_write(chip_select, 0x00, 0x30);
+  AD9510_reg_update(chip_select);
+  // wait
+  usleep(10000);
+  //sleep(1);
+  // turn off reset
+  AD9510_spi_write(chip_select, 0x00, 0x10);
+  AD9510_reg_update(chip_select);
+  // wait
+  usleep(10000);
+  //sleep(1);
+
+  // testing end
+  // PLL power down (PLL is not used) - default
+  // output OUT0 - OUT3 - power on
+  // voltage output 810mV
+
+  AD9510_spi_write(chip_select, 0x3C, 0x08);
+  AD9510_spi_write(chip_select, 0x3D, 0x08);
+  AD9510_spi_write(chip_select, 0x3E, 0x08);
+  AD9510_spi_write(chip_select, 0x3F, 0x08);
+
+  // output OUT4 - OUT7 - power down
+  AD9510_spi_write(chip_select, 0x40, 0x03);
+  AD9510_spi_write(chip_select, 0x41, 0x03);
+  AD9510_spi_write(chip_select, 0x42, 0x03);
+  AD9510_spi_write(chip_select, 0x43, 0x03);
+
+  // Clock selection (distribution mode)
+  // CLK1 - power down
+  // CLK2 - power on
+  // Clock select = CLK2
+  // Prescaler Clock -  Power-Down
+  // REFIN - Power-Down
+  AD9510_spi_write(chip_select, 0x45, 0x1A);
+
+  // Clock dividers OUT0 - OUT3
+  // divide = off (bypassed, ratio 1)
+  // duty cycle 50%
+  // lo-hi 0x00
+  // phase offset = 0
+  // start high
+  // sync
+
+  AD9510_spi_write(chip_select, 0x48, 0x00); // divide by 2 (off)
+  AD9510_spi_write(chip_select, 0x4A, 0x00); // divide by 2 (off)
+  AD9510_spi_write(chip_select, 0x4C, 0x00); // divide by 2 (off)
+  AD9510_spi_write(chip_select, 0x4E, 0x00); // divide by 2 (off)
+
+  AD9510_spi_write(chip_select, 0x49, 0x90); // phase offset = 0 , divider off
+  AD9510_spi_write(chip_select, 0x4B, 0x90); // phase
+  AD9510_spi_write(chip_select, 0x4D, 0x90); // phase
+  AD9510_spi_write(chip_select, 0x4F, 0x90); // phase
+
+  // Clock dividers OUT0 - OUT3 - not used config
+  // divide = 2
+  // duty cycle 50%
+  // lo-hi 0x00
+  // phase = 0
+  // start high
+  // sync
+  /*
+    AD9510_spi_write(chip_select, 0x48, 0x00); // divide
+    AD9510_spi_write(chip_select, 0x4A, 0x00); // divide
+    AD9510_spi_write(chip_select, 0x4C, 0x00); // divide
+    AD9510_spi_write(chip_select, 0x4E, 0x00); // divide
+  //
+    AD9510_spi_write(chip_select, 0x49, 0x10); // phase
+    AD9510_spi_write(chip_select, 0x4B, 0x10); // phase
+    AD9510_spi_write(chip_select, 0x4D, 0x10); // phase
+    AD9510_spi_write(chip_select, 0x4F, 0x10); // phase
+  */
+  // Function pin is SYNCB
+  AD9510_spi_write(chip_select, 0x58, 0x20);
+
+  AD9510_reg_update(chip_select);
+
+  usleep(10000);
+
+  // software sync
+  AD9510_spi_write(chip_select, 0x58, 0x24);
+  AD9510_reg_update(chip_select);
+
+  usleep(10000);
+
+  AD9510_spi_write(chip_select, 0x58, 0x20);
+  AD9510_reg_update(chip_select);
+
+  // Check configuration
+
+  AD9510_assert(chip_select, 0x3C, 0x08);
+  AD9510_assert(chip_select, 0x3D, 0x08);
+  AD9510_assert(chip_select, 0x3E, 0x08);
+  AD9510_assert(chip_select, 0x3F, 0x08);
+
+  AD9510_assert(chip_select, 0x40, 0x03);
+  AD9510_assert(chip_select, 0x41, 0x03);
+  AD9510_assert(chip_select, 0x42, 0x03);
+  AD9510_assert(chip_select, 0x43, 0x03);
+
+  AD9510_assert(chip_select, 0x45, 0x1A);
+
+  AD9510_assert(chip_select, 0x48, 0x00);
+  AD9510_assert(chip_select, 0x4A, 0x00);
+  AD9510_assert(chip_select, 0x4C, 0x00);
+  AD9510_assert(chip_select, 0x4E, 0x00);
+
+  AD9510_assert(chip_select, 0x49, 0x90);
+  AD9510_assert(chip_select, 0x4B, 0x90);
+  AD9510_assert(chip_select, 0x4D, 0x90);
+  AD9510_assert(chip_select, 0x4F, 0x90);
+
+  return 0;
+}
+
+int AD9510_drv::AD9510_config_si570_fmc_adc_130m_4ch(uint32_t chip_select) {
+
+  wb_data data;
+
+  // reset on startup done by function pin
+
+  // reset registers (don't turn off Long Instruction bit)
+  AD9510_spi_write(chip_select, 0x00, 0x30);
+  AD9510_reg_update(chip_select);
+  // wait
+  usleep(10000);
+  //sleep(1);
+  // turn off reset
+  AD9510_spi_write(chip_select, 0x00, 0x10);
+  AD9510_reg_update(chip_select);
+  // wait
+  usleep(10000);
+  //sleep(1);
+
+  // testing end
+  // PLL power down (PLL is not used) - default
+  // output OUT0 - OUT3 - power on
+  // voltage output 810mV
+  AD9510_spi_write(chip_select, 0x3C, 0x08);
+  AD9510_spi_write(chip_select, 0x3D, 0x08);
+  AD9510_spi_write(chip_select, 0x3E, 0x08);
+  AD9510_spi_write(chip_select, 0x3F, 0x08);
+
+  // output OUT4 - OUT6 - power down
+  AD9510_spi_write(chip_select, 0x40, 0x03);
+  AD9510_spi_write(chip_select, 0x41, 0x03);
+  AD9510_spi_write(chip_select, 0x42, 0x03);
+
+  // output OUT7 - power on (clock copy, LVDS)
+  // LVDS, 3.5mA, 100ohm termination, power on
+  AD9510_spi_write(chip_select, 0x43, 0x02);
+
+  // Clock selection (distribution mode)
+  // CLK1 - power down
+  // CLK2 - power on
+  // Clock select = CLK2
+  // Prescaler Clock -  Power-Down
+  // REFIN - Power-Down
+  AD9510_spi_write(chip_select, 0x45, 0x1A);
+
+  // Clock dividers OUT0 - OUT3 and OUT7
+  // divide = off (bypassed, ratio 1)
+  // duty cycle 50%
+  // lo-hi 0x00
+  // phase offset = 0
+  // start high
+  // sync
+  AD9510_spi_write(chip_select, 0x48, 0x00); // divide by 2 (off)
+  AD9510_spi_write(chip_select, 0x4A, 0x00); // divide by 2 (off)
+  AD9510_spi_write(chip_select, 0x4C, 0x00); // divide by 2 (off)
+  AD9510_spi_write(chip_select, 0x4E, 0x00); // divide by 2 (off)
+  AD9510_spi_write(chip_select, 0x56, 0x00); // divider
+
+  AD9510_spi_write(chip_select, 0x49, 0x90); // phase offset = 0 , divider off
+  AD9510_spi_write(chip_select, 0x4B, 0x90); // phase
+  AD9510_spi_write(chip_select, 0x4D, 0x90); // phase
+  AD9510_spi_write(chip_select, 0x4F, 0x90); // phase
+  AD9510_spi_write(chip_select, 0x57, 0x90); // phase
+
+  // Function pin is SYNCB
+  AD9510_spi_write(chip_select, 0x58, 0x20);
+
+  AD9510_reg_update(chip_select);
+
+  usleep(10000);
+
+  // software sync
+  AD9510_spi_write(chip_select, 0x58, 0x24);
+  AD9510_reg_update(chip_select);
+
+  usleep(10000);
+
+  AD9510_spi_write(chip_select, 0x58, 0x20);
+  AD9510_reg_update(chip_select);
+
+  // Check configuration
+
+  AD9510_assert(chip_select, 0x3C, 0x08);
+  AD9510_assert(chip_select, 0x3D, 0x08);
+  AD9510_assert(chip_select, 0x3E, 0x08);
+  AD9510_assert(chip_select, 0x3F, 0x08);
+
+  AD9510_assert(chip_select, 0x40, 0x03);
+  AD9510_assert(chip_select, 0x41, 0x03);
+  AD9510_assert(chip_select, 0x42, 0x03);
+  AD9510_assert(chip_select, 0x43, 0x02);
+
+  AD9510_assert(chip_select, 0x45, 0x1A);
+
+  AD9510_assert(chip_select, 0x48, 0x00);
+  AD9510_assert(chip_select, 0x4A, 0x00);
+  AD9510_assert(chip_select, 0x4C, 0x00);
+  AD9510_assert(chip_select, 0x4E, 0x00);
+  AD9510_assert(chip_select, 0x56, 0x00);
+
+  AD9510_assert(chip_select, 0x49, 0x90);
+  AD9510_assert(chip_select, 0x4B, 0x90);
+  AD9510_assert(chip_select, 0x4D, 0x90);
+  AD9510_assert(chip_select, 0x4F, 0x90);
+  AD9510_assert(chip_select, 0x57, 0x90);
+
+  return 0;
+}
+
+void AD9510_drv::AD9510_assert(uint32_t chip_select, uint8_t reg, uint8_t val) {
+
+  wb_data data;
+
+  data = AD9510_spi_read(chip_select, reg);
+
+  //cout << "AD9510 assert, reg: 0x" << hex << unsigned(reg) <<
+  //    " val: 0x" << hex << unsigned(data_.data_read[0] & 0xFF) << " =? 0x" << hex << unsigned(val) << "...";
+
+  printf("AD9510 assert, reg: 0x%02x val: 0x%02x =? 0x%02x...", reg, data.data_read[0] & 0xFF, val);
+
+  assert( (data.data_read[0] & 0xFF) == val);
+
+  printf("passed!\n");
+
+}

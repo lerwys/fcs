@@ -1,0 +1,48 @@
+==============================================================================
+
+Repository containing the configuration software for two FMC boards:
+FMC ADC 130M (active and passive) and FMC ADC 250M (active and passive) firmware.
+
+==============================================================================
+
+Installation Instructions:
+
+    -> Install needed packages libmxml and libserial (Ubuntu):
+
+1 - sudo apt-get install libmxml-dev libserial-dev
+
+    -> Run configure script
+
+2 - ./configure
+
+    -> Run Makefile
+
+3 - make
+
+  -> Check INSTALL for more instructons on how to build and install the software
+
+==============================================================================
+
+Use Instructions:
+
+    -> Go to src/ folder
+
+1 - cd src/
+
+    -> Execute one of the following programs, depending on the fmc board being tested
+    (<platform_name> is either ML605 - Virtex6 Kit - or KC705 - Kintex7 Kit):
+
+2 - sudo ./fmc_config_130m_4ch -p <platform_name>
+2 - sudo ./fmc_config_130m_4ch_passive -p <platform_name>
+2 - sudo ./fmc_config_250m_4ch -p <platform_name>
+2 - sudo ./fmc_config_250m_4ch_passive -p <platform_name>
+
+    -> Analyze data with chipscope:
+
+3 - analyzer
+
+    -> Open chipscope project in the GUI (file -> open project).
+
+    -> Select project. It is lcoated on FMC_ADC_130M_4CH/hdl/chipscope/ or
+          FMC_ADC_250M_4CH/hdl/chipscope/ dependening on your fmc board being
+          tested.

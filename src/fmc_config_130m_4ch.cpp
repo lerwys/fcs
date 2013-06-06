@@ -18,6 +18,7 @@
 #include "reg_map/fmc_config_130m_4ch.h"
 
 #include <iostream>
+#include <unistd.h>  /* getopt */
 
 #include "data.h"
 #include "commlink/commLink.h"

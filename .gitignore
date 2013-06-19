@@ -1,0 +1,8 @@
+*~
+*.swp
+*.orig
+*.[oa]
+*.elf
+# autotools stuff
+autom4te.cache/
+m4/

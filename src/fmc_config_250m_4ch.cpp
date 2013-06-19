@@ -547,7 +547,7 @@ int main(int argc, const char **argv) {
   // adc3 -0.415ns -> IDELAY_TAP(6)
   // tap resolution 78ps
 
-  set_fpga_delay_s(_commLink, WB_IDELAY0_CAL, &delay_l[0]);
+  set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY0_CAL, &delay_l[0]);
 
   //data.wb_addr = FPGA_CTRL_REGS | WB_IDELAY0_CAL;
   //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(delay_l[0]) | IDELAY_UPDATE; // should be 0x0050003f
@@ -559,7 +559,7 @@ int main(int argc, const char **argv) {
   //data.data_send[0] = (IDELAY_ALL_LINES | IDELAY_TAP(delay_l[0])) & 0xFFFFFFFE; // should be 0x0050003f
   //_commLink->fmc_config_send(&data);
 
-  set_fpga_delay_s(_commLink, WB_IDELAY1_CAL, &delay_l[1]);
+  set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY1_CAL, &delay_l[1]);
 
   //data.wb_addr = FPGA_CTRL_REGS | WB_IDELAY1_CAL;
   //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(delay_l[1]) | IDELAY_UPDATE; // should be 0x0050003f
@@ -571,7 +571,7 @@ int main(int argc, const char **argv) {
   //data.data_send[0] = (IDELAY_ALL_LINES | IDELAY_TAP(delay_l[1])) & 0xFFFFFFFE; // should be 0x0050003f
   //_commLink->fmc_config_send(&data);
 
-  set_fpga_delay_s(_commLink, WB_IDELAY2_CAL, &delay_l[2]);
+  set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY2_CAL, &delay_l[2]);
 
   //data.wb_addr = FPGA_CTRL_REGS | WB_IDELAY2_CAL;
   //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(delay_l[2]) | IDELAY_UPDATE; // should be 0x0050003f
@@ -583,7 +583,7 @@ int main(int argc, const char **argv) {
   //data.data_send[0] = (IDELAY_ALL_LINES | IDELAY_TAP(delay_l[2])) & 0xFFFFFFFE; // should be 0x0050003f
   //_commLink->fmc_config_send(&data);
 
-  set_fpga_delay_s(_commLink, WB_IDELAY3_CAL, &delay_l[3]);
+  set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY3_CAL, &delay_l[3]);
 
   //data.wb_addr = FPGA_CTRL_REGS | WB_IDELAY3_CAL;
   //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(delay_l[3]) | IDELAY_UPDATE; // should be 0x0050003f

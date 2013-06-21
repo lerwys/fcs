@@ -54,8 +54,8 @@ nobase_include_HEADERS = \
 	reg_map/fmc_config_250m_4ch.h
 
 include_HEADERS = \
-	include/platform/fmc130m.h \
-	include/platform/fmc250m.h
+	include/platform/fmc130m_plat.h \
+	include/platform/fmc250m_plat.h
 
 # don't install these headers
 noinst_HEADERS = \

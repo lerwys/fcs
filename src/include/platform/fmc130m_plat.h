@@ -1,10 +1,11 @@
 //============================================================================
 // Author      : Lucas Russo
 // Version     : 1.0
-// Description :  Definitions of multiple fmc boards fot ml605 carrier
+// Description :  Definitions of multiple fpga carrier boards for the
+// fmc130m board
 //============================================================================
-#ifndef PLATFORM_ML605_H_
-#define PLATFORM_ML605_H_
+#ifndef FMC130M_PLAT_H_
+#define FMC130M_PLAT_H_
 
 #include "common.h"
 
@@ -32,4 +33,4 @@ const struct delay_lines fmc_130m_kc705_delay_l[] = {
   {DELAY_LINES_END,  -1}
 };
 
-#endif /* PLATFORM_ML605_H_ */
+#endif /* FMC130M_PLAT_H_ */

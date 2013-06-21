@@ -31,7 +31,7 @@
 #include "chip/isla216p.h"
 #include "chip/amc7823.h"
 #include "chip/eeprom_24a64.h"
-#include "platform/fmc250m.h"
+#include "platform/fmc250m_plat.h"
 
 #include "config.h"
 

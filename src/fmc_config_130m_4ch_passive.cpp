@@ -30,7 +30,7 @@
 #include "chip/amc7823.h"
 #include "chip/eeprom_24a64.h"
 #include "chip/lm75a.h"
-#include "platform/fmc130m.h"
+#include "platform/fmc130m_plat.h"
 
 #include "config.h"
 

@@ -8,7 +8,7 @@
 //         - LED configuration
 //               - trigger configuration
 //               - AMC7823 configuration and data acquisition (temperature monitor)
-//               - EEPROM 24A64 check
+//               - EEPROM 24A64 WITHOUT check (I2C from CPU)
 //               - Si571 clock distribution chip configuration (runs with 125MHz clock)
 //               - AD9510 configuration (clock distribution)
 //               - ISLA216P configuration (4 ADC chips)
@@ -18,10 +18,10 @@
 #include "reg_map/fmc_config_250m_4ch.h"
 
 #include <iostream>
-#include <unistd.h> /* getopt */
+#include <unistd.h>  /* getopt */
 
 #include "data.h"
-#include "commlink/commLink.h"
+#include "commLink.h"
 #include "wishbone/rs232_syscon.h"
 #include "interface/i2c.h"
 #include "interface/spi.h"
@@ -33,13 +33,11 @@
 #include "chip/eeprom_24a64.h"
 #include "platform/fmc250m_plat.h"
 
-#include "config.h"
-
 using namespace std;
 
 int main(int argc, const char **argv) {
 
-  cout << "FMC configuration software for FMC ADC 250M 4CH card (ACTIVE version)" << endl <<
+  cout << "FMC configuration software for FMC ADC 250M 4CH card (ACTIVE version) AMC Artix7 Version" << endl <<
       "Author: Andrzej Wojenski" << endl;
 
   WBInt_drv* int_drv;
@@ -50,7 +48,7 @@ int main(int argc, const char **argv) {
   uint32_t data_temp;
   int opt, error;
 
-   /* Default command-line arguments */
+  /* Default command-line arguments */
   program = argv[0];
   quiet = 0;
   verbose = 0;
@@ -75,6 +73,10 @@ int main(int argc, const char **argv) {
         case KC705:
           delay_l = fmc_250m_kc705_delay_l;
           platform_name = KC705_STRING;
+          break;
+        case AFC:
+          delay_l = fmc_250m_afc_delay_l;
+          platform_name = AFC_STRING;
           break;
         case BAD_PLATFORM:
           fprintf(stderr, "%s: invalid platform -- '%s'\n", program, optarg);
@@ -207,7 +209,7 @@ int main(int argc, const char **argv) {
   data.data_send[0] = 0x01;
   _commLink->fmc_config_send(&data);
 
-
+/*
   cout << "============================================" << endl <<
       "                EEPROM check           " << endl <<
       "============================================" << endl;
@@ -216,7 +218,7 @@ int main(int argc, const char **argv) {
   EEPROM_drv::EEPROM_switch(0x02); // according to documentation, switches to i2c fmc lines
   //EEPROM_drv::EEPROM_sendData(0x00); // wrong address
   EEPROM_drv::EEPROM_sendData(0x50); // good address
-
+*/
 //
 //  // ======================================================
 //  //      AMC7823 configuration (temperature monitor)
@@ -274,7 +276,7 @@ int main(int argc, const char **argv) {
   //Si570_drv::si570_read_freq(&data);
   //exit(1);
 
-  // Configuration for 250MHz output
+  // Configuration for 250MHz output (good config)
   data.data_send.clear();
   data.data_send.push_back(0x20);
   data.data_send.push_back(0xC2);
@@ -338,7 +340,6 @@ int main(int argc, const char **argv) {
 
   // Configuration for 50MHz output
 /*
-
   data.data_send.clear();
   data.data_send.push_back(0x63); // reg 7
   data.data_send.push_back(0x42); // reg 8
@@ -357,6 +358,13 @@ int main(int argc, const char **argv) {
   data.data_send.clear();
   data.data_read.clear();
   Si570_drv::si570_read_freq(&data); // check if data is the same
+
+//  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE1);
+//  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0x42);
+//  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xB5);
+//  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x01);
+//  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x1B);
+//  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0xDA);
 
   Si570_drv::si570_assert(SI571_ADDR, 0x07, 0x20);
   Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
@@ -461,8 +469,11 @@ int main(int argc, const char **argv) {
   test_pattern.resize(4);
 
   // config for 200MHz output!!!
+//  test_pattern[0] = 0x0000; // 9999
+//  test_pattern[1] = 0x0000;
+//  test_pattern[2] = 0x0000;
+//  test_pattern[3] = 0x0000;
 
-  //test_pattern[0] = 0xAAAA; // 9999
   test_pattern[0] = 0x1234;
   test_pattern[1] = 0x5678;
   test_pattern[2] = 0x9ABC;
@@ -530,73 +541,99 @@ int main(int argc, const char **argv) {
   }
 
   // train communication links
-  // Kintex7 kit
   // upload new tap value
   // for fmc adc 250m
-  // adc0 -1.364ns -> IDELAY_TAP(18)
-  // adc1 -0.705ns -> IDELAY_TAP(9)
-  // adc2 -0.996ns -> IDELAY_TAP(13)
-  // tap resolution 78ps
-
-  // Virtex6 ML605 kit
-  // upload new tap value
-  // for fmc adc 250m
-  // adc0 -0.483ns -> IDELAY_TAP(7)
-  // adc1 -0.897ns -> IDELAY_TAP(12)
-  // adc2 -0.609ns -> IDELAY_TAP(8)
-  // adc3 -0.415ns -> IDELAY_TAP(6)
+  // adc0 -1.364
+  // adc1 -0.705
+  // adc2 -0.996
   // tap resolution 78ps
 
   set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY0_CAL, &delay_l[0]);
 
   //data.wb_addr = FPGA_CTRL_REGS | WB_IDELAY0_CAL;
-  //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(delay_l[0]) | IDELAY_UPDATE; // should be 0x0050003f
+  //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(18) | IDELAY_UPDATE; // should be 0x0050003f
   //_commLink->fmc_config_send(&data);
   //// check data
   //_commLink->fmc_config_read(&data);
-  ////assert(data.data_read[0] == (IDELAY_ALL_LINES | IDELAY_TAP(delay_l[0]) | IDELAY_UPDATE));
+  ////assert(data.data_read[0] == (IDELAY_ALL_LINES | IDELAY_TAP(18) | IDELAY_UPDATE));
   //usleep(1000);
-  //data.data_send[0] = (IDELAY_ALL_LINES | IDELAY_TAP(delay_l[0])) & 0xFFFFFFFE; // should be 0x0050003f
+  //data.data_send[0] = (IDELAY_ALL_LINES | IDELAY_TAP(18)) & 0xFFFFFFFE; // should be 0x0050003f
   //_commLink->fmc_config_send(&data);
 
   set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY1_CAL, &delay_l[1]);
 
   //data.wb_addr = FPGA_CTRL_REGS | WB_IDELAY1_CAL;
-  //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(delay_l[1]) | IDELAY_UPDATE; // should be 0x0050003f
+  //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(18) | IDELAY_UPDATE; // should be 0x0050003f
   //_commLink->fmc_config_send(&data);
   //// check data
   //_commLink->fmc_config_read(&data);
-  ////assert(data.data_read[0] == (IDELAY_ALL_LINES | IDELAY_TAP(delay_l[1]) | IDELAY_UPDATE));
+  ////assert(data.data_read[0] == (IDELAY_ALL_LINES | IDELAY_TAP(9) | IDELAY_UPDATE));
   //usleep(1000);
-  //data.data_send[0] = (IDELAY_ALL_LINES | IDELAY_TAP(delay_l[1])) & 0xFFFFFFFE; // should be 0x0050003f
+  //data.data_send[0] = (IDELAY_ALL_LINES | IDELAY_TAP(18)) & 0xFFFFFFFE; // should be 0x0050003f
   //_commLink->fmc_config_send(&data);
 
   set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY2_CAL, &delay_l[2]);
 
   //data.wb_addr = FPGA_CTRL_REGS | WB_IDELAY2_CAL;
-  //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(delay_l[2]) | IDELAY_UPDATE; // should be 0x0050003f
+  //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(18) | IDELAY_UPDATE; // should be 0x0050003f
   //_commLink->fmc_config_send(&data);
   //// check data
   //_commLink->fmc_config_read(&data);
-  ////assert(data.data_read[0] == (IDELAY_ALL_LINES | IDELAY_TAP(delay_l[2]) | IDELAY_UPDATE));
+  ////assert(data.data_read[0] == (IDELAY_ALL_LINES | IDELAY_TAP(13) | IDELAY_UPDATE));
   //usleep(1000);
-  //data.data_send[0] = (IDELAY_ALL_LINES | IDELAY_TAP(delay_l[2])) & 0xFFFFFFFE; // should be 0x0050003f
+  //data.data_send[0] = (IDELAY_ALL_LINES | IDELAY_TAP(18)) & 0xFFFFFFFE; // should be 0x0050003f
   //_commLink->fmc_config_send(&data);
 
   set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY3_CAL, &delay_l[3]);
 
   //data.wb_addr = FPGA_CTRL_REGS | WB_IDELAY3_CAL;
-  //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(delay_l[3]) | IDELAY_UPDATE; // should be 0x0050003f
+  //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(18) | IDELAY_UPDATE; // should be 0x0050003f
   //_commLink->fmc_config_send(&data);
   //// check data
   //_commLink->fmc_config_read(&data);
-  ////assert(data.data_read[0] == (IDELAY_ALL_LINES | IDELAY_TAP(delay_l[3]) | IDELAY_UPDATE));
+  ////assert(data.data_read[0] == (IDELAY_ALL_LINES | IDELAY_TAP(13) | IDELAY_UPDATE));
   //usleep(1000);
-  //data.data_send[0] = (IDELAY_ALL_LINES | IDELAY_TAP(delay_l[3])) & 0xFFFFFFFE; // should be 0x0050003f
+  //data.data_send[0] = (IDELAY_ALL_LINES | IDELAY_TAP(18)) & 0xFFFFFFFE; // should be 0x0050003f
   //_commLink->fmc_config_send(&data);
 
+  // walking "1" test
+//  for (int i = 0; i < 16; i++) {
+//
+//    test_pattern[0] = (0x1) << i;
+//    test_pattern[1] = test_pattern[0];
+//    test_pattern[2] = test_pattern[0];
+//    test_pattern[3] = test_pattern[0];
+//
+//    ISLA216P_drv::ISLA216P_setTestPattern(ISLA_ADC0_ADDR, 0x83, test_pattern);
+//    ISLA216P_drv::ISLA216P_setTestPattern(ISLA_ADC1_ADDR, 0x83, test_pattern);
+//    ISLA216P_drv::ISLA216P_setTestPattern(ISLA_ADC2_ADDR, 0x83, test_pattern);
+//    ISLA216P_drv::ISLA216P_setTestPattern(ISLA_ADC3_ADDR, 0x83, test_pattern);
+//
+//    printf("Test pattern (walking 1): %08x\n", test_pattern[0]);
+//
+//    sleep(30);
+//  }
+
+  // walking "0" test
+/*  for (int i = 0; i < 16; i++) {
+
+    test_pattern[0] = ~((0x1) << i);
+    test_pattern[1] = test_pattern[0];
+    test_pattern[2] = test_pattern[0];
+    test_pattern[3] = test_pattern[0];
+
+    ISLA216P_drv::ISLA216P_setTestPattern(ISLA_ADC0_ADDR, 0x83, test_pattern);
+    ISLA216P_drv::ISLA216P_setTestPattern(ISLA_ADC1_ADDR, 0x83, test_pattern);
+    ISLA216P_drv::ISLA216P_setTestPattern(ISLA_ADC2_ADDR, 0x83, test_pattern);
+    ISLA216P_drv::ISLA216P_setTestPattern(ISLA_ADC3_ADDR, 0x83, test_pattern);
+
+    printf("Test pattern (walking 0): %08x\n", test_pattern[0]);
+
+    sleep(35);
+  }*/
+
   // turn off test pattern
-  cout << "Check test pattern" << endl;
+  //cout << "Check test pattern" << endl;
   //sleep(90);
 
   cout << "Test pattern off" << endl;

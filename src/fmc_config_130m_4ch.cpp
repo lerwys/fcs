@@ -77,6 +77,10 @@ int main(int argc, const char **argv) {
           delay_l = fmc_130m_kc705_delay_l;
           platform_name = KC705_STRING;
           break;
+        case AFC:
+          delay_l = fmc_130m_afc_delay_l;
+          platform_name = AFC_STRING;
+          break;
         case BAD_PLATFORM:
           fprintf(stderr, "%s: invalid platform -- '%s'\n", program, optarg);
           platform_name = NOPLAT_STRING;  // why care?

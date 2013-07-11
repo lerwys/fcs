@@ -22,13 +22,14 @@ const struct delay_lines *delay_l;
 
 static const struct sym_t lookuptable[] = {
     { ML605_STRING, ML605 },
-    { KC705_STRING, KC705 }
+    { KC705_STRING, KC705 },
+    { AFC_STRING, AFC }
 };
 
 void help(void) {
   fprintf(stderr, "Usage: %s [OPTION]\n", program);
   fprintf(stderr, "\n");
-  fprintf(stderr, "  -p <platform>  supportted platforms (ML605/KC705)\n");
+  fprintf(stderr, "  -p <platform>  supportted platforms (ML605/KC705/AFC)\n");
   fprintf(stderr, "  -v             verbose operation\n");
   fprintf(stderr, "  -q             quiet: do not display warnings\n");
   fprintf(stderr, "  -h             display this help and exit\n");

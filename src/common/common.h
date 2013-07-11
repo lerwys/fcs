@@ -15,6 +15,7 @@
 #define MAX_PLATFORM_SIZE_ID 8
 #define ML605_STRING "ML605"
 #define KC705_STRING "KC705"
+#define AFC_STRING "AFC"
 #define NOPLAT_STRING "NOPLAT"
 
 // delay lines definitions
@@ -25,6 +26,7 @@
 enum platform_t {
   ML605,
   KC705,
+  AFC,
   /* add more platforms here */
   BAD_PLATFORM,
   PLATFORM_NOT_SET,

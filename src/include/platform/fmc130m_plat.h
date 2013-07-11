@@ -33,4 +33,16 @@ const struct delay_lines fmc_130m_kc705_delay_l[] = {
   {DELAY_LINES_END,  -1}
 };
 
+// adc0 ???ns -> IDELAY_TAP(???)
+// adc1 ???ns -> IDELAY_TAP(???)
+// adc2 ???ns -> IDELAY_TAP(???)
+// adc3 ???ns -> IDELAY_TAP(???)
+const struct delay_lines fmc_130m_afc_delay_l[] = {
+  {DELAY_LINES_INIT,  7},
+  {DELAY_LINES_INIT,  7},
+  {DELAY_LINES_INIT,  7},
+  {DELAY_LINES_INIT,  7},
+  {DELAY_LINES_END,   -1}
+};
+
 #endif /* FMC130M_PLAT_H_ */

@@ -419,7 +419,7 @@ int main(int argc, const char **argv) {
 
   // turn off test pattern
   cout << "Check test pattern" << endl;
-  sleep(90);
+  //sleep(90);
 
 
   cout << "Test pattern off" << endl;

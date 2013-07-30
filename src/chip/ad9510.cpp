@@ -244,8 +244,11 @@ int AD9510_drv::AD9510_config_si570_fmc_adc_130m_4ch(uint32_t chip_select) {
   AD9510_spi_write(chip_select, 0x3E, 0x08);
   AD9510_spi_write(chip_select, 0x3F, 0x08);
 
-  // output OUT4 - OUT6 - power down
-  AD9510_spi_write(chip_select, 0x40, 0x03);
+  // OUT4 power up
+  // LVDS, 3.5mA, 100ohm termination, power on
+  //AD9510_spi_write(chip_select, 0x40, 0x03);
+  AD9510_spi_write(chip_select, 0x40, 0x02);
+  // output OUT5 - OUT6 - power down
   AD9510_spi_write(chip_select, 0x41, 0x03);
   AD9510_spi_write(chip_select, 0x42, 0x03);
 
@@ -272,12 +275,14 @@ int AD9510_drv::AD9510_config_si570_fmc_adc_130m_4ch(uint32_t chip_select) {
   AD9510_spi_write(chip_select, 0x4A, 0x00); // divide by 2 (off)
   AD9510_spi_write(chip_select, 0x4C, 0x00); // divide by 2 (off)
   AD9510_spi_write(chip_select, 0x4E, 0x00); // divide by 2 (off)
+  AD9510_spi_write(chip_select, 0x50, 0x00); // divide by 2 (off)
   AD9510_spi_write(chip_select, 0x56, 0x00); // divider
 
   AD9510_spi_write(chip_select, 0x49, 0x90); // phase offset = 0 , divider off
   AD9510_spi_write(chip_select, 0x4B, 0x90); // phase
   AD9510_spi_write(chip_select, 0x4D, 0x90); // phase
   AD9510_spi_write(chip_select, 0x4F, 0x90); // phase
+  AD9510_spi_write(chip_select, 0x51, 0x90); // phase
   AD9510_spi_write(chip_select, 0x57, 0x90); // phase
 
   // Function pin is SYNCB
@@ -303,12 +308,203 @@ int AD9510_drv::AD9510_config_si570_fmc_adc_130m_4ch(uint32_t chip_select) {
   AD9510_assert(chip_select, 0x3E, 0x08);
   AD9510_assert(chip_select, 0x3F, 0x08);
 
-  AD9510_assert(chip_select, 0x40, 0x03);
+  AD9510_assert(chip_select, 0x40, 0x02);
   AD9510_assert(chip_select, 0x41, 0x03);
   AD9510_assert(chip_select, 0x42, 0x03);
   AD9510_assert(chip_select, 0x43, 0x02);
 
   AD9510_assert(chip_select, 0x45, 0x1A);
+
+  AD9510_assert(chip_select, 0x48, 0x00);
+  AD9510_assert(chip_select, 0x4A, 0x00);
+  AD9510_assert(chip_select, 0x4C, 0x00);
+  AD9510_assert(chip_select, 0x4E, 0x00);
+  AD9510_assert(chip_select, 0x50, 0x00);
+  AD9510_assert(chip_select, 0x56, 0x00);
+
+  AD9510_assert(chip_select, 0x49, 0x90);
+  AD9510_assert(chip_select, 0x4B, 0x90);
+  AD9510_assert(chip_select, 0x4D, 0x90);
+  AD9510_assert(chip_select, 0x4F, 0x90);
+  AD9510_assert(chip_select, 0x51, 0x90);
+  AD9510_assert(chip_select, 0x57, 0x90);
+
+  return 0;
+}
+
+int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
+
+  wb_data data;
+
+  // reset on startup done by function pin
+
+  // reset registers (don't turn off Long Instruction bit)
+  AD9510_spi_write(chip_select, 0x00, 0x30);
+  //AD9510_reg_update(chip_select);
+  // wait
+  usleep(10000);
+  //sleep(1);
+  // turn off reset
+  AD9510_spi_write(chip_select, 0x00, 0x10);
+  //AD9510_reg_update(chip_select);
+  // wait
+  usleep(10000);
+  //sleep(1);
+
+  // A counter = 0 - N divider
+  AD9510_spi_write(chip_select, 0x04, 0x00);
+  // B counter (MSB) = 0 - N divider
+  AD9510_spi_write(chip_select, 0x05, 0x00);
+  // B counter (LSB) = 5 - N divider
+  AD9510_spi_write(chip_select, 0x06, 0x05);
+  // B counter (LSB) = 2 - N divider
+  //AD9510_spi_write(chip_select, 0x06, 0x02);
+  // B counter (LSB) = 1 - N divider
+  //AD9510_spi_write(chip_select, 0x06, 0x01);
+
+  // Mux Status Pin. PLL Mux Select = Digital Lock Detect, CP Mode = Normal operation, PFD polarity = 1 (positive)
+  //AD9510_spi_write(chip_select, 0x08, 0x04 | 0x03 | 0x40);
+  // Mux Status Pin. N divider Output, CP Mode = Normal operation, PFD polarity = 1 (positive)
+  AD9510_spi_write(chip_select, 0x08, 0x08 | 0x03 | 0x40);
+  // Mux Status Pin. R divider Output, CP Mode = Normal operation, PFD polarity = 1 (positive)
+  //AD9510_spi_write(chip_select, 0x08, 0x10 | 0x03 | 0x40);
+  // Mux Status Pin. PFD Up output, CP Mode = Normal operation, PFD polarity = 1 (positive)
+  //AD9510_spi_write(chip_select, 0x08,  0x20 | 0x40 | 0x10 | 0x03);
+  // Mux Status Pin. PFD Down output, CP Mode = Normal operation, PFD polarity = 1 (positive)
+  //AD9510_spi_write(chip_select, 0x08,  0x20 | 0x04 | 0x40 | 0x10 | 0x03);
+
+  // Charge Pump Current. I = 0.6mA
+  AD9510_spi_write(chip_select, 0x09, 0x00);
+
+  // Pre scaler = divide by 2, mode = FD, PLL in normal operation 00
+  AD9510_spi_write(chip_select, 0x0A, 0x04 | 0x00);
+  // Pre scaler = divide by 1, mode = FD, PLL in normal operation 00
+  //AD9510_spi_write(chip_select, 0x0A, 0x00 | 0x00);
+  //AD9510_spi_write(chip_select, 0x0A, 0x08);
+
+  // R divider = 1
+  AD9510_spi_write(chip_select, 0x0B, 0x00);
+  AD9510_spi_write(chip_select, 0x0C, 0x01);
+
+  // testing end
+  // PLL power up
+  // output OUT0 - OUT3 - power on
+  // voltage output 810mV
+  AD9510_spi_write(chip_select, 0x3C, 0x08);
+  AD9510_spi_write(chip_select, 0x3D, 0x08);
+  AD9510_spi_write(chip_select, 0x3E, 0x08);
+  AD9510_spi_write(chip_select, 0x3F, 0x08);
+
+  // OUT4 power up
+  // LVDS, 3.5mA, 100ohm termination, power on
+  //AD9510_spi_write(chip_select, 0x40, 0x03);
+  AD9510_spi_write(chip_select, 0x40, 0x02);
+  // output OUT5 - OUT6 - power down
+  AD9510_spi_write(chip_select, 0x41, 0x03);
+  AD9510_spi_write(chip_select, 0x42, 0x03);
+  //AD9510_spi_write(chip_select, 0x41, 0x08);
+  //AD9510_spi_write(chip_select, 0x42, 0x08);
+
+  // output OUT7 - power on (clock copy, LVDS)
+  // LVDS, 3.5mA, 100ohm termination, power on
+  AD9510_spi_write(chip_select, 0x43, 0x02);
+
+  // Clock selection (distribution mode)
+  // CLK1 - power down
+  // CLK2 - power on
+  // Clock select = CLK2
+  // Prescaler Clock - Power-Down
+  // REFIN - Power-Down
+  //AD9510_spi_write(chip_select, 0x45, 0x1A);
+
+  // Clock selection (distribution mode)
+  // CLK1 - power down
+  // CLK2 - power on
+  // Clock select = CLK2
+  // Prescaler Clock - Power-Up
+  // REFIN - Power-Up
+  AD9510_spi_write(chip_select, 0x45, 0x02);
+
+  // Clock selection (distribution mode)
+  // CLK1 - power on
+  // CLK2 - power down
+  // Clock select = CLK1
+  // Prescaler Clock -  Power-Down
+  // REFIN - Power-Down
+  //AD9510_spi_write(chip_select, 0x45, 0x1D);
+
+  AD9510_reg_update(chip_select);
+
+  // Clock dividers OUT0 - OUT3 and OUT7
+  // divide = off (bypassed, ratio 1)
+  // duty cycle 50%
+  // lo-hi 0x00
+  // phase offset = 0
+  // start high
+  // sync
+  AD9510_spi_write(chip_select, 0x48, 0x00); // divide by 2 (off)
+  AD9510_spi_write(chip_select, 0x4A, 0x00); // divide by 2 (off)
+  AD9510_spi_write(chip_select, 0x4C, 0x00); // divide by 2 (off)
+  AD9510_spi_write(chip_select, 0x4E, 0x00); // divide by 2 (off)
+  AD9510_spi_write(chip_select, 0x50, 0x00); // divide by 2 (off)
+  AD9510_spi_write(chip_select, 0x56, 0x00); // divider
+
+  AD9510_spi_write(chip_select, 0x49, 0x90); // phase offset = 0 , divider off
+  AD9510_spi_write(chip_select, 0x4B, 0x90); // phase
+  AD9510_spi_write(chip_select, 0x4D, 0x90); // phase
+  AD9510_spi_write(chip_select, 0x4F, 0x90); // phase
+  AD9510_spi_write(chip_select, 0x51, 0x90); // phase
+  AD9510_spi_write(chip_select, 0x57, 0x90); // phase
+
+  // Function pin is SYNCB
+  AD9510_spi_write(chip_select, 0x58, 0x20); //0010 0000
+
+  AD9510_reg_update(chip_select);
+
+  usleep(10000);
+
+  // software sync
+  AD9510_spi_write(chip_select, 0x58, 0x24); //0010 0100
+  AD9510_reg_update(chip_select);
+
+  usleep(10000);
+
+  AD9510_spi_write(chip_select, 0x58, 0x20); //0010 0000
+  AD9510_reg_update(chip_select);
+
+  // Check configuration
+
+  AD9510_assert(chip_select, 0x04, 0x00);
+  AD9510_assert(chip_select, 0x05, 0x00);
+  //AD9510_assert(chip_select, 0x06, 0x05);
+  AD9510_assert(chip_select, 0x06, 0x02);
+  //AD9510_assert(chip_select, 0x06, 0x01);
+  //AD9510_assert(chip_select, 0x08, 0x04 | 0x00);
+
+  AD9510_assert(chip_select, 0x09, 0x00);
+
+  //AD9510_assert(chip_select, 0x0A, 0x04 | 0x00);
+  AD9510_assert(chip_select, 0x0A, 0x00 | 0x00);
+  //AD9510_assert(chip_select, 0x0A, 0x08);
+
+  AD9510_assert(chip_select, 0x0B, 0x00);
+  AD9510_assert(chip_select, 0x0C, 0x01);
+
+  AD9510_assert(chip_select, 0x3C, 0x08);
+  AD9510_assert(chip_select, 0x3C, 0x08);
+  AD9510_assert(chip_select, 0x3D, 0x08);
+  AD9510_assert(chip_select, 0x3E, 0x08);
+  AD9510_assert(chip_select, 0x3F, 0x08);
+
+  //AD9510_assert(chip_select, 0x40, 0x03);
+  AD9510_assert(chip_select, 0x40, 0x02);
+  AD9510_assert(chip_select, 0x41, 0x03);
+  AD9510_assert(chip_select, 0x42, 0x03);
+  AD9510_assert(chip_select, 0x43, 0x02);
+
+  //AD9510_assert(chip_select, 0x45, 0x1A);
+  AD9510_assert(chip_select, 0x45, 0x02);
+  //AD9510_assert(chip_select, 0x45, 0x1D);
 
   AD9510_assert(chip_select, 0x48, 0x00);
   AD9510_assert(chip_select, 0x4A, 0x00);

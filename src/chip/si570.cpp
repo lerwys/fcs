@@ -26,11 +26,12 @@ void Si570_drv::si570_setCommLink(commLink* comm, string i2c_id, string gpio_id)
 // get info about startup setting so user can calculate needed values
 int Si570_drv::si570_read_freq(wb_data* data) {
 
-  uint8_t HS_DIV, N1;
-  uint16_t RFFREQ_INTEGER; // 10 bits
+  uint32_t HS_DIV, N1;
+  uint32_t RFFREQ_INTEGER; // 10 bits
   uint32_t RFFREQ_INTEGER_FLOAT;
   int err = 0, std_read = 1;
   //int data_size = data->data_send.size();
+
   data->data_send.resize(1);
 
   //cout << showbase << internal << setfill('0') << setw(8);
@@ -56,11 +57,13 @@ int Si570_drv::si570_read_freq(wb_data* data) {
 
   // parsing data
   for (unsigned int i = 0; i < data->extra[1]; i++)
-    cout << "Si570: data read [" << i << "] : 0x" << hex << data->data_read[i] << endl;
+    cout << "Si570: data read [" << i << "] : 0x" << hex << (data->data_read[i] & 0xFF) << endl;
 
   if (std_read == 1) {
-    HS_DIV = data->data_read[0] >> 5;
-    N1 = ( (data->data_read[0] & 0x1F) << 2) | (data->data_read[1] >> 6);
+    //HS_DIV = data->data_read[0] >> 5;
+    HS_DIV = (data->data_read[0] & 0xE0) >> 5;
+    //N1 = ( (data->data_read[0] & 0x1F) << 2) | (data->data_read[1] >> 6);
+    N1 = ( (data->data_read[0] & 0x1F) << 2) | ((data->data_read[1] & 0xC0) >> 6);
 
     RFFREQ_INTEGER = ((data->data_read[1] & 0x3F) << 4) | ((data->data_read[2] & 0xF0) >> 4);
 

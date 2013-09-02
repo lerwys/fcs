@@ -269,6 +269,12 @@ int main(int argc, const char **argv) {
   //AD9510_drv::AD9510_config_si570_fmc_adc_130m_4ch(AD9510_ADDR); // with config check included
   AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(AD9510_ADDR); // with config check included
 
+    // Check PLL lock
+  
+  data.wb_addr = FPGA_CTRL_REGS | WB_CLK_CTRL; // clock control
+  _commLink->fmc_config_read(&data);
+  printf("Clock PLL Lock: %d\n", data.data_read[0]);
+
   //exit(1);
 
   // ======================================================

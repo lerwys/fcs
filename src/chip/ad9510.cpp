@@ -256,13 +256,21 @@ int AD9510_drv::AD9510_config_si570_fmc_adc_130m_4ch(uint32_t chip_select) {
   // LVDS, 3.5mA, 100ohm termination, power on
   AD9510_spi_write(chip_select, 0x43, 0x02);
 
+   // Clock selection (distribution mode)
+  // CLK1 - power on
+  // CLK2 - power down
+  // Clock select = CLK1
+  // Prescaler Clock -  Power-Down
+  // REFIN - Power-Down
+  AD9510_spi_write(chip_select, 0x45, 0x1D);
+
   // Clock selection (distribution mode)
   // CLK1 - power down
   // CLK2 - power on
   // Clock select = CLK2
   // Prescaler Clock -  Power-Down
   // REFIN - Power-Down
-  AD9510_spi_write(chip_select, 0x45, 0x1A);
+  //AD9510_spi_write(chip_select, 0x45, 0x1A);
 
   // Clock dividers OUT0 - OUT3 and OUT7
   // divide = off (bypassed, ratio 1)
@@ -313,7 +321,8 @@ int AD9510_drv::AD9510_config_si570_fmc_adc_130m_4ch(uint32_t chip_select) {
   AD9510_assert(chip_select, 0x42, 0x03);
   AD9510_assert(chip_select, 0x43, 0x02);
 
-  AD9510_assert(chip_select, 0x45, 0x1A);
+  //AD9510_assert(chip_select, 0x45, 0x1A);
+  AD9510_assert(chip_select, 0x45, 0x1D);
 
   AD9510_assert(chip_select, 0x48, 0x00);
   AD9510_assert(chip_select, 0x4A, 0x00);
@@ -355,21 +364,25 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
   AD9510_spi_write(chip_select, 0x04, 0x00);
   // B counter (MSB) = 0 - N divider
   AD9510_spi_write(chip_select, 0x05, 0x00);
+   // B counter (LSB) = 74 - N divider
+  //AD9510_spi_write(chip_select, 0x06, 0x4A);
+   // B counter (LSB) = 35 - N divider
+  AD9510_spi_write(chip_select, 0x06, 0x23);
   // B counter (LSB) = 10 - N divider
   //AD9510_spi_write(chip_select, 0x06, 0x0A);
   // B counter (LSB) = 5 - N divider
-  AD9510_spi_write(chip_select, 0x06, 0x05);
+  //AD9510_spi_write(chip_select, 0x06, 0x05);
   // B counter (LSB) = 2 - N divider
   //AD9510_spi_write(chip_select, 0x06, 0x02);
   // B counter (LSB) = 1 - N divider
   //AD9510_spi_write(chip_select, 0x06, 0x01);
 
   // Mux Status Pin. PLL Mux Select = Digital Lock Detect, CP Mode = Normal operation, PFD polarity = 1 (positive)
-  //AD9510_spi_write(chip_select, 0x08, 0x04 | 0x03 | 0x40);
+  AD9510_spi_write(chip_select, 0x08, 0x04 | 0x03 | 0x40);
   // Mux Status Pin. N divider Output, CP Mode = Normal operation, PFD polarity = 1 (positive)
   //AD9510_spi_write(chip_select, 0x08, 0x08 | 0x03 | 0x40);
   // Mux Status Pin. R divider Output, CP Mode = Normal operation, PFD polarity = 1 (positive)
-  AD9510_spi_write(chip_select, 0x08, 0x10 | 0x03 | 0x40);
+  //AD9510_spi_write(chip_select, 0x08, 0x10 | 0x03 | 0x40);
   // Mux Status Pin. PFD Up output, CP Mode = Normal operation, PFD polarity = 1 (positive)
   //AD9510_spi_write(chip_select, 0x08,  0x20 | 0x40 | 0x10 | 0x03);
   // Mux Status Pin. PFD Down output, CP Mode = Normal operation, PFD polarity = 1 (positive)
@@ -379,9 +392,9 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
   AD9510_spi_write(chip_select, 0x09, 0x00);
 
   // Pre scaler = divide by 2, mode = FD, PLL in normal operation 00
-  AD9510_spi_write(chip_select, 0x0A, 0x04 | 0x00);
+  //AD9510_spi_write(chip_select, 0x0A, 0x04 | 0x00);
   // Pre scaler = divide by 1, mode = FD, PLL in normal operation 00
-  //AD9510_spi_write(chip_select, 0x0A, 0x00 | 0x00);
+  AD9510_spi_write(chip_select, 0x0A, 0x00 | 0x00);
   //AD9510_spi_write(chip_select, 0x0A, 0x08);
 
   // R divider = 1
@@ -479,15 +492,17 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
   AD9510_assert(chip_select, 0x04, 0x00);
   //AD9510_assert(chip_select, 0x05, 0x00);
   //AD9510_assert(chip_select, 0x06, 0x0A);
-  AD9510_assert(chip_select, 0x06, 0x05);
+  //AD9510_assert(chip_select, 0x06, 0x4A);
+  AD9510_assert(chip_select, 0x06, 0x23);
+  //AD9510_assert(chip_select, 0x06, 0x05);
   //AD9510_assert(chip_select, 0x06, 0x02);
   //AD9510_assert(chip_select, 0x06, 0x01);
   //AD9510_assert(chip_select, 0x08, 0x04 | 0x00);
 
   AD9510_assert(chip_select, 0x09, 0x00);
 
-  AD9510_assert(chip_select, 0x0A, 0x04 | 0x00);
-  //AD9510_assert(chip_select, 0x0A, 0x00 | 0x00);
+  //AD9510_assert(chip_select, 0x0A, 0x04 | 0x00);
+  AD9510_assert(chip_select, 0x0A, 0x00 | 0x00);
   //AD9510_assert(chip_select, 0x0A, 0x08);
 
   AD9510_assert(chip_select, 0x0B, 0x00);

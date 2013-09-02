@@ -17,6 +17,7 @@
 # the program to build (the names of the final binaries)
 bin_PROGRAMS = \
 	fmc_config_130m_4ch \
+	fmc_config_130m_4ch_ext_clk_no_pll \
 	fmc_config_130m_4ch_crystek \
 	fmc_config_130m_4ch_passive \
 	fmc_config_250m_4ch \
@@ -25,6 +26,9 @@ bin_PROGRAMS = \
 # list of sources
 fmc_config_130m_4ch_SOURCES = \
 	fmc_config_130m_4ch.cpp
+
+fmc_config_130m_4ch_ext_clk_no_pll_SOURCES = \
+	fmc_config_130m_4ch_ext_clk_no_pll.cpp
 
 fmc_config_130m_4ch_crystek_SOURCES = \
 	fmc_config_130m_4ch_crystek.cpp

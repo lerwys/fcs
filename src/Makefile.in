@@ -53,6 +53,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = fmc_config_130m_4ch$(EXEEXT) \
+	fmc_config_130m_4ch_ext_clk_no_pll$(EXEEXT) \
 	fmc_config_130m_4ch_crystek$(EXEEXT) \
 	fmc_config_130m_4ch_passive$(EXEEXT) \
 	fmc_config_250m_4ch$(EXEEXT) \
@@ -86,6 +87,17 @@ fmc_config_130m_4ch_crystek_OBJECTS =  \
 	$(am_fmc_config_130m_4ch_crystek_OBJECTS)
 fmc_config_130m_4ch_crystek_LDADD = $(LDADD)
 fmc_config_130m_4ch_crystek_DEPENDENCIES =  \
+	$(top_builddir)/src/chip/libchip.la \
+	$(top_builddir)/src/commlink/libcommlink.la \
+	$(top_builddir)/src/interface/libinterface.la \
+	$(top_builddir)/src/wishbone/libwishbone.la \
+	$(top_builddir)/src/common/libcommon.la
+am_fmc_config_130m_4ch_ext_clk_no_pll_OBJECTS =  \
+	fmc_config_130m_4ch_ext_clk_no_pll.$(OBJEXT)
+fmc_config_130m_4ch_ext_clk_no_pll_OBJECTS =  \
+	$(am_fmc_config_130m_4ch_ext_clk_no_pll_OBJECTS)
+fmc_config_130m_4ch_ext_clk_no_pll_LDADD = $(LDADD)
+fmc_config_130m_4ch_ext_clk_no_pll_DEPENDENCIES =  \
 	$(top_builddir)/src/chip/libchip.la \
 	$(top_builddir)/src/commlink/libcommlink.la \
 	$(top_builddir)/src/interface/libinterface.la \
@@ -137,11 +149,13 @@ CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(fmc_config_130m_4ch_SOURCES) \
 	$(fmc_config_130m_4ch_crystek_SOURCES) \
+	$(fmc_config_130m_4ch_ext_clk_no_pll_SOURCES) \
 	$(fmc_config_130m_4ch_passive_SOURCES) \
 	$(fmc_config_250m_4ch_SOURCES) \
 	$(fmc_config_250m_4ch_passive_SOURCES)
 DIST_SOURCES = $(fmc_config_130m_4ch_SOURCES) \
 	$(fmc_config_130m_4ch_crystek_SOURCES) \
+	$(fmc_config_130m_4ch_ext_clk_no_pll_SOURCES) \
 	$(fmc_config_130m_4ch_passive_SOURCES) \
 	$(fmc_config_250m_4ch_SOURCES) \
 	$(fmc_config_250m_4ch_passive_SOURCES)
@@ -307,6 +321,9 @@ top_srcdir = @top_srcdir@
 fmc_config_130m_4ch_SOURCES = \
 	fmc_config_130m_4ch.cpp
 
+fmc_config_130m_4ch_ext_clk_no_pll_SOURCES = \
+	fmc_config_130m_4ch_ext_clk_no_pll.cpp
+
 fmc_config_130m_4ch_crystek_SOURCES = \
 	fmc_config_130m_4ch_crystek.cpp
 
@@ -436,6 +453,9 @@ fmc_config_130m_4ch$(EXEEXT): $(fmc_config_130m_4ch_OBJECTS) $(fmc_config_130m_4
 fmc_config_130m_4ch_crystek$(EXEEXT): $(fmc_config_130m_4ch_crystek_OBJECTS) $(fmc_config_130m_4ch_crystek_DEPENDENCIES) $(EXTRA_fmc_config_130m_4ch_crystek_DEPENDENCIES) 
 	@rm -f fmc_config_130m_4ch_crystek$(EXEEXT)
 	$(CXXLINK) $(fmc_config_130m_4ch_crystek_OBJECTS) $(fmc_config_130m_4ch_crystek_LDADD) $(LIBS)
+fmc_config_130m_4ch_ext_clk_no_pll$(EXEEXT): $(fmc_config_130m_4ch_ext_clk_no_pll_OBJECTS) $(fmc_config_130m_4ch_ext_clk_no_pll_DEPENDENCIES) $(EXTRA_fmc_config_130m_4ch_ext_clk_no_pll_DEPENDENCIES) 
+	@rm -f fmc_config_130m_4ch_ext_clk_no_pll$(EXEEXT)
+	$(CXXLINK) $(fmc_config_130m_4ch_ext_clk_no_pll_OBJECTS) $(fmc_config_130m_4ch_ext_clk_no_pll_LDADD) $(LIBS)
 fmc_config_130m_4ch_passive$(EXEEXT): $(fmc_config_130m_4ch_passive_OBJECTS) $(fmc_config_130m_4ch_passive_DEPENDENCIES) $(EXTRA_fmc_config_130m_4ch_passive_DEPENDENCIES) 
 	@rm -f fmc_config_130m_4ch_passive$(EXEEXT)
 	$(CXXLINK) $(fmc_config_130m_4ch_passive_OBJECTS) $(fmc_config_130m_4ch_passive_LDADD) $(LIBS)
@@ -454,6 +474,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fmc_config_130m_4ch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fmc_config_130m_4ch_crystek.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fmc_config_130m_4ch_ext_clk_no_pll.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fmc_config_130m_4ch_passive.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fmc_config_250m_4ch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fmc_config_250m_4ch_passive.Po@am__quote@

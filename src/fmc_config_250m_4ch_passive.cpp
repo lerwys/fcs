@@ -18,6 +18,8 @@
 #include <iostream>
 #include <unistd.h>  /* getopt */
 
+#include "config.h"
+#include "plat_opts.h"
 #include "data.h"
 #include "commLink.h"
 #include "wishbone/rs232_syscon.h"

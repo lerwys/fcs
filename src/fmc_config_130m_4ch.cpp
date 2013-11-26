@@ -20,6 +20,7 @@
 #include <iostream>
 #include <unistd.h>  /* getopt */
 
+#include "plat_opts.h"
 #include "data.h"
 #include "commlink/commLink.h"
 #include "wishbone/rs232_syscon.h"
@@ -244,7 +245,7 @@ int main(int argc, const char **argv) {
   // parameters:
   // OE - active high, 3.3V, LVPECL
   // 10-280MHz freq. range
-  // startup freq:  155.49MHz (previously 155.52 MHz)
+  // startup freq:  155.4882208 MHz (previously 155.49MHz previously 155.52 MHz)
   // I2C addr: 0x49
   // Startup registers values:
   // reg 7 = 0x01      // 0000 0001 -> HS = 000 -> HS = 4d
@@ -258,7 +259,7 @@ int main(int argc, const char **argv) {
   // fDCO_current = 4.97568 GHz (previously 4.97664 GHz)
   // RFreq = 00 0010 1011 1000 1011 1011 1110 0100 0111 0010 = 11689256050d
   // RFreq = 11689256050d / 2^28 = 43.545872159
-  // fxtal = 114.262954 MHz ( previously 114.285 MHz )
+  // fxtal = 114.26164683147 (previously 114.262954 MHz previously 114.285 MHz )
 
   cout << "============================================" << endl <<
       "   Si571 configuration (clock generation)   " << endl <<
@@ -451,6 +452,23 @@ int main(int argc, const char **argv) {
   data.data_send.push_back(0x34);
   data.data_send.push_back(0xC8);
 */
+ // 113.376415 MHz ++ 42 KHz output
+
+  // Configuration for 113.376415 MHz output
+  //RFreq = 2BACDFA1F
+/*
+  //HS = 111 -> HS = 11d
+  //N1 = 000 0011 -> N1 = 4d
+  // RFreq = 43.6591139576158 -> RFreq = 43.6591139576158*2^28 = 11719654164 = 2BA8BBB14h
+  data.data_send.clear();
+  data.data_send.push_back(0xE0); // 1110 0000
+  data.data_send.push_back(0xC2); // 1100 0010
+  data.data_send.push_back(0xBA);
+  data.data_send.push_back(0xCD);
+  data.data_send.push_back(0xFA);
+  data.data_send.push_back(0x1F);
+*/
+
   // Configuration for 75MHz output
 /*
   data.data_send.clear();
@@ -605,6 +623,17 @@ int main(int argc, const char **argv) {
   Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x34);
   Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0xC8);
 */
+
+/*
+//113.376415 +  42 KHz MHz
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xBA);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0xCD);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0xFA);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x1F);
+*/
+
   Si570_drv::si570_outputEnable(FPGA_CTRL_REGS | WB_CLK_CTRL);
 
   //exit(1);
@@ -643,7 +672,7 @@ int main(int argc, const char **argv) {
   AD9510_drv::AD9510_setCommLink(_commLink, AD9510_SPI_DRV);
 
   // FPGA working with clock copy for ADC (FMC ADC 130M 4CH rev.1)
-  //AD9510_drv::AD9510_config_si570_fmc_adc_130m_4ch(AD9510_ADDR); // with config check include. No PLL
+  //AD9510_drv::AD9510_config_si570_fmc_adc_130m_4ch(AD9510_ADDR); // with config check included
   AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(AD9510_ADDR); // with config check included
 
   // Check PLL lock
@@ -651,7 +680,7 @@ int main(int argc, const char **argv) {
   data.wb_addr = FPGA_CTRL_REGS | WB_CLK_CTRL; // clock control
   _commLink->fmc_config_read(&data);
 
-  pll_status = data.data_read[0] & PLL_STATUS_MASK;
+  pll_status = data.data_read[0] & AD9510_PLL_STATUS_MASK;
 
   cout << "WB Clock Control Reg: " << data.data_read[0] << endl;
   cout << "AD9510 PLL Status: " << pll_status << endl;

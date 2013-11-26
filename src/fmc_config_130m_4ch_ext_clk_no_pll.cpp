@@ -20,6 +20,8 @@
 #include <iostream>
 #include <unistd.h>  /* getopt */
 
+#include "config.h"
+#include "plat_opts.h"
 #include "data.h"
 #include "commlink/commLink.h"
 #include "wishbone/rs232_syscon.h"
@@ -33,8 +35,6 @@
 #include "chip/eeprom_24a64.h"
 #include "chip/lm75a.h"
 #include "platform/fmc130m_plat.h"
-
-#include "config.h"
 
 using namespace std;
 
@@ -309,14 +309,14 @@ int main(int argc, const char **argv) {
   //AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(AD9510_ADDR); // with config check included
 
   // Check PLL lock
-  
+
   data.wb_addr = FPGA_CTRL_REGS | WB_CLK_CTRL; // clock control
   _commLink->fmc_config_read(&data);
 
-  //#define PLL_LOCK 
+  //#define PLL_LOCK
   //
   //if (data.data_read[0] & PLL_LOCK)
-  
+
   printf("Clock PLL Lock: %d\n", data.data_read[0]);
 
   //exit(1);

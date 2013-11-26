@@ -24,6 +24,9 @@
 
 using namespace std;
 
+#define WB_GR_WORD (1 << 0)
+#define WB_GR_BYTE (1 << 1)
+
 // Wishbone word size in bytes
 #define WB_WORD_SIZE 0x4 // 32 bits
 
@@ -52,10 +55,10 @@ using namespace std;
 #define WB_GR_ACC WB_GR_WORD // Default to byte access
 #endif
 
-#if WB_GR_ACC == WB_GR_BYTE
+#if (WB_GR_ACC & WB_GR_BYTE)
 #define WB_GR_SHIFT WB_GR_SHIFT_WORD // We left shift the addresses by this to get byte granularity
 //#error "Selecting Wishbone BYTE granularity"
-#elif WB_GR_ACC == WB_GR_WORD
+#elif (WB_GR_ACC & WB_GR_WORD)
 #define WB_GR_SHIFT WB_GR_SHIFT_BYTE // We left shift the addresses by this to get word granularity
 //#error "Selecting Wishbone WORD granularity"
 #else

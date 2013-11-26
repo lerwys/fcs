@@ -63,7 +63,8 @@ nobase_include_HEADERS = \
 
 include_HEADERS = \
 	include/platform/fmc130m_plat.h \
-	include/platform/fmc250m_plat.h
+	include/platform/fmc250m_plat.h \
+	include/plat_opts.h 
 
 # don't install these headers
 noinst_HEADERS = \

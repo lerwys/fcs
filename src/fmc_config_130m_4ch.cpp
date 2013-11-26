@@ -36,7 +36,7 @@
 
 #include "config.h"
 
-#define PLL_STATUS_MASK 0x08
+#define PLL_STATUS_MASK 0x04
 
 using namespace std;
 
@@ -334,7 +334,7 @@ int main(int argc, const char **argv) {
   //HS = 001 -> HS = 5d
   //N1 = 000 0111 -> N1 = 8d
   // RFreq = 42.947412685 -> RFreq = 42.947412685*2^28 = 11528608308 = 2AF289A34h
-  data.data_send.clear();                                             
+  data.data_send.clear();
   data.data_send.push_back(0x21); // 0010 0001
   data.data_send.push_back(0xC2); // 1100 0010
   data.data_send.push_back(0xAF);
@@ -344,24 +344,52 @@ int main(int argc, const char **argv) {
 */
 
   // Configuration for 112.583175675676 MHz MHz output
-
-  //HS = 111 -> HS = 11d 
+/*
+  //HS = 111 -> HS = 11d
   //N1 = 000 0011 -> N1 = 4d
   // RFreq = 43.35315652464 -> RFreq = 43.35315652464*2^28 = 11637524341 = 2B5A68775h
-  data.data_send.clear();                                             
+  data.data_send.clear();
   data.data_send.push_back(0xE0); // 1110 0000
   data.data_send.push_back(0xC2); // 1100 0010
   data.data_send.push_back(0xB5);
   data.data_send.push_back(0xA6);
   data.data_send.push_back(0x87);
   data.data_send.push_back(0x75);
+*/
+
+  // Configuration for 113.511169 MHz output
+/*
+  //HS = 111 -> HS = 11d
+  //N1 = 000 0011 -> N1 = 4d
+  // RFreq = 43.7105051213712 -> RFreq = 43.7105051213712*2^28 = 11733449374.2456 = 2BB5E3A9Eh
+  data.data_send.clear();
+  data.data_send.push_back(0xE0); // 1110 0000
+  data.data_send.push_back(0xC2); // 1100 0010
+  data.data_send.push_back(0xBB);
+  data.data_send.push_back(0x5E);
+  data.data_send.push_back(0x3A);
+  data.data_send.push_back(0x9E);
+*/
+
+  // Configuration for 113.376415 MHz output
+
+  //HS = 111 -> HS = 11d
+  //N1 = 000 0011 -> N1 = 4d
+  // RFreq = 43.6586144972237 -> RFreq = 43.6586144972237*2^28 = 11719520090.8904 = 2BA89AF5Bh
+  data.data_send.clear();
+  data.data_send.push_back(0xE0); // 1110 0000
+  data.data_send.push_back(0xC2); // 1100 0010
+  data.data_send.push_back(0xBA);
+  data.data_send.push_back(0x89);
+  data.data_send.push_back(0xAF);
+  data.data_send.push_back(0x5B);
 
   // Configuration for 124.997588 MHz output
 /*
   //HS = 001 -> HS = 5d
   //N1 = 000 0111 -> N1 = 8d
   // RFreq = 43.7578702892628 -> RFreq = 43.7578702892628*2^28 = 11746163865 = 2BC203C99h
-  data.data_send.clear();                                             
+  data.data_send.clear();
   data.data_send.push_back(0x21); // 0010 0001
   data.data_send.push_back(0xC2); // 1100 0010
   data.data_send.push_back(0xBC);
@@ -371,10 +399,10 @@ int main(int argc, const char **argv) {
 */
 /*
   // Configuration for 113.529121545 MHz output.
-  //HS = 111 -> HS = 11d 
+  //HS = 111 -> HS = 11d
   //N1 = 000 0011 -> N1 = 4d
   // RFreq = 43.7174182279586 -> RFreq = 43.7174182279586*2^28 = 11735305097 = 2BB7A8B89h
-  data.data_send.clear();                                             
+  data.data_send.clear();
   data.data_send.push_back(0xE0); // 1110 0000
   data.data_send.push_back(0xC2); // 1100 0010
   data.data_send.push_back(0xBB);
@@ -384,7 +412,7 @@ int main(int argc, const char **argv) {
 */
   // Configuration for 113.750000 MHz output. NOT LOCKING
 /*
-  //HS = 010 -> HS = 6d 
+  //HS = 010 -> HS = 6d
   //N1 = 000 0111 -> N1 = 8d
   // RFreq = 47.7845164059035 -> RFreq = 47.7845164059035*2^28 = 12827058451d = 2FC8D6113h
   data.data_send.clear();
@@ -398,7 +426,7 @@ int main(int argc, const char **argv) {
 
   // Configuration for 112 MHz MHz output.
 /*
-  //HS = 111 -> HS = 11d 
+  //HS = 111 -> HS = 11d
   //N1 = 000 0011 -> N1 = 4d
   // RFreq = 43.128589166354 -> RFreq = 43.128589166354*2^28 = 11577242500 = 2B20EB384h
   data.data_send.clear();
@@ -412,10 +440,10 @@ int main(int argc, const char **argv) {
 
   // Configuration for 114.222973 MHz output
 /*
-  //HS = 010 -> HS = 6d 
+  //HS = 010 -> HS = 6d
   //N1 = 000 0111 -> N1 = 8d
   // RFreq = 47.983204635 -> RFreq = 47.983204635*2^28 = 12880393416 = 2FFBB34C8h
-  data.data_send.clear();                                             
+  data.data_send.clear();
   data.data_send.push_back(0x41); // 0100 0001
   data.data_send.push_back(0xC2); // 1100 0010
   data.data_send.push_back(0xFF);
@@ -499,13 +527,34 @@ int main(int argc, const char **argv) {
 */
 
 // 112.583175675676 MHz
-
+/*
   Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
   Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
   Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xB5);
   Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0xA6);
   Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x87);
   Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x75);
+*/
+
+// 113.511169 MHz output
+/*
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xBB);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x5E);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x3A);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x9E);
+*/
+
+// 113.376415 MHz output
+
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xBA);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x89);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0xAF);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x5B);
+
 
 /*
 // 124.997588 MHz
@@ -594,11 +643,11 @@ int main(int argc, const char **argv) {
   AD9510_drv::AD9510_setCommLink(_commLink, AD9510_SPI_DRV);
 
   // FPGA working with clock copy for ADC (FMC ADC 130M 4CH rev.1)
-  //AD9510_drv::AD9510_config_si570_fmc_adc_130m_4ch(AD9510_ADDR); // with config check included
+  //AD9510_drv::AD9510_config_si570_fmc_adc_130m_4ch(AD9510_ADDR); // with config check include. No PLL
   AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(AD9510_ADDR); // with config check included
 
   // Check PLL lock
-  
+
   data.wb_addr = FPGA_CTRL_REGS | WB_CLK_CTRL; // clock control
   _commLink->fmc_config_read(&data);
 
@@ -609,7 +658,7 @@ int main(int argc, const char **argv) {
 
   cout << "If the AD9510 PLL Status pin is configured for Digital Lock the " << endl <<
              "information below makes sense. Otherwise ignore that!"  << endl;
-  
+
   if (pll_status)
     cout << "Clock PLL Locked!" << endl;
   else

@@ -12,24 +12,24 @@
 
 /************************** BPM-SW firmware **************************/
 // Should be autodiscovered by SDB
-#define FMC130M_BASE_ADDR 0x30010000
-
-#define FPGA_CTRL_REGS                  (FMC130M_BASE_ADDR + 0x0000)
-#define FPGA_SI571_I2C                  (FMC130M_BASE_ADDR + 0x0100)
-#define FPGA_AD9510_SPI                 (FMC130M_BASE_ADDR + 0x0200)
-#define FPGA_EEPROM_I2C                 (FMC130M_BASE_ADDR + 0x0300)
-#define FPGA_LM75A_I2C                  (FMC130M_BASE_ADDR + 0x0400)
+//#define FMC130M_BASE_ADDR 0x30010000
+//
+//#define FPGA_CTRL_REGS                  (FMC130M_BASE_ADDR + 0x0000)
+//#define FPGA_SI571_I2C                  (FMC130M_BASE_ADDR + 0x0100)
+//#define FPGA_AD9510_SPI                 (FMC130M_BASE_ADDR + 0x0200)
+//#define FPGA_EEPROM_I2C                 (FMC130M_BASE_ADDR + 0x0300)
+//#define FPGA_LM75A_I2C                  (FMC130M_BASE_ADDR + 0x0400)
 /**********************************************************************/
 
 /********************** FMC-ADC-HDL firmware **************************/
 // Should be autodiscovered by SDB
-//#define FMC130M_BASE_ADDR 0x00000000
-//
-//#define FPGA_SI571_I2C                (FMC130M_BASE_ADDR + 0x010000)
-//#define FPGA_AD9510_SPI               (FMC130M_BASE_ADDR + 0x020000)
-//#define FPGA_EEPROM_I2C               (FMC130M_BASE_ADDR + 0x030000)
-//#define FPGA_LM75A_I2C                (FMC130M_BASE_ADDR + 0x040000)
-//#define FPGA_CTRL_REGS                (FMC130M_BASE_ADDR + 0x050000)
+#define FMC130M_BASE_ADDR 0x00000000
+
+#define FPGA_SI571_I2C                (FMC130M_BASE_ADDR + 0x010000)
+#define FPGA_AD9510_SPI               (FMC130M_BASE_ADDR + 0x020000)
+#define FPGA_EEPROM_I2C               (FMC130M_BASE_ADDR + 0x030000)
+#define FPGA_LM75A_I2C                (FMC130M_BASE_ADDR + 0x040000)
+#define FPGA_CTRL_REGS                (FMC130M_BASE_ADDR + 0x050000)
 /**********************************************************************/
 
 // System frequency

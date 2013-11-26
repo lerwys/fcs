@@ -372,9 +372,11 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
   AD9510_spi_write(chip_select, 0x06, 0x0A);
   // B counter (LSB) = 5 - N divider
   //AD9510_spi_write(chip_select, 0x06, 0x05);
-  // B counter (LSB) = 2 - N divider
+  // B counter (LSB) = 4 - N divider
+  //AD9510_spi_write(chip_select, 0x06, 0x04);
+  // B counter (LSB) = 2 - N divider. Invalid!
   //AD9510_spi_write(chip_select, 0x06, 0x02);
-  // B counter (LSB) = 1 - N divider
+  // B counter (LSB) = 1 - N divider. Invalid!
   //AD9510_spi_write(chip_select, 0x06, 0x01);
 
   // Mux Status Pin. PLL Mux Select = Digital Lock Detect, CP Mode = Normal operation, PFD polarity = 1 (positive)

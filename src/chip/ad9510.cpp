@@ -391,7 +391,9 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
   //AD9510_spi_write(chip_select, 0x08,  0x20 | 0x04 | 0x40 | 0x10 | 0x03);
 
   // Charge Pump Current. I = 0.6mA
-  AD9510_spi_write(chip_select, 0x09, 0x00);
+  //AD9510_spi_write(chip_select, 0x09, 0x00);
+  // Charge Pump Current. I = 4.8mA
+  AD9510_spi_write(chip_select, 0x09, 0x70);
 
   // Pre scaler = divide by 2, mode = FD, PLL in normal operation 00
   //AD9510_spi_write(chip_select, 0x0A, 0x04 | 0x00);

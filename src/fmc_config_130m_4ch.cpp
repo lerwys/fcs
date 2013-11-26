@@ -15,13 +15,13 @@
 //               - Clock and data lines calibation (IDELAY)
 //               - most of the functions provides assertions to check if data is written to the chip (checks readback value)
 //============================================================================
+#include "plat_opts.h" // must be included before reg_map*
+#include "data.h"
 #include "reg_map/fmc_config_130m_4ch.h"
 
 #include <iostream>
 #include <unistd.h>  /* getopt */
 
-#include "plat_opts.h"
-#include "data.h"
 #include "commlink/commLink.h"
 #include "wishbone/rs232_syscon.h"
 #include "interface/i2c.h"
@@ -260,6 +260,10 @@ int main(int argc, const char **argv) {
   // RFreq = 00 0010 1011 1000 1011 1011 1110 0100 0111 0010 = 11689256050d
   // RFreq = 11689256050d / 2^28 = 43.545872159
   // fxtal = 114.26164683147 (previously 114.262954 MHz previously 114.285 MHz )
+  
+  
+  
+  //fxtal = 92.698155690157???
 
   cout << "============================================" << endl <<
       "   Si571 configuration (clock generation)   " << endl <<

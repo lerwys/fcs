@@ -363,13 +363,28 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
   // A counter = 0 - N divider
   AD9510_spi_write(chip_select, 0x04, 0x00);
   // B counter (MSB) = 0 - N divider
-  AD9510_spi_write(chip_select, 0x05, 0x00);
+  //AD9510_spi_write(chip_select, 0x05, 0x00);
+  //AD9510_spi_write(chip_select, 0x05, 0x00);
+  // B counter (MSB) = 64 - N divider
+  //AD9510_spi_write(chip_select, 0x05, 0x40);
+  // B counter (MSB) = ?? - N divider
+  //AD9510_spi_write(chip_select, 0x05, 0x3F);
+  // B counter (MSB) = ?? - N divider
+   AD9510_spi_write(chip_select, 0x05, 0x3F);
    // B counter (LSB) = 74 - N divider
   //AD9510_spi_write(chip_select, 0x06, 0x4A);
    // B counter (LSB) = 35 - N divider
   //AD9510_spi_write(chip_select, 0x06, 0x23);
   // B counter (LSB) = 10 - N divider
-  AD9510_spi_write(chip_select, 0x06, 0x0A);
+  //AD9510_spi_write(chip_select, 0x06, 0x0A);
+  // B counter (LSB) = 200 - N divider
+  //AD9510_spi_write(chip_select, 0x06, 0xC8);
+  // B counter (LSB) = 00 - N divider
+  //AD9510_spi_write(chip_select, 0x06, 0x00);
+  // B counter (LSB) = ?? - N divider
+  //AD9510_spi_write(chip_select, 0x06, 0xFC);
+  // B counter (LSB) = ?? - N divider
+  AD9510_spi_write(chip_select, 0x06, 0xFC);
   // B counter (LSB) = 5 - N divider
   //AD9510_spi_write(chip_select, 0x06, 0x05);
   // B counter (LSB) = 2 - N divider
@@ -381,12 +396,14 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
   AD9510_spi_write(chip_select, 0x08, 0x04 | 0x03 | 0x40);
   // Mux Status Pin. N divider Output, CP Mode = Normal operation, PFD polarity = 1 (positive)
   //AD9510_spi_write(chip_select, 0x08, 0x08 | 0x03 | 0x40);
+  // Mux Status Pin. N divider Output, CP Mode = Tristated operation, PFD polarity = 1 (positive)
+  //AD9510_spi_write(chip_select, 0x08, 0x08 | 0x00 | 0x40);
   // Mux Status Pin. R divider Output, CP Mode = Normal operation, PFD polarity = 1 (positive)
   //AD9510_spi_write(chip_select, 0x08, 0x10 | 0x03 | 0x40);
   // Mux Status Pin. PFD Up output, CP Mode = Normal operation, PFD polarity = 1 (positive)
-  //AD9510_spi_write(chip_select, 0x08,  0x20 | 0x40 | 0x10 | 0x03);
+  //AD9510_spi_write(chip_select, 0x08,  0x20 | 0x03 | 0x40);
   // Mux Status Pin. PFD Down output, CP Mode = Normal operation, PFD polarity = 1 (positive)
-  //AD9510_spi_write(chip_select, 0x08,  0x20 | 0x04 | 0x40 | 0x10 | 0x03);
+  //AD9510_spi_write(chip_select, 0x08,  0x20 | 0x04 | 0x03 | 0x40);
 
   // Charge Pump Current. I = 0.6mA
   //AD9510_spi_write(chip_select, 0x09, 0x00);
@@ -400,8 +417,25 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
   //AD9510_spi_write(chip_select, 0x0A, 0x08);
 
   // R divider = 1
-  AD9510_spi_write(chip_select, 0x0B, 0x00);
-  AD9510_spi_write(chip_select, 0x0C, 0x01);
+  //AD9510_spi_write(chip_select, 0x0B, 0x00);
+  //AD9510_spi_write(chip_select, 0x0C, 0x01);
+  // R divider = 20
+  //AD9510_spi_write(chip_select, 0x0B, 0x00); // 0
+  //AD9510_spi_write(chip_select, 0x0C, 0x14); // 20
+  // R divider = 16384
+  //AD9510_spi_write(chip_select, 0x0B, 0x40);
+  //AD9510_spi_write(chip_select, 0x0C, 0x00);
+  // R divider = 1638
+  //AD9510_spi_write(chip_select, 0x0B, 0x06);
+  //AD9510_spi_write(chip_select, 0x0C, 0x66);
+  // R divider = 1000
+  AD9510_spi_write(chip_select, 0x0B, 0x03);
+  AD9510_spi_write(chip_select, 0x0C, 0xE8);
+  
+  // Antibacklash pulse. 6.0 ns
+  //AD9510_spi_write(chip_select, 0x0D, 0x02);
+  // Antibacklash pulse. 1.3 ns
+  AD9510_spi_write(chip_select, 0x0D, 0x00);
 
   // testing end
   // PLL power up
@@ -493,13 +527,24 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
 
   AD9510_assert(chip_select, 0x04, 0x00);
   //AD9510_assert(chip_select, 0x05, 0x00);
-  AD9510_assert(chip_select, 0x06, 0x0A);
+  //AD9510_assert(chip_select, 0x05, 0x40);
+  AD9510_assert(chip_select, 0x05, 0x3F);
+  //AD9510_assert(chip_select, 0x06, 0x0A);
+  //AD9510_assert(chip_select, 0x06, 0xC8);
+  //AD9510_assert(chip_select, 0x06, 0x00);
+  AD9510_assert(chip_select, 0x06, 0xFC);
   //AD9510_assert(chip_select, 0x06, 0x4A);
   //AD9510_assert(chip_select, 0x06, 0x23);
   //AD9510_assert(chip_select, 0x06, 0x05);
   //AD9510_assert(chip_select, 0x06, 0x02);
   //AD9510_assert(chip_select, 0x06, 0x01);
+  //AD9510_assert(chip_select, 0x08, 0x04 | 0x03 | 0x40);
+  //AD9510_assert(chip_select, 0x08, 0x08 | 0x03 | 0x40);
+  //AD9510_assert(chip_select, 0x08, 0x08 | 0x00 | 0x40);
   //AD9510_assert(chip_select, 0x08, 0x04 | 0x00);
+  //AD9510_assert(chip_select, 0x08, 0x20 | 0x03 | 0x40);
+  //AD9510_assert(chip_select, 0x08, 0x20 | 0x04 | 0x03 | 0x40);
+  //AD9510_assert(chip_select, 0x08, 0x10 | 0x03 | 0x40);
 
   //AD9510_assert(chip_select, 0x09, 0x00);
   AD9510_assert(chip_select, 0x09, 0x70);
@@ -508,8 +553,17 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
   AD9510_assert(chip_select, 0x0A, 0x00 | 0x00);
   //AD9510_assert(chip_select, 0x0A, 0x08);
 
-  AD9510_assert(chip_select, 0x0B, 0x00);
-  AD9510_assert(chip_select, 0x0C, 0x01);
+  //AD9510_assert(chip_select, 0x0B, 0x00);
+  //AD9510_assert(chip_select, 0x0C, 0x01);
+  //AD9510_assert(chip_select, 0x0B, 0x00);
+  //AD9510_assert(chip_select, 0x0C, 0x14);
+  //AD9510_assert(chip_select, 0x0B, 0x40);
+  //AD9510_assert(chip_select, 0x0C, 0x00);
+  AD9510_assert(chip_select, 0x0B, 0x06);
+  AD9510_assert(chip_select, 0x0C, 0x66);
+  
+  //AD9510_assert(chip_select, 0x0D, 0x02);
+  AD9510_assert(chip_select, 0x0D, 0x00);
 
   AD9510_assert(chip_select, 0x3C, 0x08);
   AD9510_assert(chip_select, 0x3C, 0x08);

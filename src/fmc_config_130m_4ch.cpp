@@ -36,7 +36,7 @@
 
 #include "config.h"
 
-#define PLL_STATUS_MASK 0x08
+#define PLL_STATUS_MASK 0x04
 
 using namespace std;
 
@@ -344,7 +344,7 @@ int main(int argc, const char **argv) {
 */
 
   // Configuration for 112.583175675676 MHz MHz output
-
+/*
   //HS = 111 -> HS = 11d 
   //N1 = 000 0011 -> N1 = 4d
   // RFreq = 43.35315652464 -> RFreq = 43.35315652464*2^28 = 11637524341 = 2B5A68775h
@@ -355,7 +355,7 @@ int main(int argc, const char **argv) {
   data.data_send.push_back(0xA6);
   data.data_send.push_back(0x87);
   data.data_send.push_back(0x75);
-
+*/
   // Configuration for 124.997588 MHz output
 /*
   //HS = 001 -> HS = 5d
@@ -445,6 +445,19 @@ int main(int argc, const char **argv) {
   data.data_send.push_back(0xFC); // reg 12
 */
 
+// Configuration for 113.376415 MHz output
+
+  //HS = 111 -> HS = 11d
+  //N1 = 000 0011 -> N1 = 4d
+  // RFreq = 43.6586144972237 -> RFreq = 43.6586144972237*2^28 = 11719520090.8904 = 2BA89AF5Bh
+  data.data_send.clear();
+  data.data_send.push_back(0xE0); // 1110 0000
+  data.data_send.push_back(0xC2); // 1100 0010
+  data.data_send.push_back(0xBA);
+  data.data_send.push_back(0x89);
+  data.data_send.push_back(0xAF);
+  data.data_send.push_back(0x5B);
+
   data.extra[0] = SI571_ADDR;
   data.extra[1] = 6;
 
@@ -499,13 +512,14 @@ int main(int argc, const char **argv) {
 */
 
 // 112.583175675676 MHz
-
+/*
   Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
   Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
   Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xB5);
   Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0xA6);
   Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x87);
   Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x75);
+*/
 
 /*
 // 124.997588 MHz
@@ -556,6 +570,16 @@ int main(int argc, const char **argv) {
   Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x34);
   Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0xC8);
 */
+
+// 113.376415 MHz output
+
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xBA);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x89);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0xAF);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x5B);
+  
   Si570_drv::si570_outputEnable(FPGA_CTRL_REGS | WB_CLK_CTRL);
 
   //exit(1);

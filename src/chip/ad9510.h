@@ -9,6 +9,8 @@
 #include "data.h"
 #include "commLink.h"
 
+#define AD9510_PLL_STATUS_MASK 0x04
+
 class AD9510_drv {
 public:
 

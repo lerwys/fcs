@@ -260,6 +260,34 @@ int main(int argc, const char **argv) {
   // RFreq = 11689256050d / 2^28 = 43.545872159
   // fxtal = 114.262954 MHz ( previously 114.285 MHz )
 
+  // ======================================================
+  //          Si571 configuration (clock generation) V2 (previously crystek)
+  // ======================================================
+  // Set Si571 to f_out = 250MHz
+  // data generated with Si570 software (from Si www)
+  // part number:
+  // 571
+  // AJC000337G, rev. D
+  // parameters:
+  // OE - active high, 3.3V, LVPECL
+  // 10-280MHz freq. range
+  // startup freq:  155.49MHz (155.488229 MHz)
+  // I2C addr: 0x49
+  // Startup registers values:
+  // reg 7 = 0x01      // 0000 0001 -> HS = 000 -> HS = 4d
+  // reg 8 = 0xC2      // 1100 0010 -> N1 = 000 0111 -> N1 = 8d
+  // reg 9 = 0xB9      // 1011 1001
+  // reg 10 = 0x35     // 0011 0101
+  // reg 11 = 0x5E     // 0101 1110
+  // reg 12 = 0x88     // 1000 1000
+
+  // fDCO_current = 4975.621216 GHz
+  // RFreq = 2B72EB759/2^28 (previously 43.154492552)
+  // RFreq = 43.5755296051502
+  // fxtal = (previously 115.297873 MHz + 0.343069999999983 MHz) WRONG!
+  // fxtal = (previously 114.185187078298 MHz) WRONG!
+  // fxtal = 114.195246117106 MHz
+
   cout << "============================================" << endl <<
       "   Si571 configuration (clock generation)   " << endl <<
       "============================================" << endl;
@@ -271,7 +299,7 @@ int main(int argc, const char **argv) {
   data.data_read.clear();
 
   Si570_drv::si570_setCommLink(_commLink, SI571_I2C_DRV, GENERAL_GPIO_DRV);
-
+  
   Si570_drv::si570_outputDisable(FPGA_CTRL_REGS | WB_CLK_CTRL);
 
   //Si570_drv::si570_read_freq(&data);
@@ -444,9 +472,8 @@ int main(int argc, const char **argv) {
   data.data_send.push_back(0x18); // reg 11
   data.data_send.push_back(0xFC); // reg 12
 */
-
+/*
 // Configuration for 113.376415 MHz output
-
   //HS = 111 -> HS = 11d
   //N1 = 000 0011 -> N1 = 4d
   // RFreq = 43.6586144972237 -> RFreq = 43.6586144972237*2^28 = 11719520090.8904 = 2BA89AF5Bh
@@ -457,14 +484,41 @@ int main(int argc, const char **argv) {
   data.data_send.push_back(0x89);
   data.data_send.push_back(0xAF);
   data.data_send.push_back(0x5B);
+*/
 
+// Configuration for 113.515008 MHz output
+
+  //HS = 111 -> HS = 11d
+  //N1 = 000 0011 -> N1 = 4d
+  // RFreq = 43.7119834307802 -> RFreq = 43.7119834307802*2^28 = 11733846204.9059 = 2BB6448BDh
+  data.data_send.clear();
+  data.data_send.push_back(0xE0); // 1110 0000
+  data.data_send.push_back(0xC2); // 1100 0010
+  data.data_send.push_back(0xBB);
+  data.data_send.push_back(0x64);
+  data.data_send.push_back(0x48);
+  data.data_send.push_back(0xBD);
+
+// Configuration for 113.515008 MHz output (V2, previously crystek)
+/*
+  //HS = 111 -> HS = 11d
+  //N1 = 000 0011 -> N1 = 4d
+  // RFreq = 43.7379008481494 -> RFreq = 43.7379008481494*2^28 = 11740803358.6558 = 2BBCE711Fh
+  data.data_send.clear();
+  data.data_send.push_back(0xE0); // 1110 0000
+  data.data_send.push_back(0xC2); // 1100 0010
+  data.data_send.push_back(0xBB);
+  data.data_send.push_back(0xCE);
+  data.data_send.push_back(0x71);
+  data.data_send.push_back(0x1F);
+*/
   data.extra[0] = SI571_ADDR;
   data.extra[1] = 6;
-
+  
   Si570_drv::si570_set_freq(&data);
-
+  
   sleep(1);
-
+  
   data.data_send.clear();
   data.data_read.clear();
   //Si570_drv::si570_read_freq(&data); // check if data is the same, //not working
@@ -570,16 +624,35 @@ int main(int argc, const char **argv) {
   Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x34);
   Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0xC8);
 */
-
+/*
 // 113.376415 MHz output
-
   Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
   Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
   Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xBA);
   Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x89);
   Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0xAF);
   Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x5B);
-  
+*/
+
+// 113.515008 MHz output
+/*
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xBB);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x64);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x48);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0xBD);
+*/
+
+// 113.515008 MHz output (V2, previously crystek)
+/*
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xBB);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0xCE);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x71);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x1F);
+*/
   Si570_drv::si570_outputEnable(FPGA_CTRL_REGS | WB_CLK_CTRL);
 
   //exit(1);
@@ -647,6 +720,8 @@ int main(int argc, const char **argv) {
       "============================================" << endl;
 
   data.wb_addr = FPGA_CTRL_REGS | WB_ADC_LTC_CTRL; // trigger control
+  //data.data_send[0] = 0x08; // dither off, power on, random off, pga on (input 2.25 Vpp)
+  //data.data_send[0] = 0x0A; // dither on, power on, random off, pga on (input 1.50 Vpp)
   //data.data_send[0] = 0x02; // dither on, power on, random off, pga off (input 2.25 Vpp)
   data.data_send[0] = 0x00; // dither off, power on, random off, pga off (input 2.25 Vpp)
   _commLink->fmc_config_send(&data);

@@ -8,6 +8,9 @@
 #define SI570_ADDR 0x55
 #define MAX_REPEAT 10
 
+// Define PRIx64 print macros
+//#define __STDC_FORMAT_MACROS
+
 wb_data Si570_drv::data_;
 commLink* Si570_drv::commLink_;
 string Si570_drv::i2c_id_;
@@ -29,6 +32,8 @@ int Si570_drv::si570_read_freq(wb_data* data) {
   uint32_t HS_DIV, N1;
   uint32_t RFFREQ_INTEGER; // 10 bits
   uint32_t RFFREQ_INTEGER_FLOAT;
+  //uint64_t RFFREQ = 0; // 38 bits
+  //uint64_t fdco = 0;
   int err = 0, std_read = 1;
   //int data_size = data->data_send.size();
 
@@ -66,18 +71,30 @@ int Si570_drv::si570_read_freq(wb_data* data) {
     N1 = ( (data->data_read[0] & 0x1F) << 2) | ((data->data_read[1] & 0xC0) >> 6);
 
     RFFREQ_INTEGER = ((data->data_read[1] & 0x3F) << 4) | ((data->data_read[2] & 0xF0) >> 4);
-
+    
     RFFREQ_INTEGER_FLOAT = (data->data_read[2] & 0x0F) << 3*8;
     RFFREQ_INTEGER_FLOAT |= data->data_read[3] << 2*8;
     RFFREQ_INTEGER_FLOAT |= data->data_read[4] << 1*8;
     RFFREQ_INTEGER_FLOAT |= data->data_read[5];
+    
+    //RFFREQ = data->data_read[1] & 0x3F;
+    //
+    //RFFREQ = (RFFREQ << 8) + data->data_read[2];
+    //RFFREQ = (RFFREQ << 8) + data->data_read[3];
+    //RFFREQ = (RFFREQ << 8) + data->data_read[4];
+    //RFFREQ = (RFFREQ << 8) + data->data_read[5];
 
     cout << "Si570: Read parameters: " << endl <<
         "HS_DIV: 0x" << hex << HS_DIV << endl <<
         "N1: 0x" << hex << N1 << endl <<
         "RFFREQ_INTEGER: 0x" << hex << RFFREQ_INTEGER << endl <<
         "RFFREQ_INTEGER_FLOAT: 0x" << hex << RFFREQ_INTEGER_FLOAT << endl;
-
+        
+    //cout << "Si570: Read parameters: " << endl <<
+    //    "HS_DIV: 0x" << hex << HS_DIV << endl <<
+    //    "N1: 0x" << hex << N1 << endl <<
+    //    "RFFREQ (LSB): 0x" << hex << (RFFREQ & 0x00000000FFFFFFFF) << endl <<
+    //    "RFFREQ (MSB): 0x" << hex << ((RFFREQ & 0xFFFFFFFF00000000) >> 32) << endl;
   }
 
   return err;

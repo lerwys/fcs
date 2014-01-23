@@ -35,49 +35,49 @@ void Si570_drv::si570_setCommLink(commLink* comm, string i2c_id, string gpio_id)
 
 }
 
-int Si570_drv::si570_get_defaults(wb_data* data) {
-
-  int err = 0;
-  
-  // recommended approach for starting from initial conditions
-  data_.extra[0] = data->extra[0]; // chip addr
-  
-  data_.data_send[0] = SI570_REG_CONTROL;
-  data_.data_send[1] = SI570_CNTRL_RECALL;
-    
-  if (err = commLink_->fmc_send(i2c_id_, &data_))
-    return err
-
-  if (err = si570_read_freq(&data))
-    return err;
-
-  data->hs_div = ((data->data_read[0] & HS_DIV_MASK) >> HS_DIV_SHIFT) + HS_DIV_OFFSET;
-  data->n1 = ((data->data_read[0] & N1_6_2_MASK) << 2) + ((data->data_read[1] & N1_1_0_MASK) >> 6) + 1;
-  
-  /* Handle invalid cases */
-  if (data->n1 > 1)
-    data->n1 &= ~1;
-  
-  data->rfreq = data->data_read[1] & RFREQ_37_32_MASK;
-  data->rfreq = (data->rfreq << 8) + data->data_read[2];
-  data->rfreq = (data->rfreq << 8) + data->data_read[3];
-  data->rfreq = (data->rfreq << 8) + data->data_read[4];
-  data->rfreq = (data->rfreq << 8) + data->data_read[5];
-  
-  /*
-   * Accept optional precision loss to avoid arithmetic overflows.
-   * Acceptable per Silicon Labs Application Note AN334.
-   */
-  fdco = data->fout * data->n1 * data->hs_div;
-  if (fdco >= (1LL << 36))
-    data->fxtal = (fdco << 24) / (data->rfreq >> 4);
-  else
-    data->fxtal = (fdco << 28) / data->rfreq;
-  
-  data->frequency = data->fout;
-  
-  return err;
-}
+//int Si570_drv::si570_get_defaults(wb_data* data) {
+//
+//  int err = 0;
+//  
+//  // recommended approach for starting from initial conditions
+//  data_.extra[0] = data->extra[0]; // chip addr
+//  
+//  data_.data_send[0] = SI570_REG_CONTROL;
+//  data_.data_send[1] = SI570_CNTRL_RECALL;
+//    
+//  if (err = commLink_->fmc_send(i2c_id_, &data_))
+//    return err
+//
+//  if (err = si570_read_freq(&data))
+//    return err;
+//
+//  data->hs_div = ((data->data_read[0] & HS_DIV_MASK) >> HS_DIV_SHIFT) + HS_DIV_OFFSET;
+//  data->n1 = ((data->data_read[0] & N1_6_2_MASK) << 2) + ((data->data_read[1] & N1_1_0_MASK) >> 6) + 1;
+//  
+//  /* Handle invalid cases */
+//  if (data->n1 > 1)
+//    data->n1 &= ~1;
+//  
+//  data->rfreq = data->data_read[1] & RFREQ_37_32_MASK;
+//  data->rfreq = (data->rfreq << 8) + data->data_read[2];
+//  data->rfreq = (data->rfreq << 8) + data->data_read[3];
+//  data->rfreq = (data->rfreq << 8) + data->data_read[4];
+//  data->rfreq = (data->rfreq << 8) + data->data_read[5];
+//  
+//  /*
+//   * Accept optional precision loss to avoid arithmetic overflows.
+//   * Acceptable per Silicon Labs Application Note AN334.
+//   */
+//  fdco = data->fout * data->n1 * data->hs_div;
+//  if (fdco >= (1LL << 36))
+//    data->fxtal = (fdco << 24) / (data->rfreq >> 4);
+//  else
+//    data->fxtal = (fdco << 28) / data->rfreq;
+//  
+//  data->frequency = data->fout;
+//  
+//  return err;
+//}
 
 // get info about startup setting so user can calculate needed values
 int Si570_drv::si570_read_freq(wb_data* data) {

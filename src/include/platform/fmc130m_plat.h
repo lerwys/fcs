@@ -13,11 +13,31 @@
 // adc1 -1.947/0.078 -> IDELAY_TAP(25)
 // adc2 -0.786/0.078 -> IDELAY_TAP(10)
 // adc3 -1.509/0.078 -> IDELAY_TAP(20)
-const struct delay_lines fmc_130m_ml605_delay_l[] = {
-  {DELAY_LINES_INIT,  23+6},
-  {DELAY_LINES_INIT,  25+6},
-  {DELAY_LINES_INIT,  11+6},
-  {DELAY_LINES_INIT,  20+6},
+// data delay
+//const struct delay_lines fmc_130m_ml605_delay_data_l[] = {
+//  {DELAY_LINES_INIT,  23+6},
+//  {DELAY_LINES_INIT,  25+6},
+//  {DELAY_LINES_INIT,  11+6},
+//  {DELAY_LINES_INIT,  20+6},
+//  {DELAY_LINES_END,  -1}
+//};
+//
+
+const struct delay_lines fmc_130m_ml605_delay_data_l[] = {
+  {DELAY_LINES_INIT,  25},
+  //{DELAY_LINES_INIT,  16},
+  {DELAY_LINES_INIT,  28},
+  {DELAY_LINES_INIT,  14},
+  {DELAY_LINES_INIT,  6},
+  {DELAY_LINES_END,  -1}
+};
+
+// clk delay
+const struct delay_lines fmc_130m_ml605_delay_clk_l[] = {
+  {DELAY_LINES_INIT,  10},
+  {DELAY_LINES_INIT,  10},
+  {DELAY_LINES_INIT,  10},
+  {DELAY_LINES_INIT,  10},
   {DELAY_LINES_END,  -1}
 };
 

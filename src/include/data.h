@@ -67,8 +67,11 @@ using namespace std;
 
 // Macros for IODELAY handling
 #define IDELAY_LINE(x) (0x01 << 1) << x
-#define IDELAY_ALL_LINES (0x01FFF << 1) // maximum 8 + 1 line
-#define IDELAY_TAP(x) (x & 0x1F) << 18
+//#define IDELAY_ALL_LINES (0x01FFF << 1) // maximum 8 + 1 line
+#define IDELAY_CLK_LINE (0x01 << 17)
+#define IDELAY_DATA_LINES (0x00FFFF << 1)
+#define IDELAY_ALL_LINES (IDELAY_CLK_LINE | IDELAY_DATA_LINES) // maximum 16 + 1 line
+#define IDELAY_TAP(x) ((x & 0x01F) << 18)
 #define IDELAY_UPDATE 0x01
 
 struct wb_data {

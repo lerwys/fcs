@@ -53,6 +53,7 @@ AM_CPPFLAGS = \
 	-I. \
 	-I$(top_srcdir)/src/include \
 	-I$(top_srcdir)/src/reg_map \
+	-I$(top_srcdir)/src/reg_map/mod_regs \
 	-I$(top_srcdir)/src/common \
 	-I$(top_srcdir)/src/commlink
 

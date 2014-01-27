@@ -284,7 +284,7 @@ int main(int argc, const char **argv) {
   set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY1_CAL, &delay_data_l[1], DLY_DATA);
   set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY2_CAL, &delay_data_l[2], DLY_DATA);
   set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY3_CAL, &delay_data_l[3], DLY_DATA);
-  
+
   set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY0_CAL, &delay_clk_l[0], DLY_CLK);
   set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY1_CAL, &delay_clk_l[1], DLY_CLK);
   set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY2_CAL, &delay_clk_l[2], DLY_CLK);
@@ -303,15 +303,15 @@ int main(int argc, const char **argv) {
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_A;
   data.data_send[0] = 32768 | 32768 << 16; // no gain for AA and AC
   _commLink->fmc_config_send(&data);
-  
+
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_B;
   data.data_send[0] = 32768 | 32768 << 16; // no gain for BB and BD
   _commLink->fmc_config_send(&data);
-  
+
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_C;
   data.data_send[0] = 32768 | 32768 << 16; // no gain for CC and CA
   _commLink->fmc_config_send(&data);
-  
+
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_D;
   data.data_send[0] = 32768 | 32768 << 16; // no gain for DD and DB
   _commLink->fmc_config_send(&data);
@@ -320,112 +320,115 @@ int main(int argc, const char **argv) {
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
   data.data_send[0] = 0x1 << 1 | 0x1 << 3; // Direct mode for both sets of channels
   _commLink->fmc_config_send(&data);
-          
-  //// ======================================================
-  ////                DSP configuration
-  //// ======================================================
+
+  // ======================================================
+  //                DSP configuration
+  // ======================================================
   cout << "============================================" << endl <<
           "            DSP configuration         " << endl <<
           "============================================" << endl;
-  
+
   //// DSP parameters
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DS_TBT_THRES;
   data.data_send[0] = 0x0200;  // 1.2207e-04 FIX26_22
   _commLink->fmc_config_send(&data);
-  
+
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DS_FOFB_THRES;
   data.data_send[0] = 0x0200;  // 1.2207e-04 FIX26_22
   _commLink->fmc_config_send(&data);
-  
+
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DS_MONIT_THRES;
   data.data_send[0] = 0x0200;  // 1.2207e-04 FIX26_22
   _commLink->fmc_config_send(&data);
-  
+
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_KX;
   data.data_send[0] = 8388608;  // 10000000 UFIX25_0
   _commLink->fmc_config_send(&data);
-  
+
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_KY;
   data.data_send[0] = 8388608;  // 10000000 UFIX25_0
   _commLink->fmc_config_send(&data);
-  
+
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_KSUM;
   data.data_send[0] = 0x0FFFFFF;  // 1.0 FIX25_24
   _commLink->fmc_config_send(&data);
-  
-  // DDS config. NOT WORKING AS THE TOGGLE BIT IS WRONG IN THE FIRMWARE!
-  
+
+  // DDS config.
+
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH0;
   data.data_send[0] = 245366784;  // phase increment
   _commLink->fmc_config_send(&data);
-  
+
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH1;
   data.data_send[0] = 245366784;  // phase increment
   _commLink->fmc_config_send(&data);
-  
+
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH2;
   data.data_send[0] = 245366784;  // phase increment
   _commLink->fmc_config_send(&data);
-  
+
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH3;
   data.data_send[0] = 245366784;  // phase increment
   _commLink->fmc_config_send(&data);
-  
+
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_CFG;
   // toggle valid signal for all four DDS's
   data.data_send[0] = (0x1) | (0x1 << 8) | (0x1 << 16) | (0x1 << 24);
   _commLink->fmc_config_send(&data);
 
-  
+
   cout << "All done! All components on the FMC card had been configured and tested!" << endl <<
                   "FMC card is ready to work!" << endl;
 
-  //sleep(4);
-  //
-  // // Monit. Data Polling
-  //cout << "Monit Amp Ch0   Monit Amp Ch1   Monit Amp Ch2   Monit Amp Ch3" << endl;
-  //
-  //for (int i = 0; i < 64; ++i) {
-  //  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_AMP_CH0;
-  //  _commLink->fmc_config_read(&data);
-  //  cout << setw(10) << data.data_read[0] << "  ";
-  //  
-  //  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_AMP_CH1;
-  //  _commLink->fmc_config_read(&data);
-  //  cout << setw(10) << data.data_read[0] << "  ";
-  //  
-  //  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_AMP_CH2;
-  //  _commLink->fmc_config_read(&data);
-  //  cout << setw(10) << data.data_read[0] << "  ";
-  //  
-  //  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_AMP_CH3;
-  //  _commLink->fmc_config_read(&data);
-  //  cout << setw(10) << data.data_read[0] << endl;
-  //}
-  //
-  //cout << "Monit Pos X   Monit Pos Y   Monit Pos Q   Monit Pos Sum" << endl;
-  //
-  //for (int i = 0; i < 64; ++i) {
-  //  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_POS_X;
-  //  _commLink->fmc_config_read(&data);
-  //  cout << setw(10) << (static_cast<int>(data.data_read[0]));
-  //  cout << "  ";
-  //  
-  //  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_POS_Y;
-  //  _commLink->fmc_config_read(&data);
-  //  cout << setw(10) << (static_cast<int>(data.data_read[0]));
-  //  cout << "  ";
-  //  
-  //  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_POS_Q;
-  //  _commLink->fmc_config_read(&data);
-  //  cout << setw(10) << (static_cast<int>(data.data_read[0]));
-  //  cout << "  ";
-  //  
-  //  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_POS_SUM;
-  //  _commLink->fmc_config_read(&data);
-  //  cout << setw(10) << (static_cast<int>(data.data_read[0]));
-  //  cout << endl;
-  //}
+  /* Just for simple debug! */
+  if (0) {
+    sleep(4);
+
+    // Monit. Data Polling
+    cout << "Monit Amp Ch0   Monit Amp Ch1   Monit Amp Ch2   Monit Amp Ch3" << endl;
+
+    for (int i = 0; i < 16; ++i) {
+      data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_AMP_CH0;
+      _commLink->fmc_config_read(&data);
+      cout << setw(10) << data.data_read[0] << "  ";
+
+      data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_AMP_CH1;
+      _commLink->fmc_config_read(&data);
+      cout << setw(10) << data.data_read[0] << "  ";
+
+      data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_AMP_CH2;
+      _commLink->fmc_config_read(&data);
+      cout << setw(10) << data.data_read[0] << "  ";
+
+      data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_AMP_CH3;
+      _commLink->fmc_config_read(&data);
+      cout << setw(10) << data.data_read[0] << endl;
+    }
+
+    cout << "Monit Pos X   Monit Pos Y   Monit Pos Q   Monit Pos Sum" << endl;
+
+    for (int i = 0; i < 16; ++i) {
+      data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_POS_X;
+      _commLink->fmc_config_read(&data);
+      cout << setw(10) << (static_cast<int>(data.data_read[0]));
+      cout << "  ";
+
+      data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_POS_Y;
+      _commLink->fmc_config_read(&data);
+      cout << setw(10) << (static_cast<int>(data.data_read[0]));
+      cout << "  ";
+
+      data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_POS_Q;
+      _commLink->fmc_config_read(&data);
+      cout << setw(10) << (static_cast<int>(data.data_read[0]));
+      cout << "  ";
+
+      data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_POS_SUM;
+      _commLink->fmc_config_read(&data);
+      cout << setw(10) << (static_cast<int>(data.data_read[0]));
+      cout << endl;
+    }
+  }
 
   cout << "============================================" << endl <<
           "                  Error Counter             " << endl <<
@@ -443,7 +446,7 @@ int main(int argc, const char **argv) {
   cout << endl;
   cout << "TBT ch23 error count: " << POS_CALC_DSP_CTNR_TBT_CH23_R(data.data_read[0]);
   cout << endl;
-  
+
   // FOFB CH 01 ERROR
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_CTNR_FOFB;
   _commLink->fmc_config_read(&data);
@@ -451,7 +454,7 @@ int main(int argc, const char **argv) {
   cout << endl;
   cout << "FOFB ch23 error count: " << POS_CALC_DSP_CTNR_FOFB_CH23_R(data.data_read[0]);
   cout << endl;
-  
+
   // Monit Part1 ERROR
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_CTNR1_MONIT;
   _commLink->fmc_config_read(&data);
@@ -459,7 +462,7 @@ int main(int argc, const char **argv) {
   cout << endl;
   cout << "Monit CFIR error count: " << POS_CALC_DSP_CTNR1_MONIT_CFIR_R(data.data_read[0]);
   cout << endl;
-  
+
   // Monit Part2 ERROR
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_CTNR2_MONIT;
   _commLink->fmc_config_read(&data);

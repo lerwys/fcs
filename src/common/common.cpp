@@ -18,7 +18,8 @@ enum platform_t platform;
 const char* platform_name;
 int verbose;
 int quiet;
-const struct delay_lines *delay_l;
+const struct delay_lines *delay_data_l;
+const struct delay_lines *delay_clk_l;
 
 static const struct sym_t lookuptable[] = {
     { ML605_STRING, ML605 },
@@ -71,14 +72,22 @@ enum platform_t lookupstring_i(const char *key)
   return ret;
 }
 
-void set_fpga_delay(commLink* _commLink, uint32_t addr, uint32_t delay_val)
+void set_fpga_delay(commLink* _commLink, uint32_t addr, uint32_t delay_val,
+                      enum delay_type_t dly_type)
 {
   wb_data data;
 
   data.data_send.resize(1);
-
   data.wb_addr = addr;
-  data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(delay_val) | IDELAY_UPDATE; // should be 0x0050003f
+
+  if (dly_type == DLY_DATA)
+    data.data_send[0] = IDELAY_DATA_LINES;
+    
+  if (dly_type == DLY_CLK)
+    data.data_send[0] |= IDELAY_CLK_LINE;
+
+  //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(delay_val) | IDELAY_UPDATE; // should be 0x0050003f
+  data.data_send[0] |= IDELAY_TAP(delay_val) | IDELAY_UPDATE; // should be 0x0050003f
   _commLink->fmc_config_send(&data);
   // check data
   _commLink->fmc_config_read(&data);
@@ -89,7 +98,8 @@ void set_fpga_delay(commLink* _commLink, uint32_t addr, uint32_t delay_val)
 }
 
 // safer set FPGA delay
-void set_fpga_delay_s(commLink* _commLink, uint32_t addr, const struct delay_lines *delay_val)
+void set_fpga_delay_s(commLink* _commLink, uint32_t addr, const struct delay_lines *delay_val,
+                        enum delay_type_t dly_type)
 {
   if (delay_val->init == DELAY_LINES_NO_INIT)
     return;
@@ -97,7 +107,7 @@ void set_fpga_delay_s(commLink* _commLink, uint32_t addr, const struct delay_lin
   if (delay_val->init == DELAY_LINES_END)
     return;
 
-  set_fpga_delay(_commLink, addr, delay_val->value);
+  set_fpga_delay(_commLink, addr, delay_val->value, dly_type);
 }
 
 void enum_to_string(enum platform_t platform, char *platform_name, int len)

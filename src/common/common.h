@@ -32,6 +32,13 @@ enum platform_t {
   PLATFORM_NOT_SET,
 };
 
+enum delay_type_t
+{
+  DLY_DATA = 1,
+  DLY_CLK = 2,
+  DLY_ALL = 3     // DLY_ALL = DLY_DATA | DLY_CLK
+};
+
 struct delay_lines {
   unsigned char init;
   uint32_t value;
@@ -48,12 +55,15 @@ extern enum platform_t platform;
 extern const char* platform_name;
 extern int verbose;
 extern int quiet;
-extern const struct delay_lines *delay_l;
+extern const struct delay_lines *delay_data_l;
+extern const struct delay_lines *delay_clk_l;
 
 void help(void);
 enum platform_t lookupstring_i(const char *key);
 enum platform_t lookupstring_i(const char *key);
-void set_fpga_delay(commLink* _commLink, uint32_t addr, uint32_t delay_val);
-void set_fpga_delay_s(commLink* _commLink, uint32_t addr, const struct delay_lines *delay_val);
+void set_fpga_delay(commLink* _commLink, uint32_t addr, uint32_t delay_val,
+                        enum delay_type_t dly_type);
+void set_fpga_delay_s(commLink* _commLink, uint32_t addr, const struct delay_lines *delay_val,
+                        enum delay_type_t dly_type);
 
 #endif

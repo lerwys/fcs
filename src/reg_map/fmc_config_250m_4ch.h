@@ -2,18 +2,37 @@
 // Author      : Andrzej Wojenski
 // Version     : 1.0
 // Description : Header file with Wishbone register map and chip addresses for
-//				 FMC ADC 250M 4CH card (ACTIVE and PASSIVE version)
+//         FMC ADC 250M 4CH card (ACTIVE and PASSIVE version)
 //============================================================================
 #ifndef FMC_ADC_250M_4CH_REG_MAP_H_
 #define FMC_ADC_250M_4CH_REG_MAP_H_
 
 // REGISTER MAP FOR FMC ADC 250M 4CH
-#define FPGA_ISLA_SPI 0x10000
-#define FPGA_SI571_I2C 0x20000
-#define FPGA_AD9510_SPI 0x30000
-#define FPGA_EEPROM_I2C 0x40000
-#define FPGA_AMC7823_SPI 0x50000
-#define FPGA_CTRL_REGS 0x60000
+// FPGA register map
+
+/************************** BPM-SW firmware **************************/
+// Should be autodiscovered by SDB
+//#define FMC250M_BASE_ADDR 0x30010000
+//
+//#define FPGA_CTRL_REGS                  (FMC250M_BASE_ADDR + 0x0000)
+//#define FPGA_ISLA_SPI                   (FMC250M_BASE_ADDR + 0x0100)
+//#define FPGA_SI571_I2C                  (FMC250M_BASE_ADDR + 0x0200)
+//#define FPGA_AD9510_SPI                 (FMC250M_BASE_ADDR + 0x0300)
+//#define FPGA_EEPROM_I2C                 (FMC250M_BASE_ADDR + 0x0400)
+//#define FPGA_AMC7823_SPI                (FMC250M_BASE_ADDR + 0x0500)
+/**********************************************************************/
+
+/********************** FMC-ADC-HDL firmware **************************/
+// Should be autodiscovered by SDB
+#define FMC250M_BASE_ADDR 0x00000000
+
+#define FPGA_ISLA_SPI                   (FMC250M_BASE_ADDR + 0x10000)
+#define FPGA_SI571_I2C                  (FMC250M_BASE_ADDR + 0x20000)
+#define FPGA_AD9510_SPI                 (FMC250M_BASE_ADDR + 0x30000)
+#define FPGA_EEPROM_I2C                 (FMC250M_BASE_ADDR + 0x40000)
+#define FPGA_AMC7823_SPI                (FMC250M_BASE_ADDR + 0x50000)
+#define FPGA_CTRL_REGS                  (FMC250M_BASE_ADDR + 0x60000)
+/**********************************************************************/
 
 // System frequency (Wishbone)
 #define FPGA_SYS_FREQ 100*1000000

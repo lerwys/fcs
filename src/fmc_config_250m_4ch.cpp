@@ -20,6 +20,8 @@
 #include <iostream>
 #include <unistd.h>  /* getopt */
 
+#include "config.h"
+#include "plat_opts.h"
 #include "data.h"
 #include "commLink.h"
 #include "wishbone/rs232_syscon.h"
@@ -67,15 +69,15 @@ int main(int argc, const char **argv) {
       // Simple lookup table for checking the platform name (case insensitive)
       switch (platform = lookupstring_i(optarg)) {
         case ML605:
-          delay_l = fmc_250m_ml605_delay_l;
+          delay_data_l = fmc_250m_ml605_delay_l;
           platform_name = ML605_STRING;
           break;
         case KC705:
-          delay_l = fmc_250m_kc705_delay_l;
+          delay_data_l = fmc_250m_kc705_delay_l;
           platform_name = KC705_STRING;
           break;
         case AFC:
-          delay_l = fmc_250m_afc_delay_l;
+          delay_data_l = fmc_250m_afc_delay_l;
           platform_name = AFC_STRING;
           break;
         case BAD_PLATFORM:
@@ -249,16 +251,23 @@ int main(int argc, const char **argv) {
   // parameters:
   // OE - active high, 3.3V, LVPECL
   // 10-280MHz freq. range
-  // startup freq: 155.52 MHz
+  // startup freq:  155.4857 MHz (previously 155.49MHz, previously 155.52 MHz)
   // I2C addr: 0x49
   // Startup registers values:
-  // reg 7 = 0x01
-  // reg 8 = 0xC2
-  // reg 9 = 0xB8
-  // reg 10 = 0xBB
-  // reg 11 = 0xE4
-  // reg 12 = 0x72
+  // reg 7 = 0x01      // 0000 0001 -> HS = 000 -> HS = 4d
+  // reg 8 = 0xC2      // 1100 0010 -> N1 = 000 0111 -> N1 = 8d
+  // reg 9 = 0xB9      // 1011 1001
+  // reg 10 = 0x59     // 0101 1001
+  // reg 11 = 0xBE     // 1011 1110
+  // reg 12 = 0xA4     // 1010 0100
   // are those default values correct?
+
+  // fDCO_current = 4975.5867616 GHz (previously 4.97568, previously 4.97664 GHz)
+  // RFreq = 00 0010 1011 1001 0101 1001 1011 1110 1010 0100 = 11699601060d
+  // RFreq = 11699601060d / 2^28 = 43.584410325
+  // fxtal = 114.260813135916 MHz ( previously 114.262954 previously 114.285 MHz )
+
+  // fxtal2 = 114.158763716164 MHz ( previously 114.262954 previously 114.285 MHz )
 
   cout << "============================================" << endl <<
       "   Si571 configuration (clock generation)   " << endl <<
@@ -266,6 +275,7 @@ int main(int argc, const char **argv) {
 
   data.extra[0] = SI571_ADDR;
   data.extra[1] = 6;
+  //data.data_send[0] = 0x07; // starting register
   data.data_send.clear();
   data.data_read.clear();
 
@@ -276,37 +286,18 @@ int main(int argc, const char **argv) {
   //Si570_drv::si570_read_freq(&data);
   //exit(1);
 
-  // Configuration for 250MHz output (good config)
-  data.data_send.clear();
-  data.data_send.push_back(0x20);
-  data.data_send.push_back(0xC2);
-  data.data_send.push_back(0xBC);
-  data.data_send.push_back(0x01);
-  data.data_send.push_back(0x1E);
-  data.data_send.push_back(0xB8);
-
-  // Configuration for 205MHz output
+  // Configuration for 130MHz output
   /*
   data.data_send.clear();
-  data.data_send.push_back(0x40);
-  data.data_send.push_back(0xC2);
-  data.data_send.push_back(0xB0);
-  data.data_send.push_back(0xCD);
-  data.data_send.push_back(0xE6);
-  data.data_send.push_back(0xEF);
-   */
-  // Configuration for 200MHz output - not working
-/*
-  data.data_send.clear();
-  data.data_send.push_back(0x60);
-  data.data_send.push_back(0xC3);
-  data.data_send.push_back(0x10);
-  data.data_send.push_back(0x01);
-  data.data_send.push_back(0x41);
-  data.data_send.push_back(0x20);
-*/
-
+  data.data_send.push_back(0x02); // reg 7
+  data.data_send.push_back(0x42); // reg 8
+  data.data_send.push_back(0xD8); // reg 9
+  data.data_send.push_back(0x01); // reg 10
+  data.data_send.push_back(0x2A); // reg 11
+  data.data_send.push_back(0x30); // reg 12
+  */
   // Configuration for 125MHz output
+
 /*
   data.data_send.clear();
   data.data_send.push_back(0x21); // reg 7
@@ -318,15 +309,157 @@ int main(int argc, const char **argv) {
 */
 
   // Configuration for 100MHz output
+
 /*
+  //HS = 001 -> HS =  5d
+  //N1 = 000 1001 -> N1 = 10d
+  // RFreq = 43.750273 -> RFreq = 43.750273*2^28 = 11744124482 = 2bc011e42
   data.data_send.clear();
-  data.data_send.push_back(0x22);
-  data.data_send.push_back(0x42);
+  data.data_send.push_back(0x22); // 0010 0010
+  data.data_send.push_back(0x42); // 0100 0010
   data.data_send.push_back(0xBC);
   data.data_send.push_back(0x01);
   data.data_send.push_back(0x1E);
-  data.data_send.push_back(0xB8);
+  //data.data_send.push_back(0xB8);
+  data.data_send.push_back(0x42);
 */
+
+  // Configuration for 117.963900MHz output
+/*
+  //HS = 011 -> HS = 7d
+  //N1 = 000 0101 -> N1 = 6d
+  // RFreq = 43.360368576 -> RFreq = 43.360368576*2^28 = 11639460311 = 2B5C411d7h
+  data.data_send.clear();
+  data.data_send.push_back(0x61); // 0110 0001
+  data.data_send.push_back(0x42); // 0100 0010
+  data.data_send.push_back(0xB5);
+  data.data_send.push_back(0xC4);
+  data.data_send.push_back(0x11);
+  data.data_send.push_back(0xD7);
+*/
+
+  // Configuration for 122.682456 MHz output
+/*
+  //HS = 001 -> HS = 5d
+  //N1 = 000 0111 -> N1 = 8d
+  // RFreq = 42.947412685 -> RFreq = 42.947412685*2^28 = 11528608308 = 2AF289A34h
+  data.data_send.clear();
+  data.data_send.push_back(0x21); // 0010 0001
+  data.data_send.push_back(0xC2); // 1100 0010
+  data.data_send.push_back(0xAF);
+  data.data_send.push_back(0x28);
+  data.data_send.push_back(0x9A);
+  data.data_send.push_back(0x34);
+*/
+
+  // Configuration for 112.583175675676 MHz MHz output
+/*
+  //HS = 111 -> HS = 11d
+  //N1 = 000 0011 -> N1 = 4d
+  // RFreq = 43.35315652464 -> RFreq = 43.35315652464*2^28 = 11637524341 = 2B5A68775h
+  data.data_send.clear();
+  data.data_send.push_back(0xE0); // 1110 0000
+  data.data_send.push_back(0xC2); // 1100 0010
+  data.data_send.push_back(0xB5);
+  data.data_send.push_back(0xA6);
+  data.data_send.push_back(0x87);
+  data.data_send.push_back(0x75);
+*/
+  // Configuration for 124.997588 MHz output
+/*
+  //HS = 001 -> HS = 5d
+  //N1 = 000 0111 -> N1 = 8d
+  // RFreq = 43.7578702892628 -> RFreq = 43.7578702892628*2^28 = 11746163865 = 2BC203C99h
+  data.data_send.clear();
+  data.data_send.push_back(0x21); // 0010 0001
+  data.data_send.push_back(0xC2); // 1100 0010
+  data.data_send.push_back(0xBC);
+  data.data_send.push_back(0x20);
+  data.data_send.push_back(0x3C);
+  data.data_send.push_back(0x99);
+*/
+/*
+  // Configuration for 113.529121545 MHz output.
+  //HS = 111 -> HS = 11d
+  //N1 = 000 0011 -> N1 = 4d
+  // RFreq = 43.7174182279586 -> RFreq = 43.7174182279586*2^28 = 11735305097 = 2BB7A8B89h
+  data.data_send.clear();
+  data.data_send.push_back(0xE0); // 1110 0000
+  data.data_send.push_back(0xC2); // 1100 0010
+  data.data_send.push_back(0xBB);
+  data.data_send.push_back(0x7A);
+  data.data_send.push_back(0x8B);
+  data.data_send.push_back(0x89);
+*/
+  // Configuration for 113.750000 MHz output. NOT LOCKING
+/*
+  //HS = 010 -> HS = 6d
+  //N1 = 000 0111 -> N1 = 8d
+  // RFreq = 47.7845164059035 -> RFreq = 47.7845164059035*2^28 = 12827058451d = 2FC8D6113h
+  data.data_send.clear();
+  data.data_send.push_back(0x41); // 0100 0001
+  data.data_send.push_back(0xC2); // 1100 0010
+  data.data_send.push_back(0xFC);
+  data.data_send.push_back(0x8D);
+  data.data_send.push_back(0x61);
+  data.data_send.push_back(0x13);
+*/
+
+  // Configuration for 112 MHz MHz output.
+/*
+  //HS = 111 -> HS = 11d
+  //N1 = 000 0011 -> N1 = 4d
+  // RFreq = 43.128589166354 -> RFreq = 43.128589166354*2^28 = 11577242500 = 2B20EB384h
+  data.data_send.clear();
+  data.data_send.push_back(0xE0); // 1110 0000
+  data.data_send.push_back(0xC2); // 1100 0010
+  data.data_send.push_back(0xB2);
+  data.data_send.push_back(0x0E);
+  data.data_send.push_back(0xB3);
+  data.data_send.push_back(0x84);
+*/
+
+  // Configuration for 114.222973 MHz output
+/*
+  //HS = 010 -> HS = 6d
+  //N1 = 000 0111 -> N1 = 8d
+  // RFreq = 47.983204635 -> RFreq = 47.983204635*2^28 = 12880393416 = 2FFBB34C8h
+  data.data_send.clear();
+  data.data_send.push_back(0x41); // 0100 0001
+  data.data_send.push_back(0xC2); // 1100 0010
+  data.data_send.push_back(0xFF);
+  data.data_send.push_back(0xBB);
+  data.data_send.push_back(0x34);
+  data.data_send.push_back(0xC8);
+*/
+
+  // Configuration for 113.376415 MHz output
+/*
+  //HS = 111 -> HS = 11d
+  //N1 = 000 0011 -> N1 = 4d
+  // RFreq = 43.6586144972237 -> RFreq = 43.6586144972237*2^28 = 11719520091 = 2BA89AF5Bh
+  data.data_send.clear();
+  data.data_send.push_back(0xE0); // 1110 0000
+  data.data_send.push_back(0xC2); // 1100 0010
+  data.data_send.push_back(0xBA);
+  data.data_send.push_back(0x89);
+  data.data_send.push_back(0xAF);
+  data.data_send.push_back(0x5B);
+*/
+
+  // Configuration for 208.927174 MHz output
+
+  //HS = 010 -> HS = 6d
+  //N1 = 000 0011 -> N1 = 4d
+  // RFreq = 43.9234975289945 -> RFreq = 43.9234975289945*2^28 = 11790624088 = 2BEC6A558h
+  data.data_send.clear();
+  data.data_send.push_back(0x40); // 0100 0000
+  data.data_send.push_back(0xC2); // 1100 0010
+  data.data_send.push_back(0xBE);
+  data.data_send.push_back(0xC6);
+  data.data_send.push_back(0xA5);
+  data.data_send.push_back(0x58);
+
   // Configuration for 75MHz output
 /*
   data.data_send.clear();
@@ -338,8 +471,8 @@ int main(int argc, const char **argv) {
   data.data_send.push_back(0xDA); // reg 12
 */
 
-  // Configuration for 50MHz output
 /*
+  // Configuration for 50MHz output
   data.data_send.clear();
   data.data_send.push_back(0x63); // reg 7
   data.data_send.push_back(0x42); // reg 8
@@ -349,29 +482,137 @@ int main(int argc, const char **argv) {
   data.data_send.push_back(0xFC); // reg 12
 */
 
-  Si570_drv::si570_set_freq(&data);
-
-  data.extra[0] = SI571_ADDR; // Si571 chip address
+  data.extra[0] = SI571_ADDR;
   data.extra[1] = 6;
 
-  //data.extra.clear();
+  Si570_drv::si570_set_freq(&data);
+
+  sleep(1);
+
   data.data_send.clear();
   data.data_read.clear();
-  Si570_drv::si570_read_freq(&data); // check if data is the same
+  //Si570_drv::si570_read_freq(&data); // check if data is the same, //not working
 
-//  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE1);
-//  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0x42);
-//  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xB5);
-//  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x01);
-//  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x1B);
-//  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0xDA);
-
-  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0x20);
+// 125MHz
+/*
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0x21);
   Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
   Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xBC);
   Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x01);
   Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x1E);
   Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0xB8);
+*/
+
+// 100MHz
+
+/*
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0x22);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0x42);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xBC);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x01);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x1E);
+  //Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0xB8);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x42);
+*/
+
+// 117.963900MHz
+/*
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0x61);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0x42);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xB5);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0xC4);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x11);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0xD7);
+*/
+
+// 122.682456 MHz
+/*
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0x21);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xAF);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x28);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x9A);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x34);
+*/
+
+// 112.583175675676 MHz
+
+/*
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xB5);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0xA6);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x87);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x75);
+*/
+
+/*
+// 124.997588 MHz
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0x21);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xBC);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x20);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x3C);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x99);
+*/
+/*
+// 113.529121545 MHz.
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xBB);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x7A);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x8B);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x89);
+*/
+
+// 113.750000 MHz. NOT LOCKING!
+/*
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0x41);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xFC);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x8D);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x61);
+  Si570_
+  * drv::si570_assert(SI571_ADDR, 0x0C, 0x13);
+*/
+
+// 112 MHz.
+/*
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xB2);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x0E);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0xB3);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x84);
+*/
+
+/*
+// 114.222973 MHz.
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0x41);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xFF);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0xBB);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x34);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0xC8);
+*/
+
+//113.376415 MHz
+/*
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xBA);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x89);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0xAF);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x5B);
+*/
+
+//208.927174 MHz
+  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0x40);
+  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xBE);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0xC6);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0xA5);
+  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x58);
 
   Si570_drv::si570_outputEnable(FPGA_CTRL_REGS | WB_CLK_CTRL);
 
@@ -384,6 +625,8 @@ int main(int argc, const char **argv) {
   cout << "============================================" << endl <<
       "     AD9510 config (clock distribution)     " << endl <<
       "============================================" << endl;
+
+  int pll_status;
 
   // reset chip
   data.wb_addr = FPGA_CTRL_REGS | WB_CLK_CTRL; // clock control
@@ -409,7 +652,26 @@ int main(int argc, const char **argv) {
 
   AD9510_drv::AD9510_setCommLink(_commLink, AD9510_SPI_DRV);
 
-  AD9510_drv::AD9510_config_si570(AD9510_ADDR); // with config check included
+  //AD9510_drv::AD9510_config_si570(AD9510_ADDR); // with config check included
+  AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(AD9510_ADDR); // with config check included
+
+  // Check PLL lock
+
+  data.wb_addr = FPGA_CTRL_REGS | WB_CLK_CTRL; // clock control
+  _commLink->fmc_config_read(&data);
+
+  pll_status = data.data_read[0] & AD9510_PLL_STATUS_MASK;
+
+  cout << "WB Clock Control Reg: " << data.data_read[0] << endl;
+  cout << "AD9510 PLL Status: " << pll_status << endl;
+
+  cout << "If the AD9510 PLL Status pin is configured for Digital Lock the " << endl <<
+             "information below makes sense. Otherwise ignore that!"  << endl;
+
+  if (pll_status)
+    cout << "Clock PLL Locked!" << endl;
+  else
+    cout << "Clock PLL NOT locked!" << endl;
 
   //exit(1);
 
@@ -548,7 +810,7 @@ int main(int argc, const char **argv) {
   // adc2 -0.996
   // tap resolution 78ps
 
-  set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY0_CAL, &delay_l[0]);
+  set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY0_CAL, &delay_data_l[0], DLY_DATA);
 
   //data.wb_addr = FPGA_CTRL_REGS | WB_IDELAY0_CAL;
   //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(18) | IDELAY_UPDATE; // should be 0x0050003f
@@ -560,7 +822,7 @@ int main(int argc, const char **argv) {
   //data.data_send[0] = (IDELAY_ALL_LINES | IDELAY_TAP(18)) & 0xFFFFFFFE; // should be 0x0050003f
   //_commLink->fmc_config_send(&data);
 
-  set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY1_CAL, &delay_l[1]);
+  set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY1_CAL, &delay_data_l[1], DLY_DATA);
 
   //data.wb_addr = FPGA_CTRL_REGS | WB_IDELAY1_CAL;
   //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(18) | IDELAY_UPDATE; // should be 0x0050003f
@@ -572,7 +834,7 @@ int main(int argc, const char **argv) {
   //data.data_send[0] = (IDELAY_ALL_LINES | IDELAY_TAP(18)) & 0xFFFFFFFE; // should be 0x0050003f
   //_commLink->fmc_config_send(&data);
 
-  set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY2_CAL, &delay_l[2]);
+  set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY2_CAL, &delay_data_l[2], DLY_DATA);
 
   //data.wb_addr = FPGA_CTRL_REGS | WB_IDELAY2_CAL;
   //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(18) | IDELAY_UPDATE; // should be 0x0050003f
@@ -584,7 +846,7 @@ int main(int argc, const char **argv) {
   //data.data_send[0] = (IDELAY_ALL_LINES | IDELAY_TAP(18)) & 0xFFFFFFFE; // should be 0x0050003f
   //_commLink->fmc_config_send(&data);
 
-  set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY3_CAL, &delay_l[3]);
+  set_fpga_delay_s(_commLink, FPGA_CTRL_REGS | WB_IDELAY3_CAL, &delay_data_l[3], DLY_DATA);
 
   //data.wb_addr = FPGA_CTRL_REGS | WB_IDELAY3_CAL;
   //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(18) | IDELAY_UPDATE; // should be 0x0050003f

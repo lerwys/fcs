@@ -9,6 +9,8 @@
 #include "data.h"
 #include "commLink.h"
 
+#define AD9510_PLL_STATUS_MASK 0x04
+
 class AD9510_drv {
 public:
 
@@ -31,6 +33,12 @@ public:
   // AD9510 - divider pass-through (output is 250MHz)
   // FPGA working on copy of ADC clock (FPGA_CLK, output 7 from AD9510 chip)
   static int AD9510_config_si570_fmc_adc_130m_4ch(uint32_t chip_select);
+
+  // Configuration for clock distribution mode (clk2) (using AD9510 chip)
+  // Si571 clk = user-defined
+  // AD9510 - PLL enabled (output is user-defined)
+  // FPGA working on copy of ADC clock (FPGA_CLK, output 7 from AD9510 chip)
+  static int AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select);
 
   static void AD9510_assert(uint32_t chip_select, uint8_t reg, uint8_t val);
 

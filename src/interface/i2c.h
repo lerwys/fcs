@@ -10,13 +10,13 @@
 #include "data.h"
 
 /* I2C register */
-#define I2C_PRER_LO (0x00 << WB_GR_SHIFT) // clock
-#define I2C_PRER_HI (0x01 << WB_GR_SHIFT)
-#define I2C_CTR     (0x02 << WB_GR_SHIFT) // control reg
-#define I2C_TXR     (0x03 << WB_GR_SHIFT) // transmit reg
-#define I2C_RXR     (0x03 << WB_GR_SHIFT) // receive reg (read)
-#define I2C_CR      (0x04 << WB_GR_SHIFT) // command reg
-#define I2C_SR      (0x04 << WB_GR_SHIFT) // status reg (read)
+#define I2C_PRER_LO (0x00 << 2) // clock
+#define I2C_PRER_HI (0x01 << 2)
+#define I2C_CTR     (0x02 << 2) // control reg
+#define I2C_TXR     (0x03 << 2) // transmit reg
+#define I2C_RXR     (0x03 << 2) // receive reg (read)
+#define I2C_CR      (0x04 << 2) // command reg
+#define I2C_SR      (0x04 << 2) // status reg (read)
 
 /* I2C control register fields mask */
 #define I2C_CTR_EN  0x80

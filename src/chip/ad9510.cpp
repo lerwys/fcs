@@ -504,7 +504,8 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
   //AD9510_assert(chip_select, 0x08, 0x04 | 0x00);
   AD9510_assert(chip_select, 0x08, 0x04 | 0x03 | 0x40);
 
-  AD9510_assert(chip_select, 0x09, 0x00);
+  //AD9510_assert(chip_select, 0x09, 0x00);
+  AD9510_assert(chip_select, 0x09, 0x70);
 
   //AD9510_assert(chip_select, 0x0A, 0x04 | 0x00);
   AD9510_assert(chip_select, 0x0A, 0x00 | 0x00);

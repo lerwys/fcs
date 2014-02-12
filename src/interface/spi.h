@@ -11,23 +11,23 @@
 #include "data.h"
 
 /* SPI BIDIR register */
-#define SPI_BIDIR_RX0        (0x00 << WB_GR_SHIFT) // 0
-#define SPI_BIDIR_RX1        (0x01 << WB_GR_SHIFT) // 1
-#define SPI_BIDIR_RX2        (0x02 << WB_GR_SHIFT) // 2
-#define SPI_BIDIR_RX3        (0x03 << WB_GR_SHIFT) // 3
-#define SPI_BIDIR_TX0        (0x00 << WB_GR_SHIFT) // 0
-#define SPI_BIDIR_TX1        (0x01 << WB_GR_SHIFT) // 1
-#define SPI_BIDIR_TX2        (0x02 << WB_GR_SHIFT) // 2
-#define SPI_BIDIR_TX3        (0x03 << WB_GR_SHIFT) // 3
-#define SPI_BIDIR_CTRL       (0x04 << WB_GR_SHIFT) // 4
-#define SPI_BIDIR_DIVIDER    (0x05 << WB_GR_SHIFT) // 5
-#define SPI_BIDIR_SS         (0x06 << WB_GR_SHIFT) // 6
-#define SPI_BIDIR_CFG_BIDIR  (0x07 << WB_GR_SHIFT) // 7
+#define SPI_BIDIR_RX0        (0x00 << 2) // 0
+#define SPI_BIDIR_RX1        (0x01 << 2) // 1
+#define SPI_BIDIR_RX2        (0x02 << 2) // 2
+#define SPI_BIDIR_RX3        (0x03 << 2) // 3
+#define SPI_BIDIR_TX0        (0x00 << 2) // 0
+#define SPI_BIDIR_TX1        (0x01 << 2) // 1
+#define SPI_BIDIR_TX2        (0x02 << 2) // 2
+#define SPI_BIDIR_TX3        (0x03 << 2) // 3
+#define SPI_BIDIR_CTRL       (0x04 << 2) // 4
+#define SPI_BIDIR_DIVIDER    (0x05 << 2) // 5
+#define SPI_BIDIR_SS         (0x06 << 2) // 6
+#define SPI_BIDIR_CFG_BIDIR  (0x07 << 2) // 7
 // For RX data from MISO (single line)
-#define SPI_RX_MISO_0        (0x08 << WB_GR_SHIFT) // 8
-#define SPI_RX_MISO_1        (0x09 << WB_GR_SHIFT) // 9
-#define SPI_RX_MISO_2        (0x0A << WB_GR_SHIFT) // 10
-#define SPI_RX_MISO_3        (0x0B << WB_GR_SHIFT) // 11
+#define SPI_RX_MISO_0        (0x08 << 2) // 8
+#define SPI_RX_MISO_1        (0x09 << 2) // 9
+#define SPI_RX_MISO_2        (0x0A << 2) // 10
+#define SPI_RX_MISO_3        (0x0B << 2) // 11
 
 /* SPI BIDIR fields mask */
 #define SPI_BIDIR_CTRL_ASS 0x2000

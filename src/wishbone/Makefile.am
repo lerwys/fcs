@@ -18,11 +18,14 @@ noinst_LTLIBRARIES = libwishbone.la
 
 libwishbone_la_SOURCES = \
 	rs232_syscon.cpp \
-	rs232_syscon.h
+	rs232_syscon.h   \
+	pcie_link.cpp \
+	pcie_link.h
 
-libwishbone_la_LIBADD = -lmxml -lserial @LTLIBOBJS@
+libwishbone_la_LIBADD = -lmxml -lserial -lpcidriver -lpthread @LTLIBOBJS@
 #libwishbone_la_LIBADD = @LTLIBOBJS@
 
 AM_CPPFLAGS = \
 	-I. \
-	-I$(top_srcdir)/src/include
+	-I$(top_srcdir)/src/include \
+	-I$(top_srcdir)/src/wishbone/pcie_headers

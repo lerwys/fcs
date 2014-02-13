@@ -20,6 +20,7 @@ SUBDIRS = \
 	src/common \
 	src/chip \
 	src/commlink \
+	src/fmc_config \
 	src/interface \
 	src/wishbone \
 	src

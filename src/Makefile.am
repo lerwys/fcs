@@ -53,6 +53,7 @@ fmc_config_250m_4ch_passive_SOURCES = \
 LDADD = \
 	$(top_builddir)/src/chip/libchip.la \
 	$(top_builddir)/src/commlink/libcommlink.la \
+	$(top_builddir)/src/fmc_config/libfmcconfig.la \
 	$(top_builddir)/src/interface/libinterface.la \
 	$(top_builddir)/src/wishbone/libwishbone.la \
 	$(top_builddir)/src/common/libcommon.la
@@ -62,6 +63,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/src/include \
 	-I$(top_srcdir)/src/reg_map \
 	-I$(top_srcdir)/src/reg_map/mod_regs \
+	-I$(top_srcdir)/src/fmc_config \
 	-I$(top_srcdir)/src/common \
 	-I$(top_srcdir)/src/commlink
 

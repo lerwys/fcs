@@ -9,7 +9,6 @@ commLink::commLink() {
 }
 
 WBMaster_unit* commLink::regWBMaster(WBMaster_unit* wb_master_unit) {
-
 	wb_master = wb_master_unit;
 	return wb_master_unit;
 }

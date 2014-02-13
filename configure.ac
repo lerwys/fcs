@@ -62,6 +62,7 @@ AC_CONFIG_FILES([src/common/Makefile])
 AC_CONFIG_FILES([src/interface/Makefile])
 AC_CONFIG_FILES([src/wishbone/Makefile])
 AC_CONFIG_FILES([src/fmc_config/Makefile])
+AC_CONFIG_FILES([src/tcp_server/Makefile])
 
 # generate the final Makefile etc.
 AC_OUTPUT

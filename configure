@@ -15300,6 +15300,8 @@ ac_config_files="$ac_config_files src/wishbone/Makefile"
 
 ac_config_files="$ac_config_files src/fmc_config/Makefile"
 
+ac_config_files="$ac_config_files src/tcp_server/Makefile"
+
 
 # generate the final Makefile etc.
 cat >confcache <<\_ACEOF
@@ -16409,6 +16411,7 @@ do
     "src/interface/Makefile") CONFIG_FILES="$CONFIG_FILES src/interface/Makefile" ;;
     "src/wishbone/Makefile") CONFIG_FILES="$CONFIG_FILES src/wishbone/Makefile" ;;
     "src/fmc_config/Makefile") CONFIG_FILES="$CONFIG_FILES src/fmc_config/Makefile" ;;
+    "src/tcp_server/Makefile") CONFIG_FILES="$CONFIG_FILES src/tcp_server/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

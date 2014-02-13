@@ -23,6 +23,7 @@ SUBDIRS = \
 	src/fmc_config \
 	src/interface \
 	src/wishbone \
+	src/tcp_server \
 	src
 
 dist_noinst_SCRIPTS = autogen.sh

@@ -16,6 +16,7 @@
 //#include "reg_map/fmc_config_130m_4ch.h"
 
 #include <iostream>
+#include <string>
 #include <unistd.h> /* getopt */
 #include <iostream>
 #include <iomanip>
@@ -45,6 +46,7 @@
 //#include "chip/lm75a.h"
 #include "platform/fmc130m_plat.h"
 #include "common.h"
+#include "tcp_server.h"
 
 using namespace std;
 
@@ -59,6 +61,7 @@ int main(int argc, const char **argv) {
   vector<uint16_t> test_pattern;
   //commLink* _commLink = new commLink();
   fmc_config_130m_4ch_board *fmc_config_130m_4ch_board_p;
+  tcp_server *tcp_server_p;
   uint32_t data_temp;
   int opt, error;
 
@@ -491,6 +494,12 @@ int main(int argc, const char **argv) {
   //cout << endl;
   //cout << "Monit 0.1 error count: " << POS_CALC_DSP_CTNR2_MONIT_FIR_01_R(data.data_read[0]);
   //cout << endl;
+
+  // Initialize TCP server and SLLP library
+
+  tcp_server_p = new tcp_server(string("8080")/*, fmc_config_130m_4ch_board_p*/);
+  /* Endless tcp loop */
+  tcp_server_p->start();
 
   return 0;
 }

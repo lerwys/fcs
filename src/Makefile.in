@@ -83,7 +83,8 @@ fmc_config_130m_4ch_DEPENDENCIES =  \
 	$(top_builddir)/src/fmc_config/libfmcconfig.la \
 	$(top_builddir)/src/interface/libinterface.la \
 	$(top_builddir)/src/wishbone/libwishbone.la \
-	$(top_builddir)/src/common/libcommon.la
+	$(top_builddir)/src/common/libcommon.la \
+	$(top_builddir)/src/tcp_server/libtcpserver.la
 am_fmc_config_130m_4ch_crystek_OBJECTS =  \
 	fmc_config_130m_4ch_crystek.$(OBJEXT)
 fmc_config_130m_4ch_crystek_OBJECTS =  \
@@ -95,7 +96,8 @@ fmc_config_130m_4ch_crystek_DEPENDENCIES =  \
 	$(top_builddir)/src/fmc_config/libfmcconfig.la \
 	$(top_builddir)/src/interface/libinterface.la \
 	$(top_builddir)/src/wishbone/libwishbone.la \
-	$(top_builddir)/src/common/libcommon.la
+	$(top_builddir)/src/common/libcommon.la \
+	$(top_builddir)/src/tcp_server/libtcpserver.la
 am_fmc_config_130m_4ch_ext_clk_no_pll_OBJECTS =  \
 	fmc_config_130m_4ch_ext_clk_no_pll.$(OBJEXT)
 fmc_config_130m_4ch_ext_clk_no_pll_OBJECTS =  \
@@ -107,7 +109,8 @@ fmc_config_130m_4ch_ext_clk_no_pll_DEPENDENCIES =  \
 	$(top_builddir)/src/fmc_config/libfmcconfig.la \
 	$(top_builddir)/src/interface/libinterface.la \
 	$(top_builddir)/src/wishbone/libwishbone.la \
-	$(top_builddir)/src/common/libcommon.la
+	$(top_builddir)/src/common/libcommon.la \
+	$(top_builddir)/src/tcp_server/libtcpserver.la
 am_fmc_config_130m_4ch_passive_OBJECTS =  \
 	fmc_config_130m_4ch_passive.$(OBJEXT)
 fmc_config_130m_4ch_passive_OBJECTS =  \
@@ -119,7 +122,8 @@ fmc_config_130m_4ch_passive_DEPENDENCIES =  \
 	$(top_builddir)/src/fmc_config/libfmcconfig.la \
 	$(top_builddir)/src/interface/libinterface.la \
 	$(top_builddir)/src/wishbone/libwishbone.la \
-	$(top_builddir)/src/common/libcommon.la
+	$(top_builddir)/src/common/libcommon.la \
+	$(top_builddir)/src/tcp_server/libtcpserver.la
 am_fmc_config_130m_4ch_passive_pcie_server_OBJECTS =  \
 	fmc_config_130m_4ch_passive_pcie_server.$(OBJEXT)
 fmc_config_130m_4ch_passive_pcie_server_OBJECTS =  \
@@ -131,7 +135,8 @@ fmc_config_130m_4ch_passive_pcie_server_DEPENDENCIES =  \
 	$(top_builddir)/src/fmc_config/libfmcconfig.la \
 	$(top_builddir)/src/interface/libinterface.la \
 	$(top_builddir)/src/wishbone/libwishbone.la \
-	$(top_builddir)/src/common/libcommon.la
+	$(top_builddir)/src/common/libcommon.la \
+	$(top_builddir)/src/tcp_server/libtcpserver.la
 am_fmc_config_130m_4ch_pcie_server_OBJECTS =  \
 	fmc_config_130m_4ch_pcie_server.$(OBJEXT)
 fmc_config_130m_4ch_pcie_server_OBJECTS =  \
@@ -143,7 +148,8 @@ fmc_config_130m_4ch_pcie_server_DEPENDENCIES =  \
 	$(top_builddir)/src/fmc_config/libfmcconfig.la \
 	$(top_builddir)/src/interface/libinterface.la \
 	$(top_builddir)/src/wishbone/libwishbone.la \
-	$(top_builddir)/src/common/libcommon.la
+	$(top_builddir)/src/common/libcommon.la \
+	$(top_builddir)/src/tcp_server/libtcpserver.la
 am_fmc_config_250m_4ch_OBJECTS = fmc_config_250m_4ch.$(OBJEXT)
 fmc_config_250m_4ch_OBJECTS = $(am_fmc_config_250m_4ch_OBJECTS)
 fmc_config_250m_4ch_LDADD = $(LDADD)
@@ -153,7 +159,8 @@ fmc_config_250m_4ch_DEPENDENCIES =  \
 	$(top_builddir)/src/fmc_config/libfmcconfig.la \
 	$(top_builddir)/src/interface/libinterface.la \
 	$(top_builddir)/src/wishbone/libwishbone.la \
-	$(top_builddir)/src/common/libcommon.la
+	$(top_builddir)/src/common/libcommon.la \
+	$(top_builddir)/src/tcp_server/libtcpserver.la
 am_fmc_config_250m_4ch_passive_OBJECTS =  \
 	fmc_config_250m_4ch_passive.$(OBJEXT)
 fmc_config_250m_4ch_passive_OBJECTS =  \
@@ -165,7 +172,8 @@ fmc_config_250m_4ch_passive_DEPENDENCIES =  \
 	$(top_builddir)/src/fmc_config/libfmcconfig.la \
 	$(top_builddir)/src/interface/libinterface.la \
 	$(top_builddir)/src/wishbone/libwishbone.la \
-	$(top_builddir)/src/common/libcommon.la
+	$(top_builddir)/src/common/libcommon.la \
+	$(top_builddir)/src/tcp_server/libtcpserver.la
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -384,7 +392,8 @@ LDADD = \
 	$(top_builddir)/src/fmc_config/libfmcconfig.la \
 	$(top_builddir)/src/interface/libinterface.la \
 	$(top_builddir)/src/wishbone/libwishbone.la \
-	$(top_builddir)/src/common/libcommon.la
+	$(top_builddir)/src/common/libcommon.la \
+	$(top_builddir)/src/tcp_server/libtcpserver.la
 
 AM_CPPFLAGS = \
 	-I. \
@@ -393,7 +402,8 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/src/reg_map/mod_regs \
 	-I$(top_srcdir)/src/fmc_config \
 	-I$(top_srcdir)/src/common \
-	-I$(top_srcdir)/src/commlink
+	-I$(top_srcdir)/src/commlink \
+	-I$(top_srcdir)/src/tcp_server
 
 
 # install these headers

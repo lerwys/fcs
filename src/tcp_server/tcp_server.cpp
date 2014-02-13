@@ -28,10 +28,12 @@ send_pkt_t send_pkt;
 struct sllp_raw_packet recv_packet = {.data = recv_pkt.data };
 struct sllp_raw_packet send_packet = {.data = send_pkt.data };
 
-tcp_server::tcp_server(string port/*, fmc_config_130m_4ch_board *fmc_config_130m_4ch_board*/)
+tcp_server::tcp_server(string port, fmc_config_130m_4ch_board *_fmc_config_130m_4ch_board)
 {
   this->port = port;
-  //this->fmc_config_130m_4ch_board = fmc_config_130m_4ch_board;
+  this->_fmc_config_130m_4ch_board = _fmc_config_130m_4ch_board;
+
+  sllp_init();
 }
 
 tcp_server::~tcp_server() {
@@ -226,18 +228,6 @@ int tcp_server::tcp_server_handle_client(int s, int *disconnected)
  * SLLP functions
  * *****************************************************************************/
 
-static uint8_t ad_convert(uint8_t *input, uint8_t *output)
-{
-    printf(S"Starting conversion of the A/D converters...\n");
-    //ad[0].data[0] = rand() % 256;
-    //ad[0].data[1] = rand() % 256;
-    //
-    //ad[1].data[0] = rand() % 256;
-    //ad[1].data[1] = rand() % 256;
-    
-    return 0; // Success!!
-}
-
 //struct sllp_func_info
 //{
 //    uint8_t id;                     // ID of the function, used in the protocol
@@ -258,11 +248,17 @@ static uint8_t ad_convert(uint8_t *input, uint8_t *output)
 //    .info.output_size = 0       // Nothing is written to the output parameter
 //};
 
+static uint8_t ad_convert(uint8_t *input, uint8_t *output)
+{
+    printf(S"Starting conversion of the A/D converters...\n");
+    
+    return 0; // Success!!
+}
+
 static struct sllp_func ad_convert_func = {
   {0, 0, 0},
   ad_convert
 };
-
 
 int tcp_server::sllp_init (void)
 {
@@ -281,7 +277,8 @@ int tcp_server::sllp_init (void)
     /*
      * Register all Functions
      */
-    TRY("reg_func", sllp_register_function(sllp_server, &ad_convert_func));  // ID 0
+    //TRY("reg_func", sllp_register_function(sllp_server, &ad_convert_func));  // ID 0
+    //TRY("reg_func", sllp_register_function(sllp_server, &fmc130m_blink_leds_func));  // ID 1
 
     /*
      * Great! Now our server is up and ready to receive some commands.
@@ -293,7 +290,12 @@ int tcp_server::sllp_init (void)
 
 /***************************************************************/ 
 /**********************   Class methods  **********************/
-/***************************************************************/ 
+/***************************************************************/
+
+int tcp_server::register_func (struct sllp_func *sllp_func)
+{
+  return sllp_register_function(sllp_server, sllp_func); 
+}
 
 int tcp_server::start(void)
 {
@@ -365,8 +367,6 @@ int tcp_server::start(void)
       perror("sigaction");
       exit(1);
   }
-
-  sllp_init();
   
   printf("server: waiting for connections...\n");
   

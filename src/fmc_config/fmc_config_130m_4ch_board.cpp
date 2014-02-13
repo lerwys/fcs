@@ -301,3 +301,27 @@ fmc_config_130m_4ch_board::~fmc_config_130m_4ch_board() {
 
 	// Close device
 }
+
+int fmc_config_130m_4ch_board::blink_leds() {
+
+  wb_data data;
+
+  data.data_send.resize(10);
+  data.extra.resize(2);
+
+  data.wb_addr = FPGA_CTRL_REGS | WB_MONITOR_CTRL; // monitor register (HW address)
+
+  data.data_send[0] = 0x02;
+  _commLink->fmc_config_send(&data);
+  usleep(500000);
+
+  data.data_send[0] = 0x04;
+  _commLink->fmc_config_send(&data);
+  usleep(500000);
+
+  data.data_send[0] = 0x08;
+  _commLink->fmc_config_send(&data);
+  usleep(500000);
+
+  return 0;
+}

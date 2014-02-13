@@ -50,6 +50,40 @@
 
 using namespace std;
 
+#define S "sllp_server: "
+
+fmc_config_130m_4ch_board *fmc_config_130m_4ch_board_p;
+tcp_server *tcp_server_p;
+
+/***************************************************************/ 
+/**********************   SLLP methods  **********************/
+/***************************************************************/
+static uint8_t ad_convert(uint8_t *input, uint8_t *output)
+{
+    printf(S"Starting conversion of the A/D converters...\n");
+    
+    return 0; // Success!!
+}
+
+static struct sllp_func ad_convert_func = {
+  {0, 0, 0},
+  ad_convert
+};
+
+uint8_t fmc130m_blink_leds(uint8_t *input, uint8_t *output)
+{
+    printf(S"blinking leds!...\n");
+
+    fmc_config_130m_4ch_board_p->blink_leds();
+    
+    return 0; // Success!!
+}
+
+static struct sllp_func fmc130m_blink_leds_func = {
+  {0, 0, 0},
+  fmc130m_blink_leds
+};
+
 int main(int argc, const char **argv) {
 
   cout << "FMC configuration software for FMC ADC 130M 4CH card (PASSIVE version)" << endl <<
@@ -60,8 +94,8 @@ int main(int argc, const char **argv) {
   vector<uint16_t> amc_temp;
   vector<uint16_t> test_pattern;
   //commLink* _commLink = new commLink();
-  fmc_config_130m_4ch_board *fmc_config_130m_4ch_board_p;
-  tcp_server *tcp_server_p;
+  //fmc_config_130m_4ch_board *fmc_config_130m_4ch_board_p;
+  //tcp_server *tcp_server_p;
   uint32_t data_temp;
   int opt, error;
 
@@ -497,7 +531,12 @@ int main(int argc, const char **argv) {
 
   // Initialize TCP server and SLLP library
 
-  tcp_server_p = new tcp_server(string("8080")/*, fmc_config_130m_4ch_board_p*/);
+  tcp_server_p = new tcp_server(string("8080"), fmc_config_130m_4ch_board_p);
+  
+  // Register functions
+  tcp_server_p->register_func(&ad_convert_func);
+  tcp_server_p->register_func(&fmc130m_blink_leds_func);
+  
   /* Endless tcp loop */
   tcp_server_p->start();
 

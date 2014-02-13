@@ -54,18 +54,23 @@ typedef struct _send_pkt_t send_pkt_t;
 class tcp_server {
 public:
 
-	tcp_server(string port);
+	tcp_server(string port, fmc_config_130m_4ch_board *_fmc_config_130m_4ch_board);
 	~tcp_server();
 
   void *get_in_addr(struct sockaddr *sa);
-  int start(void); 
+  int register_func (struct sllp_func *sllp_func);
+  int start(void);
+
+  /* SLLP exported functions */
+  //friend uint8_t fmc130m_blink_leds(uint8_t *input, uint8_t *output);
 
 private:
 
-	//fmc_config_130m_4ch_board* fmc_config_130m_4ch_board;
   //int sockfd;
   string port;
   sllp_server_t *sllp_server;
+
+  fmc_config_130m_4ch_board *_fmc_config_130m_4ch_board;
 
   /* Private functions */
   int tcp_server_handle_client(int s, int *disconnected);
@@ -76,6 +81,8 @@ private:
   int bpm_send(int fd, uint8_t *data, uint32_t *count);
   int bpm_recv(int fd, uint8_t *data, uint32_t *count);
 
+  /* SLLP exported functions */
+  //uint8_t fmc130m_blink_leds(uint8_t *input, uint8_t *output);
 };
 
 #endif // __TCP_SERVER_H

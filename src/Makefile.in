@@ -56,6 +56,8 @@ bin_PROGRAMS = fmc_config_130m_4ch$(EXEEXT) \
 	fmc_config_130m_4ch_ext_clk_no_pll$(EXEEXT) \
 	fmc_config_130m_4ch_crystek$(EXEEXT) \
 	fmc_config_130m_4ch_passive$(EXEEXT) \
+	fmc_config_130m_4ch_passive_pcie_server$(EXEEXT) \
+	fmc_config_130m_4ch_pcie_server$(EXEEXT) \
 	fmc_config_250m_4ch$(EXEEXT) \
 	fmc_config_250m_4ch_passive$(EXEEXT)
 subdir = src
@@ -114,6 +116,28 @@ fmc_config_130m_4ch_passive_DEPENDENCIES =  \
 	$(top_builddir)/src/interface/libinterface.la \
 	$(top_builddir)/src/wishbone/libwishbone.la \
 	$(top_builddir)/src/common/libcommon.la
+am_fmc_config_130m_4ch_passive_pcie_server_OBJECTS =  \
+	fmc_config_130m_4ch_passive_pcie_server.$(OBJEXT)
+fmc_config_130m_4ch_passive_pcie_server_OBJECTS =  \
+	$(am_fmc_config_130m_4ch_passive_pcie_server_OBJECTS)
+fmc_config_130m_4ch_passive_pcie_server_LDADD = $(LDADD)
+fmc_config_130m_4ch_passive_pcie_server_DEPENDENCIES =  \
+	$(top_builddir)/src/chip/libchip.la \
+	$(top_builddir)/src/commlink/libcommlink.la \
+	$(top_builddir)/src/interface/libinterface.la \
+	$(top_builddir)/src/wishbone/libwishbone.la \
+	$(top_builddir)/src/common/libcommon.la
+am_fmc_config_130m_4ch_pcie_server_OBJECTS =  \
+	fmc_config_130m_4ch_pcie_server.$(OBJEXT)
+fmc_config_130m_4ch_pcie_server_OBJECTS =  \
+	$(am_fmc_config_130m_4ch_pcie_server_OBJECTS)
+fmc_config_130m_4ch_pcie_server_LDADD = $(LDADD)
+fmc_config_130m_4ch_pcie_server_DEPENDENCIES =  \
+	$(top_builddir)/src/chip/libchip.la \
+	$(top_builddir)/src/commlink/libcommlink.la \
+	$(top_builddir)/src/interface/libinterface.la \
+	$(top_builddir)/src/wishbone/libwishbone.la \
+	$(top_builddir)/src/common/libcommon.la
 am_fmc_config_250m_4ch_OBJECTS = fmc_config_250m_4ch.$(OBJEXT)
 fmc_config_250m_4ch_OBJECTS = $(am_fmc_config_250m_4ch_OBJECTS)
 fmc_config_250m_4ch_LDADD = $(LDADD)
@@ -151,12 +175,16 @@ SOURCES = $(fmc_config_130m_4ch_SOURCES) \
 	$(fmc_config_130m_4ch_crystek_SOURCES) \
 	$(fmc_config_130m_4ch_ext_clk_no_pll_SOURCES) \
 	$(fmc_config_130m_4ch_passive_SOURCES) \
+	$(fmc_config_130m_4ch_passive_pcie_server_SOURCES) \
+	$(fmc_config_130m_4ch_pcie_server_SOURCES) \
 	$(fmc_config_250m_4ch_SOURCES) \
 	$(fmc_config_250m_4ch_passive_SOURCES)
 DIST_SOURCES = $(fmc_config_130m_4ch_SOURCES) \
 	$(fmc_config_130m_4ch_crystek_SOURCES) \
 	$(fmc_config_130m_4ch_ext_clk_no_pll_SOURCES) \
 	$(fmc_config_130m_4ch_passive_SOURCES) \
+	$(fmc_config_130m_4ch_passive_pcie_server_SOURCES) \
+	$(fmc_config_130m_4ch_pcie_server_SOURCES) \
 	$(fmc_config_250m_4ch_SOURCES) \
 	$(fmc_config_250m_4ch_passive_SOURCES)
 am__can_run_installinfo = \
@@ -327,6 +355,12 @@ fmc_config_130m_4ch_ext_clk_no_pll_SOURCES = \
 fmc_config_130m_4ch_crystek_SOURCES = \
 	fmc_config_130m_4ch_crystek.cpp
 
+fmc_config_130m_4ch_pcie_server_SOURCES = \
+	fmc_config_130m_4ch_pcie_server.cpp
+
+fmc_config_130m_4ch_passive_pcie_server_SOURCES = \
+	fmc_config_130m_4ch_passive_pcie_server.cpp
+
 fmc_config_130m_4ch_passive_SOURCES = \
 	fmc_config_130m_4ch_passive.cpp
 
@@ -461,6 +495,12 @@ fmc_config_130m_4ch_ext_clk_no_pll$(EXEEXT): $(fmc_config_130m_4ch_ext_clk_no_pl
 fmc_config_130m_4ch_passive$(EXEEXT): $(fmc_config_130m_4ch_passive_OBJECTS) $(fmc_config_130m_4ch_passive_DEPENDENCIES) $(EXTRA_fmc_config_130m_4ch_passive_DEPENDENCIES) 
 	@rm -f fmc_config_130m_4ch_passive$(EXEEXT)
 	$(CXXLINK) $(fmc_config_130m_4ch_passive_OBJECTS) $(fmc_config_130m_4ch_passive_LDADD) $(LIBS)
+fmc_config_130m_4ch_passive_pcie_server$(EXEEXT): $(fmc_config_130m_4ch_passive_pcie_server_OBJECTS) $(fmc_config_130m_4ch_passive_pcie_server_DEPENDENCIES) $(EXTRA_fmc_config_130m_4ch_passive_pcie_server_DEPENDENCIES) 
+	@rm -f fmc_config_130m_4ch_passive_pcie_server$(EXEEXT)
+	$(CXXLINK) $(fmc_config_130m_4ch_passive_pcie_server_OBJECTS) $(fmc_config_130m_4ch_passive_pcie_server_LDADD) $(LIBS)
+fmc_config_130m_4ch_pcie_server$(EXEEXT): $(fmc_config_130m_4ch_pcie_server_OBJECTS) $(fmc_config_130m_4ch_pcie_server_DEPENDENCIES) $(EXTRA_fmc_config_130m_4ch_pcie_server_DEPENDENCIES) 
+	@rm -f fmc_config_130m_4ch_pcie_server$(EXEEXT)
+	$(CXXLINK) $(fmc_config_130m_4ch_pcie_server_OBJECTS) $(fmc_config_130m_4ch_pcie_server_LDADD) $(LIBS)
 fmc_config_250m_4ch$(EXEEXT): $(fmc_config_250m_4ch_OBJECTS) $(fmc_config_250m_4ch_DEPENDENCIES) $(EXTRA_fmc_config_250m_4ch_DEPENDENCIES) 
 	@rm -f fmc_config_250m_4ch$(EXEEXT)
 	$(CXXLINK) $(fmc_config_250m_4ch_OBJECTS) $(fmc_config_250m_4ch_LDADD) $(LIBS)
@@ -478,6 +518,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fmc_config_130m_4ch_crystek.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fmc_config_130m_4ch_ext_clk_no_pll.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fmc_config_130m_4ch_passive.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fmc_config_130m_4ch_passive_pcie_server.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fmc_config_130m_4ch_pcie_server.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fmc_config_250m_4ch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fmc_config_250m_4ch_passive.Po@am__quote@
 

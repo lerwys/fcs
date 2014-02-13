@@ -63,7 +63,7 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libwishbone_la_DEPENDENCIES = @LTLIBOBJS@
-am_libwishbone_la_OBJECTS = rs232_syscon.lo
+am_libwishbone_la_OBJECTS = rs232_syscon.lo pcie_link.lo
 libwishbone_la_OBJECTS = $(am_libwishbone_la_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -220,13 +220,16 @@ top_srcdir = @top_srcdir@
 noinst_LTLIBRARIES = libwishbone.la
 libwishbone_la_SOURCES = \
 	rs232_syscon.cpp \
-	rs232_syscon.h
+	rs232_syscon.h   \
+	pcie_link.cpp \
+	pcie_link.h
 
-libwishbone_la_LIBADD = -lmxml -lserial @LTLIBOBJS@
+libwishbone_la_LIBADD = -lmxml -lserial -lpcidriver -lpthread @LTLIBOBJS@
 #libwishbone_la_LIBADD = @LTLIBOBJS@
 AM_CPPFLAGS = \
 	-I. \
-	-I$(top_srcdir)/src/include
+	-I$(top_srcdir)/src/include \
+	-I$(top_srcdir)/src/wishbone/pcie_headers
 
 all: all-am
 
@@ -280,6 +283,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pcie_link.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rs232_syscon.Plo@am__quote@
 
 .cpp.o:

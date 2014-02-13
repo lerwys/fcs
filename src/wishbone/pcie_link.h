@@ -6,9 +6,9 @@
 #ifndef __PCIE_LINK_H
 #define __PCIE_LINK_H
 
-#include "../data.h"
+#include "data.h"
 
-#include "../wishbone/lib/pciDriver.h"
+#include "pcie_headers/pciDriver.h"
 #include <iostream>
 #include <iomanip>
 #include <cstring>

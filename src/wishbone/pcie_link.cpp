@@ -180,9 +180,14 @@ int pcie_link_driver::wb_send_data(struct wb_data* data) {
 
 	addr =  data->wb_addr;
 
-	// extra field 0 for number of data to be read
-	if (data->extra[0] == 0)
+  // check extra vector before using it
+  if (data->extra.size() == 0) {
+    data->extra.resize(2);
+  }
+  // extra field 0 for number of data to be read
+  else if (data->extra[0] == 0) {
 		data->extra[0] = 1;
+  }
 
 	for (unsigned int i = 0; i < data->extra[0]; i++) {
 		offset = setPage(bar0, bar4, bar4size, addr);
@@ -208,9 +213,14 @@ int pcie_link_driver::wb_read_data(struct wb_data* data) {
 	addr =  data->wb_addr;
 	data->data_read.clear();
 
-	// extra field 0 for number of data to be read
-	if (data->extra[0] == 0)
+  // check extra vector before using it
+  if (data->extra.size() == 0) {
+    data->extra.resize(2);
+  }
+  // extra field 0 for number of data to be read
+  else if (data->extra[0] == 0) {
 		data->extra[0] = 1;
+  }
 
 	for (unsigned int i = 0; i < data->extra[0]; i++) {
 

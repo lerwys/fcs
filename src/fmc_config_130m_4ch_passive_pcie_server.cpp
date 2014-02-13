@@ -23,6 +23,7 @@
 #include "data.h"
 #include "commlink/commLink.h"
 #include "wishbone/rs232_syscon.h"
+#include "wishbone/pcie_link.h"
 #include "interface/i2c.h"
 #include "interface/spi.h"
 #include "interface/gpio.h"
@@ -120,7 +121,11 @@ int main(int argc, const char **argv) {
 
   // CommLink configuration
   // Adding communication interfaces
-  _commLink->regWBMaster(new rs232_syscon_driver());
+  // PCI-E version, 0 is 
+  //for Linux driver, for example if you have more AFC cards you can put 
+  //there 1,2,3 (I will in near future work on automapping of uTCA crate for 
+  //AFC cards and occupied slots).
+  _commLink->regWBMaster(new pcie_link_driver(0));
 
   int_drv = _commLink->regIntDrv(SI571_I2C_DRV, FPGA_SI571_I2C, new i2c_int());
   ((i2c_int*)int_drv)->i2c_init(FPGA_SYS_FREQ, 100000); // 100kHz

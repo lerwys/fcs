@@ -22,7 +22,7 @@ libtcpserver_la_SOURCES = \
 
 libtcpserver_la_LIBADD = \
 	$(top_builddir)/src/fmc_config/libfmcconfig.la \
-	-lsllp
+	-lbsmp
 	@LTLIBOBJS@
 
 AM_CPPFLAGS = \

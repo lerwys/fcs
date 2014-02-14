@@ -28,7 +28,7 @@
 #include "fmc_config/fmc_config_130m_4ch_board.h"
 
 extern "C" {
-#include <sllp/server.h>
+#include <bsmp/server.h>
 }
 
 #if defined( __GNUC__)
@@ -42,12 +42,12 @@ using namespace std;
 #define BACKLOG 10     // how many pending connections queue will hold
 
 PACKED struct _recv_pkt_t {
-  uint8_t data[SLLP_MAX_MESSAGE];
+  uint8_t data[BSMP_MAX_MESSAGE];
 };
 typedef struct _recv_pkt_t recv_pkt_t;
 
 PACKED struct _send_pkt_t {
-  uint8_t data[SLLP_MAX_MESSAGE];
+  uint8_t data[BSMP_MAX_MESSAGE];
 };
 typedef struct _send_pkt_t send_pkt_t;
 
@@ -58,30 +58,30 @@ public:
 	~tcp_server();
 
   void *get_in_addr(struct sockaddr *sa);
-  int register_func (struct sllp_func *sllp_func);
+  int register_func (struct bsmp_func *bsmp_func);
   int start(void);
 
-  /* SLLP exported functions */
+  /* BSMP exported functions */
   //friend uint8_t fmc130m_blink_leds(uint8_t *input, uint8_t *output);
 
 private:
 
   //int sockfd;
   string port;
-  sllp_server_t *sllp_server;
+  bsmp_server_t *bsmp_server;
 
   fmc_config_130m_4ch_board *_fmc_config_130m_4ch_board;
 
   /* Private functions */
   int tcp_server_handle_client(int s, int *disconnected);
-  int sllp_init (void);
+  int bsmp_init (void);
   int sendall(int fd, uint8_t *buf, uint32_t *len);
   int recvall(int fd, uint8_t *buf, uint32_t *len);
   void print_packet (char* pre, uint8_t *data, uint32_t size);
   int bpm_send(int fd, uint8_t *data, uint32_t *count);
   int bpm_recv(int fd, uint8_t *data, uint32_t *count);
 
-  /* SLLP exported functions */
+  /* BSMP exported functions */
   //uint8_t fmc130m_blink_leds(uint8_t *input, uint8_t *output);
 };
 

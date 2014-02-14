@@ -40,27 +40,27 @@
 
 using namespace std;
 
-#define S "sllp_server: "
+#define S "bsmp_server: "
 
 fmc_config_130m_4ch_board *fmc_config_130m_4ch_board_p;
 tcp_server *tcp_server_p;
 
 /***************************************************************/ 
-/**********************   SLLP methods  **********************/
+/**********************   BSMP methods  **********************/
 /***************************************************************/
 
-//struct sllp_func_info
+//struct bsmp_func_info
 //{
 //    uint8_t id;                     // ID of the function, used in the protocol
 //    uint8_t input_size;             // How many bytes of input
 //    uint8_t output_size;            // How many bytes of output
 //};
 //
-//typedef uint8_t (*sllp_func_t) (uint8_t *input, uint8_t *output);
-//struct sllp_func
+//typedef uint8_t (*bsmp_func_t) (uint8_t *input, uint8_t *output);
+//struct bsmp_func
 //{
-//    struct sllp_func_info info;     // Information about the function
-//    sllp_func_t           func_p;   // Pointer to the function to be executed
+//    struct bsmp_func_info info;     // Information about the function
+//    bsmp_func_t           func_p;   // Pointer to the function to be executed
 //};
 
 /*********************************/
@@ -79,7 +79,7 @@ uint8_t fmc130m_blink_leds(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_blink_leds_func = {
+static struct bsmp_func fmc130m_blink_leds_func = {
   {FMC130M_BLINK_LEDS_ID,
    FMC130M_BLINK_LEDS_IN,
    FMC130M_BLINK_LEDS_OUT},
@@ -102,7 +102,7 @@ uint8_t fmc130m_config_defaults(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_config_defaults_func = {
+static struct bsmp_func fmc130m_config_defaults_func = {
   {FMC130M_CONFIG_DEFAULTS_ID,
    FMC130M_CONFIG_DEFAULTS_IN,
    FMC130M_CONFIG_DEFAULTS_OUT},
@@ -127,7 +127,7 @@ uint8_t fmc130m_set_kx(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_set_kx_func = {
+static struct bsmp_func fmc130m_set_kx_func = {
   {FMC130M_SET_KX_ID,
    FMC130M_SET_KX_IN,
    FMC130M_SET_KX_OUT},
@@ -149,7 +149,7 @@ uint8_t fmc130m_get_kx(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_get_kx_func = {
+static struct bsmp_func fmc130m_get_kx_func = {
   {FMC130M_GET_KX_ID,
    FMC130M_GET_KX_IN,
    FMC130M_GET_KX_OUT},
@@ -173,7 +173,7 @@ uint8_t fmc130m_set_ky(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_set_ky_func = {
+static struct bsmp_func fmc130m_set_ky_func = {
   {FMC130M_SET_KY_ID,
    FMC130M_SET_KY_IN,
    FMC130M_SET_KY_OUT},
@@ -195,7 +195,7 @@ uint8_t fmc130m_get_ky(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_get_ky_func = {
+static struct bsmp_func fmc130m_get_ky_func = {
   {FMC130M_GET_KY_ID,
    FMC130M_GET_KY_IN,
    FMC130M_GET_KY_OUT},
@@ -219,7 +219,7 @@ uint8_t fmc130m_set_ksum(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_set_ksum_func = {
+static struct bsmp_func fmc130m_set_ksum_func = {
   {FMC130M_SET_KSUM_ID,
    FMC130M_SET_KSUM_IN,
    FMC130M_SET_KSUM_OUT},
@@ -241,7 +241,7 @@ uint8_t fmc130m_get_ksum(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_get_ksum_func = {
+static struct bsmp_func fmc130m_get_ksum_func = {
   {FMC130M_GET_KSUM_ID,
    FMC130M_GET_KSUM_IN,
    FMC130M_GET_KSUM_OUT},
@@ -264,7 +264,7 @@ uint8_t fmc130m_set_sw_on(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_set_sw_on_func = {
+static struct bsmp_func fmc130m_set_sw_on_func = {
   {FMC130M_SET_SW_ON_ID,
    FMC130M_SET_SW_ON_IN,
    FMC130M_SET_SW_ON_OUT},
@@ -283,7 +283,7 @@ uint8_t fmc130m_set_sw_off(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_set_sw_off_func = {
+static struct bsmp_func fmc130m_set_sw_off_func = {
   {FMC130M_SET_SW_OFF_ID,
    FMC130M_SET_SW_OFF_IN,
    FMC130M_SET_SW_OFF_OUT},
@@ -305,7 +305,7 @@ uint8_t fmc130m_get_sw(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_get_sw_func = {
+static struct bsmp_func fmc130m_get_sw_func = {
   {FMC130M_GET_SW_ID,
    FMC130M_GET_SW_IN,
    FMC130M_GET_SW_OUT},
@@ -329,7 +329,7 @@ uint8_t fmc130m_set_sw_divclk(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_set_sw_divclk_func = {
+static struct bsmp_func fmc130m_set_sw_divclk_func = {
   {FMC130M_SET_SW_DIVCLK_ID,
    FMC130M_SET_SW_DIVCLK_IN,
    FMC130M_SET_SW_DIVCLK_OUT},
@@ -351,7 +351,7 @@ uint8_t fmc130m_get_sw_divclk(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_get_sw_divclk_func = {
+static struct bsmp_func fmc130m_get_sw_divclk_func = {
   {FMC130M_GET_SW_DIVCLK_ID,
    FMC130M_GET_SW_DIVCLK_IN,
    FMC130M_GET_SW_DIVCLK_OUT},
@@ -375,7 +375,7 @@ uint8_t fmc130m_set_sw_phaseclk(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_set_sw_phaseclk_func = {
+static struct bsmp_func fmc130m_set_sw_phaseclk_func = {
   {FMC130M_SET_SW_PHASECLK_ID,
    FMC130M_SET_SW_PHASECLK_IN,
    FMC130M_SET_SW_PHASECLK_OUT},
@@ -397,7 +397,7 @@ uint8_t fmc130m_get_sw_phaseclk(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_get_sw_phaseclk_func = {
+static struct bsmp_func fmc130m_get_sw_phaseclk_func = {
   {FMC130M_GET_SW_PHASECLK_ID,
    FMC130M_GET_SW_PHASECLK_IN,
    FMC130M_GET_SW_PHASECLK_OUT},
@@ -421,7 +421,7 @@ uint8_t fmc130m_set_adc_clk(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_set_adc_clk_func = {
+static struct bsmp_func fmc130m_set_adc_clk_func = {
   {FMC130M_SET_ADC_CLK_ID,
    FMC130M_SET_ADC_CLK_IN,
    FMC130M_SET_ADC_CLK_OUT},
@@ -443,7 +443,7 @@ uint8_t fmc130m_get_adc_clk(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_get_adc_clk_func = {
+static struct bsmp_func fmc130m_get_adc_clk_func = {
   {FMC130M_GET_ADC_CLK_ID,
    FMC130M_GET_ADC_CLK_IN,
    FMC130M_GET_ADC_CLK_OUT},
@@ -467,7 +467,7 @@ uint8_t fmc130m_set_dds_freq(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_set_dds_freq_func = {
+static struct bsmp_func fmc130m_set_dds_freq_func = {
   {FMC130M_SET_DDS_FREQ_ID,
    FMC130M_SET_DDS_FREQ_IN,
    FMC130M_SET_DDS_FREQ_OUT},
@@ -489,7 +489,7 @@ uint8_t fmc130m_get_dds_freq(uint8_t *input, uint8_t *output)
     return 0; // Success!!
 }
 
-static struct sllp_func fmc130m_get_dds_freq_func = {
+static struct bsmp_func fmc130m_get_dds_freq_func = {
   {FMC130M_GET_DDS_FREQ_ID,
    FMC130M_GET_DDS_FREQ_IN,
    FMC130M_GET_DDS_FREQ_OUT},
@@ -581,7 +581,7 @@ int main(int argc, const char **argv) {
                                                   delay_data_l,
                                                   delay_clk_l);
 
-  // Initialize TCP server and SLLP library
+  // Initialize TCP server and BSMP library
 
   tcp_server_p = new tcp_server(string("8080"), fmc_config_130m_4ch_board_p);
   

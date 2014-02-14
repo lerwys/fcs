@@ -4,19 +4,19 @@
 // Description : based on http://beej.us/guide/bgnet/output/html/singlepage/bgnet.html#simpleserver
 //============================================================================
 #include "tcp_server.h"
-#define S "sllp_server: "
+#define S "bsmp_server: "
 
 #define TRY(name, func)\
     do {\
-        enum sllp_err err = func;\
+        enum bsmp_err err = func;\
         if(err) {\
-            fprintf(stderr, S name": %s\n", sllp_error_str(err));\
+            fprintf(stderr, S name": %s\n", bsmp_error_str(err));\
             return -1;\
         }\
     }while(0)
 
-#define PACKET_SIZE             SLLP_MAX_MESSAGE
-#define PACKET_HEADER           SLLP_HEADER_SIZE
+#define PACKET_SIZE             BSMP_MAX_MESSAGE
+#define PACKET_HEADER           BSMP_HEADER_SIZE
 
 /* Our socket */
 int sockfd;
@@ -25,15 +25,15 @@ int sockfd;
 recv_pkt_t recv_pkt;
 send_pkt_t send_pkt;
 
-struct sllp_raw_packet recv_packet = {.data = recv_pkt.data };
-struct sllp_raw_packet send_packet = {.data = send_pkt.data };
+struct bsmp_raw_packet recv_packet = {.data = recv_pkt.data };
+struct bsmp_raw_packet send_packet = {.data = send_pkt.data };
 
 tcp_server::tcp_server(string port, fmc_config_130m_4ch_board *_fmc_config_130m_4ch_board)
 {
   this->port = port;
   this->_fmc_config_130m_4ch_board = _fmc_config_130m_4ch_board;
 
-  sllp_init();
+  bsmp_init();
 }
 
 tcp_server::~tcp_server() {
@@ -112,7 +112,7 @@ void tcp_server::print_packet (char* pre, uint8_t *data, uint32_t size)
 
 int tcp_server::bpm_send(int fd, uint8_t *data, uint32_t *count)
 {
-    uint8_t  packet[SLLP_MAX_MESSAGE];
+    uint8_t  packet[BSMP_MAX_MESSAGE];
     uint32_t packet_size = *count;
     uint32_t len = *count;
 
@@ -200,9 +200,9 @@ int tcp_server::tcp_server_handle_client(int s, int *disconnected)
    //fprintf(stderr, "bytes received check = %d\n", len_recv);
    //print_packet("RECV_CHECK", recv_packet.data, len_recv);
 
-  /* Pass it to sllp */
+  /* Pass it to bsmp */
   recv_packet.len = len_recv;
-  sllp_process_packet(this->sllp_server, &recv_packet, &send_packet);
+  bsmp_process_packet(this->bsmp_server, &recv_packet, &send_packet);
 
   /* Calculate how many bytes to send */
    uint32_t len = send_packet.len;
@@ -224,25 +224,25 @@ int tcp_server::tcp_server_handle_client(int s, int *disconnected)
   return 0;
 }
 
-int tcp_server::sllp_init (void)
+int tcp_server::bsmp_init (void)
 {
     /*
      * This call malloc's a new server instance. If it returns NULL, the
      * allocation failed. Probably there's not enough memory.
      */
-    sllp_server = sllp_server_new();
+    bsmp_server = bsmp_server_new();
 
-    if(!sllp_server)
+    if(!bsmp_server)
     {
-        fprintf(stderr, S"Couldn't allocate a SLLP Server instance\n");
+        fprintf(stderr, S"Couldn't allocate a BSMP Server instance\n");
         return -1;
     }
 
     /*
      * Register all Functions
      */
-    //TRY("reg_func", sllp_register_function(sllp_server, &ad_convert_func));  // ID 0
-    //TRY("reg_func", sllp_register_function(sllp_server, &fmc130m_blink_leds_func));  // ID 1
+    //TRY("reg_func", bsmp_register_function(bsmp_server, &ad_convert_func));  // ID 0
+    //TRY("reg_func", bsmp_register_function(bsmp_server, &fmc130m_blink_leds_func));  // ID 1
 
     /*
      * Great! Now our server is up and ready to receive some commands.
@@ -256,9 +256,9 @@ int tcp_server::sllp_init (void)
 /**********************   Class methods  **********************/
 /***************************************************************/
 
-int tcp_server::register_func (struct sllp_func *sllp_func)
+int tcp_server::register_func (struct bsmp_func *bsmp_func)
 {
-  return sllp_register_function(sllp_server, sllp_func); 
+  return bsmp_register_function(bsmp_server, bsmp_func); 
 }
 
 int tcp_server::start(void)

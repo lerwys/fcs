@@ -4,6 +4,7 @@
 // Description : Software driver for PCIe-Wishbone Master IP core
 //============================================================================
 #include "fmc_config_130m_4ch_board.h"
+#include <math.h>
 
 fmc_config_130m_4ch_board::fmc_config_130m_4ch_board(WBMaster_unit* wb_master_unit, const delay_lines *delay_data_l,
                                         const delay_lines *delay_clk_l) {
@@ -44,6 +45,8 @@ int fmc_config_130m_4ch_board::init(WBMaster_unit* wb_master_unit, const delay_l
   // Get delay lines
   this->delay_data_l = delay_data_l;
   this->delay_clk_l = delay_clk_l;
+
+  this->adc_clk = DEFAULT_ADC_CLK;
 
   return 0;
 }
@@ -461,6 +464,84 @@ int fmc_config_130m_4ch_board::set_sw_divclk(uint32_t divclk, uint32_t *divclk_o
     _commLink->fmc_config_read(&data);
     data.data_send[0] |= (data.data_read[0] & ~BPM_SWAP_CTRL_SWAP_DIV_F_MASK) |
                             BPM_SWAP_CTRL_SWAP_DIV_F_W(divclk); // Clock divider for swap clk
+    _commLink->fmc_config_send(&data);
+  }
+  
+  return 0;
+}
+
+int fmc_config_130m_4ch_board::set_sw_phase(uint32_t phase, uint32_t *phase_out) {
+  wb_data data;
+
+  data.data_send.resize(10);
+  data.extra.resize(2);
+  
+  // Switching mode
+  data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_DLY;
+
+  if (phase_out) {
+    _commLink->fmc_config_read(&data);
+    *phase_out = BPM_SWAP_DLY_1_R(data.data_read[0]) |
+                  BPM_SWAP_DLY_2_R(data.data_read[0]);
+  }
+  else {
+    data.data_send[0] = BPM_SWAP_DLY_1_W(phase) |
+                          BPM_SWAP_DLY_2_W(phase); // Phase delay for swap clk
+    _commLink->fmc_config_send(&data);
+  }
+  
+  return 0;
+}
+
+int fmc_config_130m_4ch_board::set_adc_clk(uint32_t adc_clk, uint32_t *adc_clk_out)
+{
+    if (adc_clk_out) {
+        *adc_clk_out = this->adc_clk;
+    }
+    else {
+      this->adc_clk = adc_clk;
+    }
+
+    return 0;
+}
+
+int fmc_config_130m_4ch_board::set_dds_freq(uint32_t dds_freq, uint32_t *dds_freq_out) {
+  wb_data data;
+
+  data.data_send.resize(10);
+  data.extra.resize(2);
+  
+  // Phase increment mode
+  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH0;
+
+  if (dds_freq_out) {
+    _commLink->fmc_config_read(&data);
+    uint32_t pinc = POS_CALC_DDS_PINC_CH0_VAL_R(data.data_read[0]);
+    *dds_freq_out = floor((pinc / (double) (1 << 30)) * this->adc_clk);
+  }
+  else {
+    uint32_t pinc =  floor((dds_freq / (double) this->adc_clk) * (1 << 30));
+
+    printf ("pinc = %d\n", pinc);
+    
+    data.data_send[0] = POS_CALC_DDS_PINC_CH0_VAL_W(pinc);  // phase increment ch0
+    _commLink->fmc_config_send(&data);
+    
+    data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH1;
+    data.data_send[0] = POS_CALC_DDS_PINC_CH1_VAL_W(pinc);  // phase increment ch1
+    _commLink->fmc_config_send(&data);
+    
+    data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH2;
+    data.data_send[0] = POS_CALC_DDS_PINC_CH2_VAL_W(pinc);  // phase increment ch2
+    _commLink->fmc_config_send(&data);
+    
+    data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH3;
+    data.data_send[0] = POS_CALC_DDS_PINC_CH3_VAL_W(pinc);  // phase increment ch3
+    _commLink->fmc_config_send(&data);
+    
+    data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_CFG;
+    // toggle valid signal for all four DDS's
+    data.data_send[0] = (0x1) | (0x1 << 8) | (0x1 << 16) | (0x1 << 24);
     _commLink->fmc_config_send(&data);
   }
   

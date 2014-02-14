@@ -40,6 +40,7 @@
 
 // System frequency
 //#define FPGA_SYS_FREQ 200*1000000
+#define DEFAULT_ADC_CLK                 113515008     // in Hertz
 #define FPGA_SYS_FREQ                   (100*1000000) // Wishbone freq is 100MHz!!!
 
 // System interface drivers

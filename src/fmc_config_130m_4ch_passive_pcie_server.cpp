@@ -313,7 +313,7 @@ static struct sllp_func fmc130m_get_sw_func = {
 };
 
 /*************************************************/
-/********** Set/Get Swap CLK DIV Functions ********/
+/****** Set/Get Switching CLK DIV Functions ******/
 /*************************************************/
 
 #define FMC130M_SET_SW_DIVCLK_ID 11
@@ -356,6 +356,144 @@ static struct sllp_func fmc130m_get_sw_divclk_func = {
    FMC130M_GET_SW_DIVCLK_IN,
    FMC130M_GET_SW_DIVCLK_OUT},
   fmc130m_get_sw_divclk
+};
+
+/*************************************************/
+/****** Set/Get Switching CLK Phase Functions *****/
+/*************************************************/
+
+#define FMC130M_SET_SW_PHASECLK_ID 13
+#define FMC130M_SET_SW_PHASECLK_IN 4
+#define FMC130M_SET_SW_PHASECLK_OUT 4
+
+uint8_t fmc130m_set_sw_phaseclk(uint8_t *input, uint8_t *output)
+{
+    uint32_t phaseclk = *((uint32_t *) input);
+    printf(S"Setting PHASECLK value...\n");
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_sw_phase(phaseclk, NULL);
+
+    return 0; // Success!!
+}
+
+static struct sllp_func fmc130m_set_sw_phaseclk_func = {
+  {FMC130M_SET_SW_PHASECLK_ID,
+   FMC130M_SET_SW_PHASECLK_IN,
+   FMC130M_SET_SW_PHASECLK_OUT},
+  fmc130m_set_sw_phaseclk
+};
+
+#define FMC130M_GET_SW_PHASECLK_ID 14
+#define FMC130M_GET_SW_PHASECLK_IN 0
+#define FMC130M_GET_SW_PHASECLK_OUT 4
+
+uint8_t fmc130m_get_sw_phaseclk(uint8_t *input, uint8_t *output)
+{
+    uint32_t phaseclk;
+    
+    printf(S"Getting PHASECLK value!\n");
+    fmc_config_130m_4ch_board_p->set_sw_phase(NULL, &phaseclk);
+    *((uint32_t *)output) = phaseclk;
+
+    return 0; // Success!!
+}
+
+static struct sllp_func fmc130m_get_sw_phaseclk_func = {
+  {FMC130M_GET_SW_PHASECLK_ID,
+   FMC130M_GET_SW_PHASECLK_IN,
+   FMC130M_GET_SW_PHASECLK_OUT},
+  fmc130m_get_sw_phaseclk
+};
+
+/*************************************************/
+/************ Set/Get ADC CLK Functions **********/
+/*************************************************/
+
+#define FMC130M_SET_ADC_CLK_ID 15
+#define FMC130M_SET_ADC_CLK_IN 4
+#define FMC130M_SET_ADC_CLK_OUT 4
+
+uint8_t fmc130m_set_adc_clk(uint8_t *input, uint8_t *output)
+{
+    uint32_t adcclk = *((uint32_t *) input);
+    printf(S"Setting ADC_CLK value...\n");
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_adc_clk(adcclk, NULL);
+
+    return 0; // Success!!
+}
+
+static struct sllp_func fmc130m_set_adc_clk_func = {
+  {FMC130M_SET_ADC_CLK_ID,
+   FMC130M_SET_ADC_CLK_IN,
+   FMC130M_SET_ADC_CLK_OUT},
+  fmc130m_set_adc_clk
+};
+
+#define FMC130M_GET_ADC_CLK_ID 16
+#define FMC130M_GET_ADC_CLK_IN 0
+#define FMC130M_GET_ADC_CLK_OUT 4
+
+uint8_t fmc130m_get_adc_clk(uint8_t *input, uint8_t *output)
+{
+    uint32_t adcclk;
+    
+    printf(S"Getting ADC_CLK value!\n");
+    fmc_config_130m_4ch_board_p->set_adc_clk(NULL, &adcclk);
+    *((uint32_t *)output) = adcclk;
+
+    return 0; // Success!!
+}
+
+static struct sllp_func fmc130m_get_adc_clk_func = {
+  {FMC130M_GET_ADC_CLK_ID,
+   FMC130M_GET_ADC_CLK_IN,
+   FMC130M_GET_ADC_CLK_OUT},
+  fmc130m_get_adc_clk
+};
+
+/*************************************************/
+/****** Set/Get DDS frequency CLK Functions ******/
+/*************************************************/
+
+#define FMC130M_SET_DDS_FREQ_ID 17
+#define FMC130M_SET_DDS_FREQ_IN 4
+#define FMC130M_SET_DDS_FREQ_OUT 4
+
+uint8_t fmc130m_set_dds_freq(uint8_t *input, uint8_t *output)
+{
+    uint32_t ddsfreq = *((uint32_t *) input);
+    printf(S"Setting DDS_FREQ value...\n");
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_dds_freq(ddsfreq, NULL);
+
+    return 0; // Success!!
+}
+
+static struct sllp_func fmc130m_set_dds_freq_func = {
+  {FMC130M_SET_DDS_FREQ_ID,
+   FMC130M_SET_DDS_FREQ_IN,
+   FMC130M_SET_DDS_FREQ_OUT},
+  fmc130m_set_dds_freq
+};
+
+#define FMC130M_GET_DDS_FREQ_ID 18
+#define FMC130M_GET_DDS_FREQ_IN 0
+#define FMC130M_GET_DDS_FREQ_OUT 4
+
+uint8_t fmc130m_get_dds_freq(uint8_t *input, uint8_t *output)
+{
+    uint32_t ddsfreq;
+    
+    printf(S"Getting DDS_FREQ value!\n");
+    fmc_config_130m_4ch_board_p->set_dds_freq(NULL, &ddsfreq);
+    *((uint32_t *)output) = ddsfreq;
+
+    return 0; // Success!!
+}
+
+static struct sllp_func fmc130m_get_dds_freq_func = {
+  {FMC130M_GET_DDS_FREQ_ID,
+   FMC130M_GET_DDS_FREQ_IN,
+   FMC130M_GET_DDS_FREQ_OUT},
+  fmc130m_get_dds_freq
 };
 
 int main(int argc, const char **argv) {
@@ -456,12 +594,20 @@ int main(int argc, const char **argv) {
   tcp_server_p->register_func(&fmc130m_get_ky_func);
   tcp_server_p->register_func(&fmc130m_set_ksum_func);
   tcp_server_p->register_func(&fmc130m_get_ksum_func);
+  
   tcp_server_p->register_func(&fmc130m_set_sw_on_func);
   tcp_server_p->register_func(&fmc130m_set_sw_off_func);
   tcp_server_p->register_func(&fmc130m_get_sw_func);
   tcp_server_p->register_func(&fmc130m_set_sw_divclk_func);
   tcp_server_p->register_func(&fmc130m_get_sw_divclk_func);
+  tcp_server_p->register_func(&fmc130m_set_sw_phaseclk_func);
+  tcp_server_p->register_func(&fmc130m_get_sw_phaseclk_func);
   
+  tcp_server_p->register_func(&fmc130m_set_adc_clk_func);
+  tcp_server_p->register_func(&fmc130m_get_adc_clk_func);
+  tcp_server_p->register_func(&fmc130m_set_dds_freq_func);
+  tcp_server_p->register_func(&fmc130m_get_dds_freq_func);
+
   /* Endless tcp loop */
   tcp_server_p->start();
 

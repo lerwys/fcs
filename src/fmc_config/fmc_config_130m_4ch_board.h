@@ -54,6 +54,9 @@ public:
   int set_sw_on(uint32_t *sw_on_out);
   int set_sw_off(uint32_t *sw_off_out);
   int set_sw_divclk(uint32_t divclk, uint32_t *divclk_out);
+  int set_sw_phase(uint32_t phase, uint32_t *phase_out);
+  int set_adc_clk(uint32_t adc_clk, uint32_t *adc_clk_out);
+  int set_dds_freq(uint32_t dds_freq, uint32_t *dds_freq_out);
 
 private:
 
@@ -61,6 +64,7 @@ private:
 
   WBInt_drv* int_drv;
   //wb_data data;
+  uint32_t adc_clk; // in hertz
 
   const struct delay_lines *delay_data_l;
   const struct delay_lines *delay_clk_l;

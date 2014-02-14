@@ -44,9 +44,13 @@ public:
 
   int init(WBMaster_unit* wb_master_unit, const delay_lines *delay_data_l,
                                         const delay_lines *delay_clk_l);
-  int config_defaults();
-  
+
+  /* Exported functions */
   int blink_leds();
+  int config_defaults();
+  int set_kx(uint32_t kx);
+  int set_ky(uint32_t ky);
+  int set_ksum(uint32_t ksum);
 
 private:
 

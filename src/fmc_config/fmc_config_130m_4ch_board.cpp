@@ -325,3 +325,44 @@ int fmc_config_130m_4ch_board::blink_leds() {
 
   return 0;
 }
+
+#define K_MASK ((1 << 25)-1)
+
+int fmc_config_130m_4ch_board::set_kx(uint32_t kx) {
+  wb_data data;
+
+  data.data_send.resize(10);
+  data.extra.resize(2);
+
+  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_KX;
+  data.data_send[0] = (kx & K_MASK);  // 10000000 UFIX25_0
+  _commLink->fmc_config_send(&data);
+  
+  return 0;
+}
+
+int fmc_config_130m_4ch_board::set_ky(uint32_t ky) {
+  wb_data data;
+
+  data.data_send.resize(10);
+  data.extra.resize(2);
+  
+  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_KY;
+  data.data_send[0] = (ky & K_MASK);  // 10000000 UFIX25_0
+  _commLink->fmc_config_send(&data);
+  
+  return 0;
+}
+
+int fmc_config_130m_4ch_board::set_ksum(uint32_t ksum) {
+  wb_data data;
+
+  data.data_send.resize(10);
+  data.extra.resize(2);
+  
+  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_KSUM;
+  data.data_send[0] = (ksum & K_MASK);  // 1.0 FIX25_24
+  _commLink->fmc_config_send(&data);
+  
+  return 0;
+}

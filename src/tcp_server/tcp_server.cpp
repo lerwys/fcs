@@ -142,9 +142,10 @@ int tcp_server::bpm_recv(int fd, uint8_t *data, uint32_t *count)
       perror("recv");
       return -1;
     }
-    
+
     // Client disconnected
     if (len == 0) {
+       *count = 0;
        return 0;
     }
     
@@ -152,7 +153,6 @@ int tcp_server::bpm_recv(int fd, uint8_t *data, uint32_t *count)
        return -1;
     }
 
-    //uint32_t remaining = (packet[2] << 8) + packet[3];
     uint32_t remaining = (packet[1] << 8) + packet[2];
     len = remaining;
 
@@ -191,8 +191,8 @@ int tcp_server::tcp_server_handle_client(int s, int *disconnected)
   }
   // Client disconnected
   if (bytes_recv == 0) {
-    return 0;
     *disconnected = 1;
+    return 0;
   }
 
    //uint32_t len_recv = PACKET_HEADER + (recv_packet.data[2] << 8) + recv_packet.data[3];
@@ -223,42 +223,6 @@ int tcp_server::tcp_server_handle_client(int s, int *disconnected)
   
   return 0;
 }
-
-/*******************************************************************************
- * SLLP functions
- * *****************************************************************************/
-
-//struct sllp_func_info
-//{
-//    uint8_t id;                     // ID of the function, used in the protocol
-//    uint8_t input_size;             // How many bytes of input
-//    uint8_t output_size;            // How many bytes of output
-//};
-//
-//typedef uint8_t (*sllp_func_t) (uint8_t *input, uint8_t *output);
-//struct sllp_func
-//{
-//    struct sllp_func_info info;     // Information about the function
-//    sllp_func_t           func_p;   // Pointer to the function to be executed
-//};
-
-//static struct sllp_func ad_convert_func = {
-//    .func_p = ad_convert,
-//    .info.input_size = 0,       // Nothing is read from the input parameter
-//    .info.output_size = 0       // Nothing is written to the output parameter
-//};
-
-static uint8_t ad_convert(uint8_t *input, uint8_t *output)
-{
-    printf(S"Starting conversion of the A/D converters...\n");
-    
-    return 0; // Success!!
-}
-
-static struct sllp_func ad_convert_func = {
-  {0, 0, 0},
-  ad_convert
-};
 
 int tcp_server::sllp_init (void)
 {
@@ -413,7 +377,6 @@ int tcp_server::start(void)
   
   return 0;
 }
-
 
 /*******************************************************************************
  * tcp_server functions

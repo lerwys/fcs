@@ -63,6 +63,10 @@ tcp_server *tcp_server_p;
 //    sllp_func_t           func_p;   // Pointer to the function to be executed
 //};
 
+/*********************************/
+/******** Blink Function *********/
+/*********************************/
+
 #define FMC130M_BLINK_LEDS_ID 0
 #define FMC130M_BLINK_LEDS_IN 0
 #define FMC130M_BLINK_LEDS_OUT 4
@@ -70,9 +74,8 @@ tcp_server *tcp_server_p;
 uint8_t fmc130m_blink_leds(uint8_t *input, uint8_t *output)
 {
     printf(S"blinking leds...\n");
-    fmc_config_130m_4ch_board_p->blink_leds();
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->blink_leds();
 
-    *((uint32_t *)output) = 0;
     return 0; // Success!!
 }
 
@@ -83,6 +86,10 @@ static struct sllp_func fmc130m_blink_leds_func = {
   fmc130m_blink_leds
 };
 
+/*******************************************/
+/******** Config Defaults Function *********/
+/*******************************************/
+
 #define FMC130M_CONFIG_DEFAULTS_ID 1
 #define FMC130M_CONFIG_DEFAULTS_IN 0
 #define FMC130M_CONFIG_DEFAULTS_OUT 4
@@ -90,9 +97,8 @@ static struct sllp_func fmc130m_blink_leds_func = {
 uint8_t fmc130m_config_defaults(uint8_t *input, uint8_t *output)
 {
     printf(S"Configuring Defaults...\n");
-    fmc_config_130m_4ch_board_p->config_defaults();
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->config_defaults();
 
-     *((uint32_t *)output) = 0;
     return 0; // Success!!
 }
 
@@ -103,6 +109,10 @@ static struct sllp_func fmc130m_config_defaults_func = {
   fmc130m_config_defaults
 };
 
+/********************************************/
+/********** Set/Get KX  Function **********/
+/*******************************************/
+
 #define FMC130M_SET_KX_ID 2
 #define FMC130M_SET_KX_IN 4
 #define FMC130M_SET_KX_OUT 4
@@ -110,10 +120,10 @@ static struct sllp_func fmc130m_config_defaults_func = {
 uint8_t fmc130m_set_kx(uint8_t *input, uint8_t *output)
 {
     uint32_t kx = *((uint32_t *) input);
+    
     printf(S"Setting Kx value...\n");
-    fmc_config_130m_4ch_board_p->set_kx(kx);
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_kx(kx, NULL);
 
-     *((uint32_t *)output) = 0;
     return 0; // Success!!
 }
 
@@ -124,7 +134,33 @@ static struct sllp_func fmc130m_set_kx_func = {
   fmc130m_set_kx
 };
 
-#define FMC130M_SET_KY_ID 3
+#define FMC130M_GET_KX_ID 3
+#define FMC130M_GET_KX_IN 0
+#define FMC130M_GET_KX_OUT 4
+
+uint8_t fmc130m_get_kx(uint8_t *input, uint8_t *output)
+{
+    uint32_t kx_out;
+    
+    printf(S"Getting Kx value...\n");
+     fmc_config_130m_4ch_board_p->set_kx(NULL, &kx_out);
+    *((uint32_t *)output) = kx_out;
+
+    return 0; // Success!!
+}
+
+static struct sllp_func fmc130m_get_kx_func = {
+  {FMC130M_GET_KX_ID,
+   FMC130M_GET_KX_IN,
+   FMC130M_GET_KX_OUT},
+  fmc130m_get_kx
+};
+
+/********************************************/
+/********** Set/Get KY  Function **********/
+/*******************************************/
+
+#define FMC130M_SET_KY_ID 4
 #define FMC130M_SET_KY_IN 4
 #define FMC130M_SET_KY_OUT 4
 
@@ -132,9 +168,8 @@ uint8_t fmc130m_set_ky(uint8_t *input, uint8_t *output)
 {
     uint32_t ky = *((uint32_t *) input);
     printf(S"Setting Ky value...\n");
-    fmc_config_130m_4ch_board_p->set_ky(ky);
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_ky(ky, NULL);
 
-     *((uint32_t *)output) = 0;
     return 0; // Success!!
 }
 
@@ -142,9 +177,36 @@ static struct sllp_func fmc130m_set_ky_func = {
   {FMC130M_SET_KY_ID,
    FMC130M_SET_KY_IN,
    FMC130M_SET_KY_OUT},
-  fmc130m_set_kx
+  fmc130m_set_ky
 };
-#define FMC130M_SET_KSUM_ID 4
+
+#define FMC130M_GET_KY_ID 5
+#define FMC130M_GET_KY_IN 0
+#define FMC130M_GET_KY_OUT 4
+
+uint8_t fmc130m_get_ky(uint8_t *input, uint8_t *output)
+{
+    uint32_t ky_out;
+    
+    printf(S"Getting Ky value...\n");
+     fmc_config_130m_4ch_board_p->set_ky(NULL, &ky_out);
+    *((uint32_t *)output) = ky_out;
+
+    return 0; // Success!!
+}
+
+static struct sllp_func fmc130m_get_ky_func = {
+  {FMC130M_GET_KY_ID,
+   FMC130M_GET_KY_IN,
+   FMC130M_GET_KY_OUT},
+  fmc130m_get_ky
+};
+
+/********************************************/
+/********** Set/Get KSUM  Function **********/
+/*******************************************/
+
+#define FMC130M_SET_KSUM_ID 6
 #define FMC130M_SET_KSUM_IN 4
 #define FMC130M_SET_KSUM_OUT 4
 
@@ -152,9 +214,8 @@ uint8_t fmc130m_set_ksum(uint8_t *input, uint8_t *output)
 {
     uint32_t ksum = *((uint32_t *) input);
     printf(S"Setting Ksum value...\n");
-    fmc_config_130m_4ch_board_p->set_ksum(ksum);
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_ksum(ksum, NULL);
 
-     *((uint32_t *)output) = 0;
     return 0; // Success!!
 }
 
@@ -163,6 +224,138 @@ static struct sllp_func fmc130m_set_ksum_func = {
    FMC130M_SET_KSUM_IN,
    FMC130M_SET_KSUM_OUT},
   fmc130m_set_ksum
+};
+
+#define FMC130M_GET_KSUM_ID 7
+#define FMC130M_GET_KSUM_IN 0
+#define FMC130M_GET_KSUM_OUT 4
+
+uint8_t fmc130m_get_ksum(uint8_t *input, uint8_t *output)
+{
+    uint32_t ksum_out;
+    
+    printf(S"Getting Ksum value...\n");
+     fmc_config_130m_4ch_board_p->set_ksum(NULL, &ksum_out);
+    *((uint32_t *)output) = ksum_out;
+
+    return 0; // Success!!
+}
+
+static struct sllp_func fmc130m_get_ksum_func = {
+  {FMC130M_GET_KSUM_ID,
+   FMC130M_GET_KSUM_IN,
+   FMC130M_GET_KSUM_OUT},
+  fmc130m_get_ksum
+};
+
+/*************************************************/
+/********** Set/Get Switching Functions **********/
+/*************************************************/
+
+#define FMC130M_SET_SW_ON_ID 8
+#define FMC130M_SET_SW_ON_IN 0
+#define FMC130M_SET_SW_ON_OUT 4
+
+uint8_t fmc130m_set_sw_on(uint8_t *input, uint8_t *output)
+{
+    printf(S"Setting Switching ON!\n");
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_sw_on(NULL);
+
+    return 0; // Success!!
+}
+
+static struct sllp_func fmc130m_set_sw_on_func = {
+  {FMC130M_SET_SW_ON_ID,
+   FMC130M_SET_SW_ON_IN,
+   FMC130M_SET_SW_ON_OUT},
+  fmc130m_set_sw_on
+};
+
+#define FMC130M_SET_SW_OFF_ID 9
+#define FMC130M_SET_SW_OFF_IN 0
+#define FMC130M_SET_SW_OFF_OUT 4
+
+uint8_t fmc130m_set_sw_off(uint8_t *input, uint8_t *output)
+{
+    printf(S"Setting Switching OFF!\n");
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_sw_off(NULL);
+
+    return 0; // Success!!
+}
+
+static struct sllp_func fmc130m_set_sw_off_func = {
+  {FMC130M_SET_SW_OFF_ID,
+   FMC130M_SET_SW_OFF_IN,
+   FMC130M_SET_SW_OFF_OUT},
+  fmc130m_set_sw_off
+};
+
+#define FMC130M_GET_SW_ID 10
+#define FMC130M_GET_SW_IN 0
+#define FMC130M_GET_SW_OUT 4
+
+uint8_t fmc130m_get_sw(uint8_t *input, uint8_t *output)
+{
+    uint32_t sw_state;
+    
+    printf(S"Getting Switching State!\n");
+    fmc_config_130m_4ch_board_p->set_sw_on(&sw_state);
+    *((uint32_t *)output) = sw_state;
+
+    return 0; // Success!!
+}
+
+static struct sllp_func fmc130m_get_sw_func = {
+  {FMC130M_GET_SW_ID,
+   FMC130M_GET_SW_IN,
+   FMC130M_GET_SW_OUT},
+  fmc130m_get_sw
+};
+
+/*************************************************/
+/********** Set/Get Swap CLK DIV Functions ********/
+/*************************************************/
+
+#define FMC130M_SET_SW_DIVCLK_ID 11
+#define FMC130M_SET_SW_DIVCLK_IN 4
+#define FMC130M_SET_SW_DIVCLK_OUT 4
+
+uint8_t fmc130m_set_sw_divclk(uint8_t *input, uint8_t *output)
+{
+    uint32_t divclk = *((uint32_t *) input);
+    printf(S"Setting DIVCLK value...\n");
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_sw_divclk(divclk, NULL);
+
+    return 0; // Success!!
+}
+
+static struct sllp_func fmc130m_set_sw_divclk_func = {
+  {FMC130M_SET_SW_DIVCLK_ID,
+   FMC130M_SET_SW_DIVCLK_IN,
+   FMC130M_SET_SW_DIVCLK_OUT},
+  fmc130m_set_sw_divclk
+};
+
+#define FMC130M_GET_SW_DIVCLK_ID 12
+#define FMC130M_GET_SW_DIVCLK_IN 0
+#define FMC130M_GET_SW_DIVCLK_OUT 4
+
+uint8_t fmc130m_get_sw_divclk(uint8_t *input, uint8_t *output)
+{
+    uint32_t divclk;
+    
+    printf(S"Getting DIVCLK value!\n");
+    fmc_config_130m_4ch_board_p->set_sw_divclk(NULL, &divclk);
+    *((uint32_t *)output) = divclk;
+
+    return 0; // Success!!
+}
+
+static struct sllp_func fmc130m_get_sw_divclk_func = {
+  {FMC130M_GET_SW_DIVCLK_ID,
+   FMC130M_GET_SW_DIVCLK_IN,
+   FMC130M_GET_SW_DIVCLK_OUT},
+  fmc130m_get_sw_divclk
 };
 
 int main(int argc, const char **argv) {
@@ -258,8 +451,16 @@ int main(int argc, const char **argv) {
   tcp_server_p->register_func(&fmc130m_blink_leds_func);
   tcp_server_p->register_func(&fmc130m_config_defaults_func);
   tcp_server_p->register_func(&fmc130m_set_kx_func);
+  tcp_server_p->register_func(&fmc130m_get_kx_func);
   tcp_server_p->register_func(&fmc130m_set_ky_func);
+  tcp_server_p->register_func(&fmc130m_get_ky_func);
   tcp_server_p->register_func(&fmc130m_set_ksum_func);
+  tcp_server_p->register_func(&fmc130m_get_ksum_func);
+  tcp_server_p->register_func(&fmc130m_set_sw_on_func);
+  tcp_server_p->register_func(&fmc130m_set_sw_off_func);
+  tcp_server_p->register_func(&fmc130m_get_sw_func);
+  tcp_server_p->register_func(&fmc130m_set_sw_divclk_func);
+  tcp_server_p->register_func(&fmc130m_get_sw_divclk_func);
   
   /* Endless tcp loop */
   tcp_server_p->start();

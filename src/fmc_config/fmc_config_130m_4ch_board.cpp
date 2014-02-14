@@ -234,9 +234,14 @@ int fmc_config_130m_4ch_board::config_defaults() {
   data.data_send[0] = 32768 | 32768 << 16; // no gain for DD and DB
   _commLink->fmc_config_send(&data);
 
+  // Switching DIVCLK
+  data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
+  data.data_send[0] = 4288 << 8;
+  _commLink->fmc_config_send(&data);
+
   // Switching mode
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
-  data.data_send[0] = 0x1 << 1 | 0x1 << 3; // Direct mode for both sets of channels
+  data.data_send[0] |= data.data_send[0] | 0x1 << 1 | 0x1 << 3; // Direct mode for both sets of channels
   _commLink->fmc_config_send(&data);
 
   // ======================================================
@@ -326,43 +331,138 @@ int fmc_config_130m_4ch_board::blink_leds() {
   return 0;
 }
 
-#define K_MASK ((1 << 25)-1)
-
-int fmc_config_130m_4ch_board::set_kx(uint32_t kx) {
+int fmc_config_130m_4ch_board::set_kx(uint32_t kx, uint32_t *kx_out) {
   wb_data data;
 
   data.data_send.resize(10);
   data.extra.resize(2);
 
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_KX;
-  data.data_send[0] = (kx & K_MASK);  // 10000000 UFIX25_0
-  _commLink->fmc_config_send(&data);
+
+  if (kx_out) {
+    _commLink->fmc_config_read(&data);
+    *kx_out = POS_CALC_KX_VAL_R(data.data_read[0]);
+  }
+  else {
+    data.data_send[0] = POS_CALC_KX_VAL_W(kx);
+    _commLink->fmc_config_send(&data);
+  }
   
   return 0;
 }
 
-int fmc_config_130m_4ch_board::set_ky(uint32_t ky) {
+int fmc_config_130m_4ch_board::set_ky(uint32_t ky,  uint32_t *ky_out) {
   wb_data data;
 
   data.data_send.resize(10);
   data.extra.resize(2);
   
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_KY;
-  data.data_send[0] = (ky & K_MASK);  // 10000000 UFIX25_0
-  _commLink->fmc_config_send(&data);
+
+  if (ky_out) {
+    _commLink->fmc_config_read(&data);
+    *ky_out = POS_CALC_KY_VAL_R(data.data_read[0]);
+  }
+  else {  
+    data.data_send[0] = POS_CALC_KY_VAL_W(ky);
+    _commLink->fmc_config_send(&data);
+  }
   
   return 0;
 }
 
-int fmc_config_130m_4ch_board::set_ksum(uint32_t ksum) {
+int fmc_config_130m_4ch_board::set_ksum(uint32_t ksum, uint32_t *ksum_out) {
   wb_data data;
 
   data.data_send.resize(10);
   data.extra.resize(2);
   
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_KSUM;
-  data.data_send[0] = (ksum & K_MASK);  // 1.0 FIX25_24
-  _commLink->fmc_config_send(&data);
+
+  if (ksum_out) {
+    _commLink->fmc_config_read(&data);
+    *ksum_out = POS_CALC_KSUM_VAL_R(data.data_read[0]);
+  }
+  else {
+    data.data_send[0] = POS_CALC_KSUM_VAL_W(ksum);
+    _commLink->fmc_config_send(&data);
+  }
+  
+  return 0;
+}
+
+int fmc_config_130m_4ch_board::set_sw_on(uint32_t *swon_out) {
+  wb_data data;
+
+  data.data_send.resize(10);
+  data.data_read.resize(1);
+  data.extra.resize(2);
+  
+  // Switching mode
+  data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
+
+  if (swon_out) {
+    _commLink->fmc_config_read(&data);
+    *swon_out = BPM_SWAP_CTRL_MODE1_R(data.data_read[0]) |
+                BPM_SWAP_CTRL_MODE2_R(data.data_read[0]);
+  }
+  else {
+    _commLink->fmc_config_read(&data);
+    data.data_send[0] |= (data.data_read[0] & ~BPM_SWAP_CTRL_MODE1_MASK & ~BPM_SWAP_CTRL_MODE2_MASK) |
+                            BPM_SWAP_CTRL_MODE1_W(0x3)  |
+                            BPM_SWAP_CTRL_MODE2_W(0x3); // Switching mode for both sets of channels
+    _commLink->fmc_config_send(&data);
+  }
+  
+  return 0;
+}
+
+int fmc_config_130m_4ch_board::set_sw_off(uint32_t *swoff_out) {
+  wb_data data;
+
+  data.data_send.resize(10);
+  data.data_read.resize(1);
+  data.extra.resize(2);
+  
+  // Switching mode
+  data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
+
+  if (swoff_out) {
+    _commLink->fmc_config_read(&data);
+    *swoff_out = BPM_SWAP_CTRL_MODE1_R(data.data_read[0]) |
+                BPM_SWAP_CTRL_MODE2_R(data.data_read[0]);
+  }
+  else {
+    _commLink->fmc_config_read(&data);
+    data.data_send[0] |= (data.data_read[0] & ~BPM_SWAP_CTRL_MODE1_MASK & ~BPM_SWAP_CTRL_MODE2_MASK) |
+                          BPM_SWAP_CTRL_MODE1_W(0x1)  |
+                          BPM_SWAP_CTRL_MODE2_W(0x1); // Switching mode for both sets of channels
+    _commLink->fmc_config_send(&data);
+  }
+  
+  return 0;
+}
+
+int fmc_config_130m_4ch_board::set_sw_divclk(uint32_t divclk, uint32_t *divclk_out) {
+  wb_data data;
+
+  data.data_send.resize(10);
+  data.data_read.resize(1);
+  data.extra.resize(2);
+  
+  // Switching mode
+  data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
+
+  if (divclk_out) {
+    _commLink->fmc_config_read(&data);
+    *divclk_out = BPM_SWAP_CTRL_SWAP_DIV_F_R(data.data_read[0]);
+  }
+  else {
+    _commLink->fmc_config_read(&data);
+    data.data_send[0] |= (data.data_read[0] & ~BPM_SWAP_CTRL_SWAP_DIV_F_MASK) |
+                            BPM_SWAP_CTRL_SWAP_DIV_F_W(divclk); // Clock divider for swap clk
+    _commLink->fmc_config_send(&data);
+  }
   
   return 0;
 }

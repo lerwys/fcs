@@ -48,9 +48,12 @@ public:
   /* Exported functions */
   int blink_leds();
   int config_defaults();
-  int set_kx(uint32_t kx);
-  int set_ky(uint32_t ky);
-  int set_ksum(uint32_t ksum);
+  int set_kx(uint32_t kx, uint32_t *kx_out);
+  int set_ky(uint32_t ky, uint32_t *ky_out);
+  int set_ksum(uint32_t ksum, uint32_t *ksum_out);
+  int set_sw_on(uint32_t *sw_on_out);
+  int set_sw_off(uint32_t *sw_off_out);
+  int set_sw_divclk(uint32_t divclk, uint32_t *divclk_out);
 
 private:
 

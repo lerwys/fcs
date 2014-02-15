@@ -58,7 +58,9 @@ public:
   int set_adc_clk(uint32_t adc_clk, uint32_t *adc_clk_out);
   int set_dds_freq(uint32_t dds_freq, uint32_t *dds_freq_out);
 
-  int set_data_acquire(uint32_t num_samples, uint32_t offset, int acq_chan);
+  int set_data_acquire(/*uint32_t num_samples, uint32_t offset, int acq_chan*/);
+  int set_acq_params(const uint32_t *acq_nsamples, const uint32_t *acq_chan,
+                        const uint32_t *acq_offset);
 
 private:
 
@@ -67,6 +69,9 @@ private:
   WBInt_drv* int_drv;
   //wb_data data;
   uint32_t adc_clk; // in hertz
+  uint32_t acq_nsamples;    // of the next acquisition
+  uint32_t acq_chan;        // of the next acquisition
+  uint32_t acq_offset;      // of the next acquisition
 
   const struct delay_lines *delay_data_l;
   const struct delay_lines *delay_clk_l;

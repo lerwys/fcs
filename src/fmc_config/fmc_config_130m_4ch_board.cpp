@@ -301,8 +301,19 @@ int fmc_config_130m_4ch_board::config_defaults() {
   // toggle valid signal for all four DDS's
   data.data_send[0] = (0x1) | (0x1 << 8) | (0x1 << 16) | (0x1 << 24);
   _commLink->fmc_config_send(&data);
+  
+  // ======================================================
+  //                Acq configuration
+  // ======================================================
+  cout << "============================================" << endl <<
+          "            Acq configuration         " << endl <<
+          "============================================" << endl;
+          
+  this->acq_nsamples = 4096;
+  this->acq_chan = 0;        //ADC
+  this->acq_offset = 0x0;
 
-	return 0;
+  return 0;
 }
 
 fmc_config_130m_4ch_board::~fmc_config_130m_4ch_board() {
@@ -548,7 +559,8 @@ int fmc_config_130m_4ch_board::set_dds_freq(uint32_t dds_freq, uint32_t *dds_fre
 
 #define MAX_TRIES 10
 
-int fmc_config_130m_4ch_board::set_data_acquire(uint32_t num_samples, uint32_t offset, int acq_chan)
+// Acquire data with previously set parameters
+int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t offset, int acq_chan*/)
 {
   wb_data data;
   uint32_t acq_core_ctl_reg;
@@ -564,7 +576,7 @@ int fmc_config_130m_4ch_board::set_data_acquire(uint32_t num_samples, uint32_t o
 
   // Pre-trigger samples
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_PRE_SAMPLES;
-  data.data_send[0] = num_samples;
+  data.data_send[0] = this->acq_nsamples;
   _commLink->fmc_config_send(&data);
 
   // Pos-trigger samples
@@ -574,7 +586,7 @@ int fmc_config_130m_4ch_board::set_data_acquire(uint32_t num_samples, uint32_t o
 
   // DDR3 start address
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_DDR3_START_ADDR;
-  data.data_send[0] = offset;
+  data.data_send[0] = this->acq_offset;
   _commLink->fmc_config_send(&data);
 
   // Prepare core_ctl register
@@ -585,7 +597,7 @@ int fmc_config_130m_4ch_board::set_data_acquire(uint32_t num_samples, uint32_t o
 
   // Prepare acquisition channel control
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_ACQ_CHAN_CTL;
-  data.data_send[0] = ACQ_CORE_ACQ_CHAN_CTL_WHICH_W(acq_chan);
+  data.data_send[0] = ACQ_CORE_ACQ_CHAN_CTL_WHICH_W(this->acq_chan);
   _commLink->fmc_config_send(&data);
 
   // Starting acquisition...
@@ -606,4 +618,22 @@ int fmc_config_130m_4ch_board::set_data_acquire(uint32_t num_samples, uint32_t o
   }
   
   return 0;
+}
+
+int fmc_config_130m_4ch_board::set_acq_params(const uint32_t *acq_nsamples, const uint32_t *acq_chan,
+                                                const uint32_t *acq_offset)
+{
+    if (acq_nsamples) {
+        this->acq_nsamples = *acq_nsamples;
+    }
+    
+    if (acq_chan) {
+        this->acq_chan = *acq_chan;
+    }
+ 
+    if (acq_offset) {
+        this->acq_offset = *acq_offset;
+    }
+ 
+    return 0;
 }

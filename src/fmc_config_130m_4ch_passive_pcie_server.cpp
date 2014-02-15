@@ -500,11 +500,11 @@ static struct bsmp_func fmc130m_get_dds_freq_func = {
 /****** Set Data Acquisition Functions ******/
 /*************************************************/
 
-#define FMC130M_SET_DATA_ACQ_ID 18
-#define FMC130M_SET_DATA_ACQ_IN 8
-#define FMC130M_SET_DATA_ACQ_OUT 4
+#define FMC130M_SET_ACQ_PARAM_ID 18
+#define FMC130M_SET_ACQ_PARAM_IN 8
+#define FMC130M_SET_ACQ_PARAM_OUT 4
 
-uint8_t fmc130m_set_data_acq(uint8_t *input, uint8_t *output)
+uint8_t fmc130m_set_acq_params(uint8_t *input, uint8_t *output)
 {
     uint32_t nsamples = *((uint32_t *) input);
     uint32_t acq_chan = *((uint32_t *) input + sizeof(uint32_t));
@@ -519,17 +519,37 @@ uint8_t fmc130m_set_data_acq(uint8_t *input, uint8_t *output)
         return -2; // invalid number of samples
     }
 
-    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_data_acquire(nsamples,
-            ddr3_acq_chan[acq_chan].start_addr, acq_chan);
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_acq_params(&nsamples,
+            &acq_chan, &ddr3_acq_chan[acq_chan].start_addr);
 
     return 0; // Success!!
 }
 
-static struct bsmp_func fmc130m_set_data_acq_func = {
-  {FMC130M_SET_DATA_ACQ_ID,
-   FMC130M_SET_DATA_ACQ_IN,
-   FMC130M_SET_DATA_ACQ_OUT},
-  fmc130m_set_data_acq
+static struct bsmp_func fmc130m_set_acq_params_func = {
+  {FMC130M_SET_ACQ_PARAM_ID,
+   FMC130M_SET_ACQ_PARAM_IN,
+   FMC130M_SET_ACQ_PARAM_OUT},
+  fmc130m_set_acq_params
+};
+
+#define FMC130M_START_ACQ_ID 19
+#define FMC130M_START_ACQ_IN 0
+#define FMC130M_START_ACQ_OUT 4
+
+uint8_t fmc130m_start_acq(uint8_t *input, uint8_t *output)
+{
+    printf(S"Starting ACQ...\n");
+
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_data_acquire();
+
+    return 0; // Success!!
+}
+
+static struct bsmp_func fmc130m_start_acq_func = {
+  {FMC130M_START_ACQ_ID,
+   FMC130M_START_ACQ_IN,
+   FMC130M_START_ACQ_OUT},
+  fmc130m_start_acq
 };
 
 int main(int argc, const char **argv) {
@@ -644,7 +664,8 @@ int main(int argc, const char **argv) {
   tcp_server_p->register_func(&fmc130m_set_dds_freq_func);
   tcp_server_p->register_func(&fmc130m_get_dds_freq_func);
   
-  tcp_server_p->register_func(&fmc130m_set_data_acq_func);
+  tcp_server_p->register_func(&fmc130m_set_acq_params_func);
+  tcp_server_p->register_func(&fmc130m_start_acq_func);
 
   /* Endless tcp loop */
   tcp_server_p->start();

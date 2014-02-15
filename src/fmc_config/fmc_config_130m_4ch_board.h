@@ -59,8 +59,9 @@ public:
   int set_dds_freq(uint32_t dds_freq, uint32_t *dds_freq_out);
 
   int set_data_acquire(/*uint32_t num_samples, uint32_t offset, int acq_chan*/);
-  int set_acq_params(const uint32_t *acq_nsamples, const uint32_t *acq_chan,
-                        const uint32_t *acq_offset);
+  int set_acq_params(uint32_t acq_nsamples, uint32_t acq_chan,
+                      uint32_t acq_offset, uint32_t *acq_nsamples_out,
+                      uint32_t *acq_chan_out, uint32_t *acq_offset_out);
 
 private:
 

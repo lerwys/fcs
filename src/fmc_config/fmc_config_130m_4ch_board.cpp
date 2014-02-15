@@ -620,20 +620,31 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
   return 0;
 }
 
-int fmc_config_130m_4ch_board::set_acq_params(const uint32_t *acq_nsamples, const uint32_t *acq_chan,
-                                                const uint32_t *acq_offset)
+int fmc_config_130m_4ch_board::set_acq_params(uint32_t acq_nsamples, uint32_t acq_chan,
+                                                uint32_t acq_offset, uint32_t *acq_nsamples_out,
+                                                uint32_t *acq_chan_out, uint32_t *acq_offset_out)
 {
-    if (acq_nsamples) {
-        this->acq_nsamples = *acq_nsamples;
-    }
-    
-    if (acq_chan) {
-        this->acq_chan = *acq_chan;
-    }
- 
-    if (acq_offset) {
-        this->acq_offset = *acq_offset;
-    }
- 
-    return 0;
+  if (acq_nsamples_out) {
+    *acq_nsamples_out = this->acq_nsamples;
+  }
+  else {
+    this->acq_nsamples = acq_nsamples;
+  }
+  
+  if (acq_chan_out) {
+    *acq_chan_out = this->acq_chan;
+  }
+  else {
+    this->acq_chan = acq_chan;
+  }
+  
+  if (acq_offset_out) {
+    *acq_offset_out = this->acq_offset;
+  }
+  else {
+    this->acq_offset = acq_offset;
+  }
+  
+  
+  return 0;
 }

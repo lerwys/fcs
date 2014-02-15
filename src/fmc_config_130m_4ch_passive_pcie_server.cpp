@@ -497,10 +497,10 @@ static struct bsmp_func fmc130m_get_dds_freq_func = {
 };
 
 /*************************************************/
-/****** Set Data Acquisition Functions ******/
+/****** Set/Get Data Acquisition Functions ******/
 /*************************************************/
 
-#define FMC130M_SET_ACQ_PARAM_ID 18
+#define FMC130M_SET_ACQ_PARAM_ID 19
 #define FMC130M_SET_ACQ_PARAM_IN 8
 #define FMC130M_SET_ACQ_PARAM_OUT 4
 
@@ -519,8 +519,8 @@ uint8_t fmc130m_set_acq_params(uint8_t *input, uint8_t *output)
         return -2; // invalid number of samples
     }
 
-    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_acq_params(&nsamples,
-            &acq_chan, &ddr3_acq_chan[acq_chan].start_addr);
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_acq_params(nsamples,
+            acq_chan, ddr3_acq_chan[acq_chan].start_addr, NULL, NULL, NULL);
 
     return 0; // Success!!
 }
@@ -532,7 +532,59 @@ static struct bsmp_func fmc130m_set_acq_params_func = {
   fmc130m_set_acq_params
 };
 
-#define FMC130M_START_ACQ_ID 19
+#define FMC130M_GET_ACQ_NSAMPLES_ID 20
+#define FMC130M_GET_ACQ_NSAMPLES_IN 0
+#define FMC130M_GET_ACQ_NSAMPLES_OUT 4
+
+uint8_t fmc130m_get_acq_nsamples(uint8_t *input, uint8_t *output)
+{
+    uint32_t nsamples;
+    uint32_t acq_chan;
+    uint32_t acq_offset;
+    printf(S"Getting ACQ_NSAMPLES...\n");
+
+    fmc_config_130m_4ch_board_p->set_acq_params(NULL, NULL, NULL,
+            &nsamples, &acq_chan, &acq_offset);
+
+    *((uint32_t *)output) = nsamples;
+    
+    return 0; // Success!!
+}
+
+static struct bsmp_func fmc130m_get_acq_nsamples_func = {
+  {FMC130M_GET_ACQ_NSAMPLES_ID,
+   FMC130M_GET_ACQ_NSAMPLES_IN,
+   FMC130M_GET_ACQ_NSAMPLES_OUT},
+  fmc130m_get_acq_nsamples
+};
+
+#define FMC130M_GET_ACQ_CHAN_ID 21
+#define FMC130M_GET_ACQ_CHAN_IN 0
+#define FMC130M_GET_ACQ_CHAN_OUT 4
+
+uint8_t fmc130m_get_acq_chan(uint8_t *input, uint8_t *output)
+{
+    uint32_t nsamples;
+    uint32_t acq_chan;
+    uint32_t acq_offset;
+    printf(S"Getting ACQ_CHAN...\n");
+
+    fmc_config_130m_4ch_board_p->set_acq_params(NULL, NULL, NULL,
+            &nsamples, &acq_chan, &acq_offset);
+
+    *((uint32_t *)output) = acq_chan;
+    
+    return 0; // Success!!
+}
+
+static struct bsmp_func fmc130m_get_acq_chan_func = {
+  {FMC130M_GET_ACQ_CHAN_ID,
+   FMC130M_GET_ACQ_CHAN_IN,
+   FMC130M_GET_ACQ_CHAN_OUT},
+  fmc130m_get_acq_chan
+};
+
+#define FMC130M_START_ACQ_ID 22
 #define FMC130M_START_ACQ_IN 0
 #define FMC130M_START_ACQ_OUT 4
 
@@ -665,6 +717,8 @@ int main(int argc, const char **argv) {
   tcp_server_p->register_func(&fmc130m_get_dds_freq_func);
   
   tcp_server_p->register_func(&fmc130m_set_acq_params_func);
+  tcp_server_p->register_func(&fmc130m_get_acq_nsamples_func);
+  tcp_server_p->register_func(&fmc130m_get_acq_chan_func);
   tcp_server_p->register_func(&fmc130m_start_acq_func);
 
   /* Endless tcp loop */

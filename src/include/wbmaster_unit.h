@@ -19,6 +19,10 @@ public:
 
 	virtual int wb_send_data(struct wb_data* data) =0;
 	virtual int wb_read_data(struct wb_data* data) =0;
+	virtual int wb_read_data_unsafe(struct wb_data* data, uint32_t *data_out)
+    {
+        return 0;
+    }
 
 };
 

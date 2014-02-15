@@ -62,7 +62,8 @@ public:
   int set_acq_params(uint32_t acq_nsamples, uint32_t acq_chan,
                       uint32_t acq_offset, uint32_t *acq_nsamples_out,
                       uint32_t *acq_chan_out, uint32_t *acq_offset_out);
-
+  int get_acq_data(uint32_t acq_chan, uint32_t acq_addr, uint32_t acq_bytes,
+                                            uint32_t *data_out);
 private:
 
 	commLink* _commLink;

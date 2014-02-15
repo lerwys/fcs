@@ -180,14 +180,14 @@ int pcie_link_driver::wb_send_data(struct wb_data* data) {
 
 	addr =  data->wb_addr;
 
-  // check extra vector before using it
-  if (data->extra.size() == 0) {
-    data->extra.resize(2);
-  }
-  // extra field 0 for number of data to be read
-  else if (data->extra[0] == 0) {
-		data->extra[0] = 1;
-  }
+    // check extra vector before using it
+    if (data->extra.size() == 0) {
+      data->extra.resize(2);
+    }
+    // extra field 0 for number of data to be read
+    else if (data->extra[0] == 0) {
+      data->extra[0] = 1;
+    }
 
 	for (unsigned int i = 0; i < data->extra[0]; i++) {
 		offset = setPage(bar0, bar4, bar4size, addr);
@@ -213,14 +213,14 @@ int pcie_link_driver::wb_read_data(struct wb_data* data) {
 	addr =  data->wb_addr;
 	data->data_read.clear();
 
-  // check extra vector before using it
-  if (data->extra.size() == 0) {
-    data->extra.resize(2);
-  }
-  // extra field 0 for number of data to be read
-  else if (data->extra[0] == 0) {
-		data->extra[0] = 1;
-  }
+    // check extra vector before using it
+    if (data->extra.size() == 0) {
+      data->extra.resize(2);
+    }
+    // extra field 0 for number of data to be read
+    else if (data->extra[0] == 0) {
+      data->extra[0] = 1;
+    }
 
 	for (unsigned int i = 0; i < data->extra[0]; i++) {
 
@@ -246,4 +246,42 @@ int pcie_link_driver::wb_read_data(struct wb_data* data) {
 
 	return STATUS_OK;
 
+}
+
+/* This should be used with caution!!! */
+int pcie_link_driver::wb_read_data_unsafe(struct wb_data* data, uint32_t *data_out)
+{
+    // check extra vector before using it
+    if (data->extra.size() == 0) {
+      data->extra.resize(1);
+    }
+    // extra field 0 for number of data to be read
+    else if (data->extra[0] == 0) {
+      data->extra[0] = 1;
+    }
+
+    uint32_t num_bytes_page;
+    uint32_t num_bytes = data->extra[0]*sizeof(uint32_t);
+    uint32_t num_pages = (num_bytes < bar2size) ? 1 : num_bytes/bar2size;
+    uint32_t page_start = data->wb_addr / bar2size;
+    uint32_t offset = data->wb_addr % bar2size;
+    uint32_t num_bytes_rem = num_bytes;
+
+	for (unsigned int i = page_start; i < page_start+num_pages; ++i) {
+        bar0[REG_SDRAM_PG >> 2] = i;
+        num_bytes_page = (num_bytes_rem > bar2size) ? 
+				(bar2size-offset) : (num_bytes_rem-offset);
+        num_bytes_rem -= num_bytes_page;
+        
+        memcpy ((uint8_t *)data_out,
+                (uint8_t *)bar2 + offset,
+                num_bytes_page);
+        data_out = (uint32_t *)((uint8_t *)data_out + num_bytes_page);
+        offset = 0; // after the first page this will always be 0
+	}
+
+	data->extra[0] = 1; // reset counter
+	data->extra[1] = 0; // default is Wishbone mode
+
+	return STATUS_OK;
 }

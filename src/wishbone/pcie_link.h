@@ -38,6 +38,8 @@ public:
 	int wb_send_data(struct wb_data* data);
 	// return - 1 error, 0 ok
 	int wb_read_data(struct wb_data* data);
+    // return - 1 error, 0 ok
+    int wb_read_data_unsafe(struct wb_data* data, uint32_t *data_out);
 
 private:
 

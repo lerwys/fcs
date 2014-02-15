@@ -604,6 +604,45 @@ static struct bsmp_func fmc130m_start_acq_func = {
   fmc130m_start_acq
 };
 
+/*************************************************/
+/************** Position Data Curves *************/
+/*************************************************/
+
+//static void curve_read_block (struct bsmp_curve *curve, uint16_t block,
+//                              uint8_t *data, uint16_t *len)
+//{
+//    /* Let's check which curve we have so we can point to the right block. */
+//
+//    /* Note: the use of strcmp here is unsafe, but bear in mind that this server
+//     * is just an example. A safer way to do it would to be to use strncmp or
+//     * not to use strings altogether as identifiers (as they are slow, too).
+//     */
+//
+//    /* Note: the library will NOT request access to Curve blocks beyond the
+//     * specified limits. If you are paranoid or do not trust the library, you
+//     * can check the block limits yourself.
+//     */
+//
+//    uint8_t *block_data;
+//    uint16_t block_size = curve->info.block_size;
+//
+//    if(!strcmp((char*)curve->user, "MY PRETTY LITTLE CURVE"))
+//        block_data = &little_curve_memory[block*block_size];
+//    else if(!strcmp((char*)curve->user, "MY AWESOME BIG CURVE"))
+//        block_data = &big_curve_memory[block*block_size];
+//    else
+//    {
+//        fprintf(stderr,S"That's weird. I've got an unexpected Curve to read\n");
+//        return;
+//    }
+//
+//    /* Now we need to copy the block requested into the 'data' pointer. */
+//    memcpy(data, block_data, block_size);
+//
+//    /* We copied the whole requested block */
+//    *len = block_size;
+//}
+
 int main(int argc, const char **argv) {
 
   cout << "FMC configuration software for FMC ADC 130M 4CH card (PASSIVE version)" << endl <<

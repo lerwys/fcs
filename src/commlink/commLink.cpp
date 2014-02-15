@@ -40,6 +40,13 @@ int commLink::fmc_config_read(struct wb_data* data) {
 	return wb_master->wb_read_data(data);
 }
 
+int commLink::fmc_config_read_unsafe(struct wb_data* data, uint32_t *data_out) {
+
+	data->data_read.clear();
+
+	return wb_master->wb_read_data_unsafe(data, data_out);
+}
+
 int commLink::fmc_send(string intName, struct wb_data* data) {
 
 	data->data_read.clear();

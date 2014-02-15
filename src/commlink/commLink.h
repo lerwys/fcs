@@ -35,6 +35,7 @@ public:
   // Config communication interface (FPGA core)
   int fmc_config_send(struct wb_data* data); // send interface config data
   int fmc_config_read(struct wb_data* data); // read interface config data
+  int fmc_config_read_unsafe(struct wb_data* data, uint32_t *data_out);
 
   // Send data through communication interface (like I2C, SPI)
   int fmc_send(string intName, struct wb_data* data); // send data through interface

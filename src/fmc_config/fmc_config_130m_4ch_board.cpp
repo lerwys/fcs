@@ -648,3 +648,18 @@ int fmc_config_130m_4ch_board::set_acq_params(uint32_t acq_nsamples, uint32_t ac
   
   return 0;
 }
+
+int fmc_config_130m_4ch_board::get_acq_data(uint32_t acq_chan, uint32_t acq_addr, uint32_t acq_bytes,
+                                            uint32_t *data_out)
+{
+  wb_data data;
+  data.extra.resize(2);
+
+  data.wb_addr = acq_addr;
+  data.extra[0] = acq_bytes;
+
+  // always from bar2
+  _commLink->fmc_config_read_unsafe(&data, data_out);
+
+  return 0;
+}

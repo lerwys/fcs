@@ -59,6 +59,7 @@ public:
 
   void *get_in_addr(struct sockaddr *sa);
   int register_func (struct bsmp_func *bsmp_func);
+  int register_curve (struct bsmp_curve *bsmp_curve);
   int start(void);
 
   /* BSMP exported functions */

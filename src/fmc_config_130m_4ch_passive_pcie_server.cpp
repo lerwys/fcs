@@ -608,40 +608,144 @@ static struct bsmp_func fmc130m_start_acq_func = {
 /************** Position Data Curves *************/
 /*************************************************/
 
-//static void curve_read_block (struct bsmp_curve *curve, uint16_t block,
-//                              uint8_t *data, uint16_t *len)
+static void curve_read_block (struct bsmp_curve *curve, uint16_t block,
+                              uint8_t *data, uint16_t *len)
+{
+    /* Let's check which curve we have so we can point to the right block. */
+
+    /* Note: the use of strcmp here is unsafe, but bear in mind that this server
+     * is just an example. A safer way to do it would to be to use strncmp or
+     * not to use strings altogether as identifiers (as they are slow, too).
+     */
+
+    /* Note: the library will NOT request access to Curve blocks beyond the
+     * specified limits. If you are paranoid or do not trust the library, you
+     * can check the block limits yourself.
+     */
+
+     printf(S"Readding curve block...\n");
+
+    uint8_t *block_data;
+    uint16_t block_size = curve->info.block_size;
+    uint32_t curve_id = *((uint32_t*)curve->user);
+
+    printf(S"curve id = %d, block_size = %d\n", curve_id, block_size);
+
+    if (curve_id > END_CHAN_ID-1) {
+      fprintf(stderr,S"That's weird. I've got an unexpected Curve to read\n");
+      return;
+    }
+
+    fmc_config_130m_4ch_board_p->get_acq_data_block(curve_id, block*block_size,
+                        block_size, (uint32_t *)data, (uint32_t *)len);
+}
+
+//struct bsmp_curve_info
 //{
-//    /* Let's check which curve we have so we can point to the right block. */
+//    uint8_t  id;                    // ID of the curve, used in the protocol.
+//    bool     writable;              // Determine if the curve is writable.
+//    uint32_t nblocks;               // How many blocks the curve contains.
+//    uint16_t block_size;            // Maximum number of bytes in a block
+//    uint8_t  checksum[16];          // MD5 checksum of the curve
+//};
 //
-//    /* Note: the use of strcmp here is unsafe, but bear in mind that this server
-//     * is just an example. A safer way to do it would to be to use strncmp or
-//     * not to use strings altogether as identifiers (as they are slow, too).
-//     */
+//struct bsmp_curve;
 //
-//    /* Note: the library will NOT request access to Curve blocks beyond the
-//     * specified limits. If you are paranoid or do not trust the library, you
-//     * can check the block limits yourself.
-//     */
+//typedef void (*bsmp_curve_read_t)  (struct bsmp_curve *curve, uint16_t block,
+//                                    uint8_t *data, uint16_t *len);
+//typedef void (*bsmp_curve_write_t) (struct bsmp_curve *curve, uint16_t block,
+//                                    uint8_t *data, uint16_t len);
+//struct bsmp_curve
+//{
+//    // Info about the curve identification
+//    struct bsmp_curve_info info;
 //
-//    uint8_t *block_data;
-//    uint16_t block_size = curve->info.block_size;
+//    // Functions to read/write a block
+//    void (*read_block)(struct bsmp_curve *curve, uint16_t block, uint8_t *data,
+//                       uint16_t *len);
 //
-//    if(!strcmp((char*)curve->user, "MY PRETTY LITTLE CURVE"))
-//        block_data = &little_curve_memory[block*block_size];
-//    else if(!strcmp((char*)curve->user, "MY AWESOME BIG CURVE"))
-//        block_data = &big_curve_memory[block*block_size];
-//    else
-//    {
-//        fprintf(stderr,S"That's weird. I've got an unexpected Curve to read\n");
-//        return;
-//    }
+//    void (*write_block)(struct bsmp_curve *curve, uint16_t block, uint8_t *data,
+//                        uint16_t len);
 //
-//    /* Now we need to copy the block requested into the 'data' pointer. */
-//    memcpy(data, block_data, block_size);
-//
-//    /* We copied the whole requested block */
-//    *len = block_size;
-//}
+//    // The user can make use of this variable as he wishes. It is not touched by
+//    // BSMP
+//    void *user;
+//};
+
+static uint32_t adc_id = ADC_CHAN_ID;
+// Whole cruve can get up to 512 MB
+static struct bsmp_curve adc_curve = {
+    {   // info
+        0,      // Internal protocol id
+        false,  // writable = Read-only
+        16384,  // 16384 blocks
+        32768,  // 32768 bytes per block
+        {0}     // checksum
+    },
+    curve_read_block, // read_block
+    NULL,             // write_block
+    (void*) &adc_id    //user
+};
+
+static uint32_t tbtamp_id = TBTAMP_CHAN_ID;
+// Whole cruve can get up to 512 MB
+static struct bsmp_curve tbtamp_curve = {
+    {   // info
+        0,      // Internal protocol id
+        false,  // writable = Read-only
+        16384,  // 16384 blocks
+        32768,  // 32768 bytes per block
+        {0}     // checksum
+    },
+    curve_read_block, // read_block
+    NULL,             // write_block
+    (void*) &tbtamp_id    //user
+};
+
+static uint32_t tbtpos_id = TBTPOS_CHAN_ID;
+// Whole cruve can get up to 512 MB
+static struct bsmp_curve tbtpos_curve = {
+    {   // info
+        0,      // Internal protocol id
+        false,  // writable = Read-only
+        16384,  // 16384 blocks
+        32768,  // 32768 bytes per block
+        {0}     // checksum
+    },
+    curve_read_block, // read_block
+    NULL,             // write_block
+    (void*) &tbtpos_id    //user
+};
+
+static uint32_t fofbamp_id = FOFBAMP_CHAN_ID;
+// Whole cruve can get up to 512 MB
+static struct bsmp_curve fofbamp_curve = {
+    {   // info
+        0,      // Internal protocol id
+        false,  // writable = Read-only
+        16384,  // 16384 blocks
+        32768,  // 32768 bytes per block
+        {0}     // checksum
+    },
+    curve_read_block, // read_block
+    NULL,             // write_block
+    (void*) &fofbamp_id    //user
+};
+
+static uint32_t fofbpos_id = FOFBPOS_CHAN_ID;
+// Whole cruve can get up to 512 MB
+static struct bsmp_curve fofbpos_curve = {
+    {  // info
+        0,      // Internal protocol id
+        false,  // writable = Read-only
+        16384,  // 16384 blocks
+        32768,  // 32768 bytes per block
+        {0}     // checksum
+    },
+    curve_read_block, // read_block
+    NULL,             // write_block
+    (void*) &fofbpos_id    //user
+};
 
 int main(int argc, const char **argv) {
 
@@ -759,6 +863,13 @@ int main(int argc, const char **argv) {
   tcp_server_p->register_func(&fmc130m_get_acq_nsamples_func);
   tcp_server_p->register_func(&fmc130m_get_acq_chan_func);
   tcp_server_p->register_func(&fmc130m_start_acq_func);
+
+  // Register curves functions
+  tcp_server_p->register_curve(&adc_curve);
+  tcp_server_p->register_curve(&tbtamp_curve);
+  tcp_server_p->register_curve(&tbtpos_curve);
+  tcp_server_p->register_curve(&fofbamp_curve);
+  tcp_server_p->register_curve(&fofbpos_curve);
 
   /* Endless tcp loop */
   tcp_server_p->start();

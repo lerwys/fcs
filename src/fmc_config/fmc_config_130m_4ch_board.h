@@ -35,6 +35,10 @@
 
 using namespace std;
 
+typedef struct _acq_params_t {  
+  uint32_t acq_nsamples;
+} acq_params_t;
+
 class fmc_config_130m_4ch_board {
 public:
 
@@ -62,8 +66,8 @@ public:
   int set_acq_params(uint32_t acq_nsamples, uint32_t acq_chan,
                       uint32_t acq_offset, uint32_t *acq_nsamples_out,
                       uint32_t *acq_chan_out, uint32_t *acq_offset_out);
-  int get_acq_data(uint32_t acq_chan, uint32_t acq_addr, uint32_t acq_bytes,
-                                            uint32_t *data_out);
+  int get_acq_data_block(uint32_t acq_chan, uint32_t acq_offs, uint32_t acq_bytes,
+                        uint32_t *data_out, uint32_t *acq_bytes_out);
 private:
 
 	commLink* _commLink;
@@ -74,6 +78,8 @@ private:
   uint32_t acq_nsamples;    // of the next acquisition
   uint32_t acq_chan;        // of the next acquisition
   uint32_t acq_offset;      // of the next acquisition
+
+  acq_params_t acq_last_params[END_CHAN_ID];
 
   const struct delay_lines *delay_data_l;
   const struct delay_lines *delay_clk_l;

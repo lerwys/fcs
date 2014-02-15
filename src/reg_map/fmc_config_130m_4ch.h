@@ -76,6 +76,7 @@ struct ddr3_acq_chan_s {
   uint32_t start_addr;
   uint32_t end_addr;
   uint32_t max_samples;
+  uint32_t samples_size;
 };
 
 extern const struct ddr3_acq_chan_s ddr3_acq_chan[END_CHAN_ID];

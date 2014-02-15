@@ -6,6 +6,8 @@
 #include "fmc_config_130m_4ch_board.h"
 #include <math.h>
 
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+
 fmc_config_130m_4ch_board::fmc_config_130m_4ch_board(WBMaster_unit* wb_master_unit, const delay_lines *delay_data_l,
                                         const delay_lines *delay_clk_l) {
 
@@ -313,6 +315,10 @@ int fmc_config_130m_4ch_board::config_defaults() {
   this->acq_chan = 0;        //ADC
   this->acq_offset = 0x0;
 
+  for (unsigned int i = 0; i < ARRAY_SIZE(acq_last_params); ++i) {
+    this->acq_last_params[i].acq_nsamples = 0 ;
+  }
+
   return 0;
 }
 
@@ -568,6 +574,9 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
 
   data.data_send.resize(10);
   data.extra.resize(2);
+
+  // sabe the number of samples of this acq_chan
+  acq_last_params[this->acq_chan].acq_nsamples = this->acq_nsamples;
   
   // Num shots	
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_SHOTS;
@@ -645,18 +654,34 @@ int fmc_config_130m_4ch_board::set_acq_params(uint32_t acq_nsamples, uint32_t ac
     this->acq_offset = acq_offset;
   }
   
-  
   return 0;
 }
 
-int fmc_config_130m_4ch_board::get_acq_data(uint32_t acq_chan, uint32_t acq_addr, uint32_t acq_bytes,
-                                            uint32_t *data_out)
+int fmc_config_130m_4ch_board::get_acq_data_block(uint32_t acq_chan, uint32_t acq_offs, uint32_t acq_bytes,
+                                            uint32_t *data_out, uint32_t *acq_bytes_out)
 {
   wb_data data;
   data.extra.resize(2);
 
-  data.wb_addr = acq_addr;
-  data.extra[0] = acq_bytes;
+  data.wb_addr = ddr3_acq_chan[acq_chan].start_addr + acq_offs;
+  uint32_t acq_end = acq_last_params[acq_chan].acq_nsamples *
+                            ddr3_acq_chan[acq_chan].samples_size;
+
+  // No data to be read
+  if (acq_offs > acq_end) {
+    *acq_bytes_out = 0;
+    return 0;
+  }
+
+  // ughhhh... check for out of bounds request
+  if (acq_offs + acq_bytes >= acq_end) {
+    data.extra[0] = acq_end - acq_offs;
+  }
+  else {
+    data.extra[0] = acq_bytes;
+  }
+
+  *acq_bytes_out = data.extra[0];
 
   // always from bar2
   _commLink->fmc_config_read_unsafe(&data, data_out);

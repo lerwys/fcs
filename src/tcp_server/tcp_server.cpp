@@ -261,6 +261,11 @@ int tcp_server::register_func (struct bsmp_func *bsmp_func)
   return bsmp_register_function(bsmp_server, bsmp_func); 
 }
 
+int tcp_server::register_curve (struct bsmp_curve *bsmp_curve)
+{
+  return bsmp_register_curve(bsmp_server, bsmp_curve); 
+}
+
 int tcp_server::start(void)
 {
   int new_fd;  // listen on sock_fd, new connection on new_fd

@@ -4,6 +4,7 @@
 // Description : based on http://beej.us/guide/bgnet/output/html/singlepage/bgnet.html#simpleserver
 //============================================================================
 #include "tcp_server.h"
+#include <pthread.h>
 #define S "bsmp_server: "
 
 #define TRY(name, func)\
@@ -28,10 +29,10 @@ send_pkt_t send_pkt;
 struct bsmp_raw_packet recv_packet = {.data = recv_pkt.data };
 struct bsmp_raw_packet send_packet = {.data = send_pkt.data };
 
-tcp_server::tcp_server(string port, fmc_config_130m_4ch_board *_fmc_config_130m_4ch_board)
+tcp_server::tcp_server(string port/*, fmc_config_130m_4ch_board *_fmc_config_130m_4ch_board*/)
 {
   this->port = port;
-  this->_fmc_config_130m_4ch_board = _fmc_config_130m_4ch_board;
+  //this->_fmc_config_130m_4ch_board = _fmc_config_130m_4ch_board;
 
   bsmp_init();
 }
@@ -50,9 +51,9 @@ void *tcp_server::get_in_addr(struct sockaddr *sa)
     return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-/***************************************************************/ 
+/***************************************************************/
 /********************** Utility functions **********************/
-/***************************************************************/ 
+/***************************************************************/
 
 void sigchld_handler(int s)
 {
@@ -148,7 +149,7 @@ int tcp_server::bpm_recv(int fd, uint8_t *data, uint32_t *count)
        *count = 0;
        return 0;
     }
-    
+
     if(len != PACKET_HEADER) {
        return -1;
     }
@@ -182,7 +183,7 @@ int tcp_server::tcp_server_handle_client(int s, int *disconnected)
   int ret;
 
   *disconnected = 0;
-  
+
   /* receive packet */
   ret = bpm_recv(s, (uint8_t *)&recv_pkt, &bytes_recv);
   if (ret < 0) {
@@ -213,14 +214,14 @@ int tcp_server::tcp_server_handle_client(int s, int *disconnected)
     fprintf(stderr, "recv err\n");
     return -1;
   }
-  
+
   //if (bytes_sent = send(s, (char *)&send_pkt, len, 0) == -1) {
   //  fprintf(stderr, "send err\n");
   //  return -1;
   //}
 
   //fprintf(stderr, "bytes sent = %d\n", bytes_sent);
-  
+
   return 0;
 }
 
@@ -252,18 +253,53 @@ int tcp_server::bsmp_init (void)
     return 0;
 }
 
-/***************************************************************/ 
+typedef struct _tcp_server_hdr_t {
+    int fd;
+    tcp_server *server;
+} tcp_server_hdr_t;
+
+/* Thread loop */
+void *tcp_thread (void *arg)
+{
+    tcp_server_hdr_t *tcp_server_hdr =
+        (tcp_server_hdr_t *) arg;
+
+    int fd = tcp_server_hdr->fd;
+    tcp_server * tcp_server = tcp_server_hdr->server;
+    int disconnected;
+    int ret;
+
+    while (1) {
+        ret = tcp_server->tcp_server_handle_client(fd, &disconnected);
+
+        if (ret == -1) {
+            fprintf(stderr, "server: failed to handle client\n");
+            break;
+        }
+
+        // Client disconnected
+        if (disconnected) {
+            fprintf(stderr, "server: client disconnected\n");
+            break;
+        }
+    }
+
+    pthread_exit(&ret);
+    return NULL;
+}
+
+/***************************************************************/
 /**********************   Class methods  **********************/
 /***************************************************************/
 
 int tcp_server::register_func (struct bsmp_func *bsmp_func)
 {
-  return bsmp_register_function(bsmp_server, bsmp_func); 
+  return bsmp_register_function(bsmp_server, bsmp_func);
 }
 
 int tcp_server::register_curve (struct bsmp_curve *bsmp_curve)
 {
-  return bsmp_register_curve(bsmp_server, bsmp_curve); 
+  return bsmp_register_curve(bsmp_server, bsmp_curve);
 }
 
 int tcp_server::start(void)
@@ -276,17 +312,19 @@ int tcp_server::start(void)
   int yes=1;
   char s[INET6_ADDRSTRLEN];
   int rv;
+  tcp_server_hdr_t tcp_server_hdr;
+  pthread_t tid;
 
   memset(&hints, 0, sizeof hints);
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE; // use my IP
-  
+
   if ((rv = getaddrinfo(NULL, this->port.c_str(), &hints, &servinfo)) != 0) {
       fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
       return -1;
   }
-  
+
   // loop through all the results and bind to the first we can
   for(p = servinfo; p != NULL; p = p->ai_next) {
       if ((sockfd = socket(p->ai_family, p->ai_socktype,
@@ -294,7 +332,7 @@ int tcp_server::start(void)
           perror("server: socket");
           continue;
       }
-  
+
       if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes,
               sizeof(int)) == -1) {
           perror("setsockopt");
@@ -307,28 +345,28 @@ int tcp_server::start(void)
           perror("setsockopt");
           exit(1);
       }
-  
+
       if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
           close(sockfd);
           perror("server: bind");
           continue;
       }
-  
+
       break;
   }
-  
+
   if (p == NULL)  {
       fprintf(stderr, "server: failed to bind\n");
       return -2;
   }
-  
+
   freeaddrinfo(servinfo); // all done with this structure
-  
+
   if (listen(sockfd, BACKLOG) == -1) {
       perror("listen");
       exit(1);
   }
-  
+
   sa.sa_handler = sigchld_handler; // reap all dead processes
   sigemptyset(&sa.sa_mask);
   sa.sa_flags = SA_RESTART;
@@ -336,9 +374,9 @@ int tcp_server::start(void)
       perror("sigaction");
       exit(1);
   }
-  
+
   printf("server: waiting for connections...\n");
-  
+
   while(1) {  // main accept() loop
       sin_size = sizeof their_addr;
       new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size);
@@ -346,13 +384,21 @@ int tcp_server::start(void)
           perror("accept");
           continue;
       }
-  
+
       inet_ntop(their_addr.ss_family,
           get_in_addr((struct sockaddr *)&their_addr),
           s, sizeof s);
       printf("server: got connection from %s\n", s);
-  
-      if (!fork()) { // this is the child process
+
+      tcp_server_hdr.fd = new_fd;
+      tcp_server_hdr.server = this;
+
+      // Create thread
+      if (pthread_create (&tid, NULL, tcp_thread, (void *)&tcp_server_hdr) != 0) {
+          fprintf(stderr, "server: error creating tcp thread\n");
+      }
+
+      /*if (!fork()) { // this is the child process
           close(sockfd); // child doesn't need the listener
 
           // Receive packet
@@ -373,13 +419,13 @@ int tcp_server::start(void)
               break;
             }
           }
-        
+
           close(new_fd);
           exit(0);
-      }
-      close(new_fd);  // parent doesn't need this
+      }*/
+      //close(new_fd);  // parent doesn't need this
   }
-  
+
   return 0;
 }
 

@@ -35,7 +35,7 @@
 
 using namespace std;
 
-typedef struct _acq_params_t {  
+typedef struct _acq_params_t {
   uint32_t acq_nsamples;
 } acq_params_t;
 
@@ -63,9 +63,17 @@ public:
   int set_dds_freq(uint32_t dds_freq, uint32_t *dds_freq_out);
 
   int set_data_acquire(/*uint32_t num_samples, uint32_t offset, int acq_chan*/);
-  int set_acq_params(uint32_t acq_nsamples, uint32_t acq_chan,
+  /*int set_acq_params(uint32_t acq_nsamples, uint32_t acq_chan,
                       uint32_t acq_offset, uint32_t *acq_nsamples_out,
-                      uint32_t *acq_chan_out, uint32_t *acq_offset_out);
+                      uint32_t *acq_chan_out, uint32_t *acq_offset_out);*/
+
+  int set_acq_nsamples(uint32_t acq_nsamples);
+  int get_acq_nsamples(uint32_t *acq_nsamples);
+  int set_acq_chan(uint32_t acq_chan);
+  int get_acq_chan(uint32_t *acq_chan);
+  int set_acq_offset(uint32_t acq_offset);
+  int get_acq_offset(uint32_t *acq_offset);
+
   int get_acq_data_block(uint32_t acq_chan, uint32_t acq_offs, uint32_t acq_bytes,
                         uint32_t *data_out, uint32_t *acq_bytes_out);
 private:
@@ -75,9 +83,9 @@ private:
   WBInt_drv* int_drv;
   //wb_data data;
   uint32_t adc_clk; // in hertz
-  uint32_t acq_nsamples;    // of the next acquisition
-  uint32_t acq_chan;        // of the next acquisition
-  uint32_t acq_offset;      // of the next acquisition
+  uint32_t acq_nsamples_n;    // of the next acquisition
+  uint32_t acq_chan_n;        // of the next acquisition
+  uint32_t acq_offset_n;      // of the next acquisition
 
   acq_params_t acq_last_params[END_CHAN_ID];
 

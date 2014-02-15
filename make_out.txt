@@ -1,0 +1,199 @@
+make  all-recursive
+make[1]: Entering directory `/home/lerwys/Repos/fcs'
+Making all in src/common
+make[2]: Entering directory `/home/lerwys/Repos/fcs/src/common'
+/bin/sh ../../libtool --tag=CXX   --mode=compile g++ -DHAVE_CONFIG_H -I. -I../..  -I. -I../../src/include -I../../src/commlink   -g -O2 -MT common.lo -MD -MP -MF .deps/common.Tpo -c -o common.lo common.cpp
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/commlink -g -O2 -MT common.lo -MD -MP -MF .deps/common.Tpo -c common.cpp  -fPIC -DPIC -o .libs/common.o
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/commlink -g -O2 -MT common.lo -MD -MP -MF .deps/common.Tpo -c common.cpp -o common.o >/dev/null 2>&1
+mv -f .deps/common.Tpo .deps/common.Plo
+/bin/sh ../../libtool --tag=CXX   --mode=link g++  -g -O2   -o libcommon.la  common.lo  
+libtool: link: ar cru .libs/libcommon.a .libs/common.o 
+libtool: link: ranlib .libs/libcommon.a
+libtool: link: ( cd ".libs" && rm -f "libcommon.la" && ln -s "../libcommon.la" "libcommon.la" )
+make[2]: Leaving directory `/home/lerwys/Repos/fcs/src/common'
+Making all in src/chip
+make[2]: Entering directory `/home/lerwys/Repos/fcs/src/chip'
+/bin/sh ../../libtool --tag=CXX   --mode=compile g++ -DHAVE_CONFIG_H -I. -I../..  -I. -I../../src/include -I../../src/commlink   -g -O2 -MT ad9510.lo -MD -MP -MF .deps/ad9510.Tpo -c -o ad9510.lo ad9510.cpp
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/commlink -g -O2 -MT ad9510.lo -MD -MP -MF .deps/ad9510.Tpo -c ad9510.cpp  -fPIC -DPIC -o .libs/ad9510.o
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/commlink -g -O2 -MT ad9510.lo -MD -MP -MF .deps/ad9510.Tpo -c ad9510.cpp -o ad9510.o >/dev/null 2>&1
+mv -f .deps/ad9510.Tpo .deps/ad9510.Plo
+/bin/sh ../../libtool --tag=CXX   --mode=compile g++ -DHAVE_CONFIG_H -I. -I../..  -I. -I../../src/include -I../../src/commlink   -g -O2 -MT amc7823.lo -MD -MP -MF .deps/amc7823.Tpo -c -o amc7823.lo amc7823.cpp
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/commlink -g -O2 -MT amc7823.lo -MD -MP -MF .deps/amc7823.Tpo -c amc7823.cpp  -fPIC -DPIC -o .libs/amc7823.o
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/commlink -g -O2 -MT amc7823.lo -MD -MP -MF .deps/amc7823.Tpo -c amc7823.cpp -o amc7823.o >/dev/null 2>&1
+mv -f .deps/amc7823.Tpo .deps/amc7823.Plo
+/bin/sh ../../libtool --tag=CXX   --mode=compile g++ -DHAVE_CONFIG_H -I. -I../..  -I. -I../../src/include -I../../src/commlink   -g -O2 -MT isla216p.lo -MD -MP -MF .deps/isla216p.Tpo -c -o isla216p.lo isla216p.cpp
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/commlink -g -O2 -MT isla216p.lo -MD -MP -MF .deps/isla216p.Tpo -c isla216p.cpp  -fPIC -DPIC -o .libs/isla216p.o
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/commlink -g -O2 -MT isla216p.lo -MD -MP -MF .deps/isla216p.Tpo -c isla216p.cpp -o isla216p.o >/dev/null 2>&1
+mv -f .deps/isla216p.Tpo .deps/isla216p.Plo
+/bin/sh ../../libtool --tag=CXX   --mode=compile g++ -DHAVE_CONFIG_H -I. -I../..  -I. -I../../src/include -I../../src/commlink   -g -O2 -MT lm75a.lo -MD -MP -MF .deps/lm75a.Tpo -c -o lm75a.lo lm75a.cpp
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/commlink -g -O2 -MT lm75a.lo -MD -MP -MF .deps/lm75a.Tpo -c lm75a.cpp  -fPIC -DPIC -o .libs/lm75a.o
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/commlink -g -O2 -MT lm75a.lo -MD -MP -MF .deps/lm75a.Tpo -c lm75a.cpp -o lm75a.o >/dev/null 2>&1
+mv -f .deps/lm75a.Tpo .deps/lm75a.Plo
+/bin/sh ../../libtool --tag=CXX   --mode=compile g++ -DHAVE_CONFIG_H -I. -I../..  -I. -I../../src/include -I../../src/commlink   -g -O2 -MT si570.lo -MD -MP -MF .deps/si570.Tpo -c -o si570.lo si570.cpp
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/commlink -g -O2 -MT si570.lo -MD -MP -MF .deps/si570.Tpo -c si570.cpp  -fPIC -DPIC -o .libs/si570.o
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/commlink -g -O2 -MT si570.lo -MD -MP -MF .deps/si570.Tpo -c si570.cpp -o si570.o >/dev/null 2>&1
+mv -f .deps/si570.Tpo .deps/si570.Plo
+/bin/sh ../../libtool --tag=CXX   --mode=compile g++ -DHAVE_CONFIG_H -I. -I../..  -I. -I../../src/include -I../../src/commlink   -g -O2 -MT eeprom_24a64.lo -MD -MP -MF .deps/eeprom_24a64.Tpo -c -o eeprom_24a64.lo eeprom_24a64.cpp
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/commlink -g -O2 -MT eeprom_24a64.lo -MD -MP -MF .deps/eeprom_24a64.Tpo -c eeprom_24a64.cpp  -fPIC -DPIC -o .libs/eeprom_24a64.o
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/commlink -g -O2 -MT eeprom_24a64.lo -MD -MP -MF .deps/eeprom_24a64.Tpo -c eeprom_24a64.cpp -o eeprom_24a64.o >/dev/null 2>&1
+mv -f .deps/eeprom_24a64.Tpo .deps/eeprom_24a64.Plo
+/bin/sh ../../libtool --tag=CXX   --mode=link g++  -g -O2   -o libchip.la  ad9510.lo amc7823.lo isla216p.lo lm75a.lo si570.lo eeprom_24a64.lo  
+libtool: link: ar cru .libs/libchip.a .libs/ad9510.o .libs/amc7823.o .libs/isla216p.o .libs/lm75a.o .libs/si570.o .libs/eeprom_24a64.o 
+libtool: link: ranlib .libs/libchip.a
+libtool: link: ( cd ".libs" && rm -f "libchip.la" && ln -s "../libchip.la" "libchip.la" )
+make[2]: Leaving directory `/home/lerwys/Repos/fcs/src/chip'
+Making all in src/commlink
+make[2]: Entering directory `/home/lerwys/Repos/fcs/src/commlink'
+/bin/sh ../../libtool --tag=CXX   --mode=compile g++ -DHAVE_CONFIG_H -I. -I../..  -I. -I../../src/include   -g -O2 -MT commLink.lo -MD -MP -MF .deps/commLink.Tpo -c -o commLink.lo commLink.cpp
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -g -O2 -MT commLink.lo -MD -MP -MF .deps/commLink.Tpo -c commLink.cpp  -fPIC -DPIC -o .libs/commLink.o
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -g -O2 -MT commLink.lo -MD -MP -MF .deps/commLink.Tpo -c commLink.cpp -o commLink.o >/dev/null 2>&1
+mv -f .deps/commLink.Tpo .deps/commLink.Plo
+/bin/sh ../../libtool --tag=CXX   --mode=link g++  -g -O2   -o libcommlink.la  commLink.lo  
+libtool: link: ar cru .libs/libcommlink.a .libs/commLink.o 
+libtool: link: ranlib .libs/libcommlink.a
+libtool: link: ( cd ".libs" && rm -f "libcommlink.la" && ln -s "../libcommlink.la" "libcommlink.la" )
+make[2]: Leaving directory `/home/lerwys/Repos/fcs/src/commlink'
+Making all in src/fmc_config
+make[2]: Entering directory `/home/lerwys/Repos/fcs/src/fmc_config'
+/bin/sh ../../libtool --tag=CXX   --mode=compile g++ -DHAVE_CONFIG_H -I. -I../..  -I. -I../../src/fmc_config -I../../src/include -I../../src -I../../src/reg_map -I../../src/reg_map/mod_regs -I../../src/common -I../../src/commlink   -g -O2 -MT fmc_config_130m_4ch_board.lo -MD -MP -MF .deps/fmc_config_130m_4ch_board.Tpo -c -o fmc_config_130m_4ch_board.lo fmc_config_130m_4ch_board.cpp
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/fmc_config -I../../src/include -I../../src -I../../src/reg_map -I../../src/reg_map/mod_regs -I../../src/common -I../../src/commlink -g -O2 -MT fmc_config_130m_4ch_board.lo -MD -MP -MF .deps/fmc_config_130m_4ch_board.Tpo -c fmc_config_130m_4ch_board.cpp  -fPIC -DPIC -o .libs/fmc_config_130m_4ch_board.o
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/fmc_config -I../../src/include -I../../src -I../../src/reg_map -I../../src/reg_map/mod_regs -I../../src/common -I../../src/commlink -g -O2 -MT fmc_config_130m_4ch_board.lo -MD -MP -MF .deps/fmc_config_130m_4ch_board.Tpo -c fmc_config_130m_4ch_board.cpp -o fmc_config_130m_4ch_board.o >/dev/null 2>&1
+mv -f .deps/fmc_config_130m_4ch_board.Tpo .deps/fmc_config_130m_4ch_board.Plo
+/bin/sh ../../libtool --tag=CXX   --mode=link g++  -g -O2   -o libfmcconfig.la  fmc_config_130m_4ch_board.lo ../../src/chip/libchip.la ../../src/commlink/libcommlink.la  
+libtool: link: (cd .libs/libfmcconfig.lax/libchip.a && ar x "/home/lerwys/Repos/fcs/src/fmc_config/../../src/chip/.libs/libchip.a")
+libtool: link: (cd .libs/libfmcconfig.lax/libcommlink.a && ar x "/home/lerwys/Repos/fcs/src/fmc_config/../../src/commlink/.libs/libcommlink.a")
+libtool: link: ar cru .libs/libfmcconfig.a .libs/fmc_config_130m_4ch_board.o   .libs/libfmcconfig.lax/libchip.a/ad9510.o .libs/libfmcconfig.lax/libchip.a/amc7823.o .libs/libfmcconfig.lax/libchip.a/eeprom_24a64.o .libs/libfmcconfig.lax/libchip.a/isla216p.o .libs/libfmcconfig.lax/libchip.a/lm75a.o .libs/libfmcconfig.lax/libchip.a/si570.o  .libs/libfmcconfig.lax/libcommlink.a/commLink.o 
+libtool: link: ranlib .libs/libfmcconfig.a
+libtool: link: rm -fr .libs/libfmcconfig.lax
+libtool: link: ( cd ".libs" && rm -f "libfmcconfig.la" && ln -s "../libfmcconfig.la" "libfmcconfig.la" )
+make[2]: Leaving directory `/home/lerwys/Repos/fcs/src/fmc_config'
+Making all in src/interface
+make[2]: Entering directory `/home/lerwys/Repos/fcs/src/interface'
+/bin/sh ../../libtool --tag=CXX   --mode=compile g++ -DHAVE_CONFIG_H -I. -I../..  -I. -I../../src/include   -g -O2 -MT gpio.lo -MD -MP -MF .deps/gpio.Tpo -c -o gpio.lo gpio.cpp
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -g -O2 -MT gpio.lo -MD -MP -MF .deps/gpio.Tpo -c gpio.cpp  -fPIC -DPIC -o .libs/gpio.o
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -g -O2 -MT gpio.lo -MD -MP -MF .deps/gpio.Tpo -c gpio.cpp -o gpio.o >/dev/null 2>&1
+mv -f .deps/gpio.Tpo .deps/gpio.Plo
+/bin/sh ../../libtool --tag=CXX   --mode=compile g++ -DHAVE_CONFIG_H -I. -I../..  -I. -I../../src/include   -g -O2 -MT i2c.lo -MD -MP -MF .deps/i2c.Tpo -c -o i2c.lo i2c.cpp
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -g -O2 -MT i2c.lo -MD -MP -MF .deps/i2c.Tpo -c i2c.cpp  -fPIC -DPIC -o .libs/i2c.o
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -g -O2 -MT i2c.lo -MD -MP -MF .deps/i2c.Tpo -c i2c.cpp -o i2c.o >/dev/null 2>&1
+mv -f .deps/i2c.Tpo .deps/i2c.Plo
+/bin/sh ../../libtool --tag=CXX   --mode=compile g++ -DHAVE_CONFIG_H -I. -I../..  -I. -I../../src/include   -g -O2 -MT spi.lo -MD -MP -MF .deps/spi.Tpo -c -o spi.lo spi.cpp
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -g -O2 -MT spi.lo -MD -MP -MF .deps/spi.Tpo -c spi.cpp  -fPIC -DPIC -o .libs/spi.o
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -g -O2 -MT spi.lo -MD -MP -MF .deps/spi.Tpo -c spi.cpp -o spi.o >/dev/null 2>&1
+mv -f .deps/spi.Tpo .deps/spi.Plo
+/bin/sh ../../libtool --tag=CXX   --mode=link g++  -g -O2   -o libinterface.la  gpio.lo i2c.lo spi.lo  
+libtool: link: ar cru .libs/libinterface.a .libs/gpio.o .libs/i2c.o .libs/spi.o 
+libtool: link: ranlib .libs/libinterface.a
+libtool: link: ( cd ".libs" && rm -f "libinterface.la" && ln -s "../libinterface.la" "libinterface.la" )
+make[2]: Leaving directory `/home/lerwys/Repos/fcs/src/interface'
+Making all in src/wishbone
+make[2]: Entering directory `/home/lerwys/Repos/fcs/src/wishbone'
+/bin/sh ../../libtool --tag=CXX   --mode=compile g++ -DHAVE_CONFIG_H -I. -I../..  -I. -I../../src/include -I../../src/wishbone/pcie_headers   -g -O2 -MT rs232_syscon.lo -MD -MP -MF .deps/rs232_syscon.Tpo -c -o rs232_syscon.lo rs232_syscon.cpp
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/wishbone/pcie_headers -g -O2 -MT rs232_syscon.lo -MD -MP -MF .deps/rs232_syscon.Tpo -c rs232_syscon.cpp  -fPIC -DPIC -o .libs/rs232_syscon.o
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/wishbone/pcie_headers -g -O2 -MT rs232_syscon.lo -MD -MP -MF .deps/rs232_syscon.Tpo -c rs232_syscon.cpp -o rs232_syscon.o >/dev/null 2>&1
+mv -f .deps/rs232_syscon.Tpo .deps/rs232_syscon.Plo
+/bin/sh ../../libtool --tag=CXX   --mode=compile g++ -DHAVE_CONFIG_H -I. -I../..  -I. -I../../src/include -I../../src/wishbone/pcie_headers   -g -O2 -MT pcie_link.lo -MD -MP -MF .deps/pcie_link.Tpo -c -o pcie_link.lo pcie_link.cpp
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/wishbone/pcie_headers -g -O2 -MT pcie_link.lo -MD -MP -MF .deps/pcie_link.Tpo -c pcie_link.cpp  -fPIC -DPIC -o .libs/pcie_link.o
+pcie_link.cpp: In member function 'virtual int pcie_link_driver::wb_send_data(wb_data*)':
+pcie_link.cpp:197:106: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'uint64_t {aka long unsigned int}' [-Wformat]
+pcie_link.cpp: In member function 'virtual int pcie_link_driver::wb_read_data(wb_data*)':
+pcie_link.cpp:239:91: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'uint64_t {aka long unsigned int}' [-Wformat]
+pcie_link.cpp: In member function 'virtual int pcie_link_driver::wb_read_data_unsafe(wb_data*, uint32_t*)':
+pcie_link.cpp:264:26: warning: format '%lX' expects argument of type 'long unsigned int', but argument 4 has type 'uint32_t {aka unsigned int}' [-Wformat]
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/wishbone/pcie_headers -g -O2 -MT pcie_link.lo -MD -MP -MF .deps/pcie_link.Tpo -c pcie_link.cpp -o pcie_link.o >/dev/null 2>&1
+mv -f .deps/pcie_link.Tpo .deps/pcie_link.Plo
+/bin/sh ../../libtool --tag=CXX   --mode=link g++  -g -O2   -o libwishbone.la  rs232_syscon.lo pcie_link.lo -lmxml -lserial -lpcidriver -lpthread  
+libtool: link: ar cru .libs/libwishbone.a .libs/rs232_syscon.o .libs/pcie_link.o 
+libtool: link: ranlib .libs/libwishbone.a
+libtool: link: ( cd ".libs" && rm -f "libwishbone.la" && ln -s "../libwishbone.la" "libwishbone.la" )
+make[2]: Leaving directory `/home/lerwys/Repos/fcs/src/wishbone'
+Making all in src/tcp_server
+make[2]: Entering directory `/home/lerwys/Repos/fcs/src/tcp_server'
+/bin/sh ../../libtool --tag=CXX   --mode=compile g++ -DHAVE_CONFIG_H -I. -I../..  -I. -I../../src/include -I../../src/fmc_config -I../../src -I../../src/reg_map -I../../src/reg_map/mod_regs -I../../src/common -I../../src/commlink   -g -O2 -MT tcp_server.lo -MD -MP -MF .deps/tcp_server.Tpo -c -o tcp_server.lo tcp_server.cpp
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/fmc_config -I../../src -I../../src/reg_map -I../../src/reg_map/mod_regs -I../../src/common -I../../src/commlink -g -O2 -MT tcp_server.lo -MD -MP -MF .deps/tcp_server.Tpo -c tcp_server.cpp  -fPIC -DPIC -o .libs/tcp_server.o
+In file included from tcp_server.cpp:6:0:
+tcp_server.h:44:15: warning: attribute ignored in declaration of 'struct _recv_pkt_t' [enabled by default]
+tcp_server.h:44:15: warning: attribute for 'struct _recv_pkt_t' must follow the 'struct' keyword [enabled by default]
+tcp_server.h:49:15: warning: attribute ignored in declaration of 'struct _send_pkt_t' [enabled by default]
+tcp_server.h:49:15: warning: attribute for 'struct _send_pkt_t' must follow the 'struct' keyword [enabled by default]
+tcp_server.cpp: In member function 'int tcp_server::bpm_send(int, uint8_t*, uint32_t*)':
+tcp_server.cpp:121:45: warning: deprecated conversion from string constant to 'char*' [-Wwrite-strings]
+tcp_server.cpp: In member function 'int tcp_server::bpm_recv(int, uint8_t*, uint32_t*)':
+tcp_server.cpp:170:45: warning: deprecated conversion from string constant to 'char*' [-Wwrite-strings]
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/include -I../../src/fmc_config -I../../src -I../../src/reg_map -I../../src/reg_map/mod_regs -I../../src/common -I../../src/commlink -g -O2 -MT tcp_server.lo -MD -MP -MF .deps/tcp_server.Tpo -c tcp_server.cpp -o tcp_server.o >/dev/null 2>&1
+mv -f .deps/tcp_server.Tpo .deps/tcp_server.Plo
+/bin/sh ../../libtool --tag=CXX   --mode=link g++  -g -O2   -o libtcpserver.la  tcp_server.lo ../../src/fmc_config/libfmcconfig.la -lbsmp 
+libtool: link: (cd .libs/libtcpserver.lax/libfmcconfig.a && ar x "/home/lerwys/Repos/fcs/src/tcp_server/../../src/fmc_config/.libs/libfmcconfig.a")
+libtool: link: ar cru .libs/libtcpserver.a .libs/tcp_server.o   .libs/libtcpserver.lax/libfmcconfig.a/ad9510.o .libs/libtcpserver.lax/libfmcconfig.a/amc7823.o .libs/libtcpserver.lax/libfmcconfig.a/commLink.o .libs/libtcpserver.lax/libfmcconfig.a/eeprom_24a64.o .libs/libtcpserver.lax/libfmcconfig.a/fmc_config_130m_4ch_board.o .libs/libtcpserver.lax/libfmcconfig.a/isla216p.o .libs/libtcpserver.lax/libfmcconfig.a/lm75a.o .libs/libtcpserver.lax/libfmcconfig.a/si570.o 
+libtool: link: ranlib .libs/libtcpserver.a
+libtool: link: rm -fr .libs/libtcpserver.lax
+libtool: link: ( cd ".libs" && rm -f "libtcpserver.la" && ln -s "../libtcpserver.la" "libtcpserver.la" )
+make[2]: Leaving directory `/home/lerwys/Repos/fcs/src/tcp_server'
+Making all in src/reg_map
+make[2]: Entering directory `/home/lerwys/Repos/fcs/src/reg_map'
+/bin/sh ../../libtool --tag=CXX   --mode=compile g++ -DHAVE_CONFIG_H -I. -I../..  -I. -I../../src/reg_map -I../../src/reg_map/mod_regs   -g -O2 -MT fmc_config_130m_4ch.lo -MD -MP -MF .deps/fmc_config_130m_4ch.Tpo -c -o fmc_config_130m_4ch.lo fmc_config_130m_4ch.cpp
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/reg_map -I../../src/reg_map/mod_regs -g -O2 -MT fmc_config_130m_4ch.lo -MD -MP -MF .deps/fmc_config_130m_4ch.Tpo -c fmc_config_130m_4ch.cpp  -fPIC -DPIC -o .libs/fmc_config_130m_4ch.o
+libtool: compile:  g++ -DHAVE_CONFIG_H -I. -I../.. -I. -I../../src/reg_map -I../../src/reg_map/mod_regs -g -O2 -MT fmc_config_130m_4ch.lo -MD -MP -MF .deps/fmc_config_130m_4ch.Tpo -c fmc_config_130m_4ch.cpp -o fmc_config_130m_4ch.o >/dev/null 2>&1
+mv -f .deps/fmc_config_130m_4ch.Tpo .deps/fmc_config_130m_4ch.Plo
+/bin/sh ../../libtool --tag=CXX   --mode=link g++  -g -O2   -o libregmap.la  fmc_config_130m_4ch.lo  
+libtool: link: ar cru .libs/libregmap.a .libs/fmc_config_130m_4ch.o 
+libtool: link: ranlib .libs/libregmap.a
+libtool: link: ( cd ".libs" && rm -f "libregmap.la" && ln -s "../libregmap.la" "libregmap.la" )
+make[2]: Leaving directory `/home/lerwys/Repos/fcs/src/reg_map'
+Making all in src
+make[2]: Entering directory `/home/lerwys/Repos/fcs/src'
+g++ -DHAVE_CONFIG_H -I. -I..  -I. -I../src/include -I../src/reg_map -I../src/reg_map/mod_regs -I../src/fmc_config -I../src/common -I../src/commlink -I../src/tcp_server -I../src/reg_map   -g -O2 -MT fmc_config_130m_4ch.o -MD -MP -MF .deps/fmc_config_130m_4ch.Tpo -c -o fmc_config_130m_4ch.o fmc_config_130m_4ch.cpp
+mv -f .deps/fmc_config_130m_4ch.Tpo .deps/fmc_config_130m_4ch.Po
+/bin/sh ../libtool --tag=CXX   --mode=link g++  -g -O2   -o fmc_config_130m_4ch fmc_config_130m_4ch.o ../src/chip/libchip.la ../src/commlink/libcommlink.la ../src/fmc_config/libfmcconfig.la ../src/interface/libinterface.la ../src/wishbone/libwishbone.la ../src/common/libcommon.la ../src/tcp_server/libtcpserver.la ../src/reg_map/libregmap.la 
+libtool: link: g++ -g -O2 -o fmc_config_130m_4ch fmc_config_130m_4ch.o  ../src/chip/.libs/libchip.a ../src/commlink/.libs/libcommlink.a ../src/fmc_config/.libs/libfmcconfig.a ../src/interface/.libs/libinterface.a ../src/wishbone/.libs/libwishbone.a -lmxml -lserial -lpcidriver -lpthread ../src/common/.libs/libcommon.a ../src/tcp_server/.libs/libtcpserver.a -lbsmp ../src/reg_map/.libs/libregmap.a
+g++ -DHAVE_CONFIG_H -I. -I..  -I. -I../src/include -I../src/reg_map -I../src/reg_map/mod_regs -I../src/fmc_config -I../src/common -I../src/commlink -I../src/tcp_server -I../src/reg_map   -g -O2 -MT fmc_config_130m_4ch_ext_clk_no_pll.o -MD -MP -MF .deps/fmc_config_130m_4ch_ext_clk_no_pll.Tpo -c -o fmc_config_130m_4ch_ext_clk_no_pll.o fmc_config_130m_4ch_ext_clk_no_pll.cpp
+mv -f .deps/fmc_config_130m_4ch_ext_clk_no_pll.Tpo .deps/fmc_config_130m_4ch_ext_clk_no_pll.Po
+/bin/sh ../libtool --tag=CXX   --mode=link g++  -g -O2   -o fmc_config_130m_4ch_ext_clk_no_pll fmc_config_130m_4ch_ext_clk_no_pll.o ../src/chip/libchip.la ../src/commlink/libcommlink.la ../src/fmc_config/libfmcconfig.la ../src/interface/libinterface.la ../src/wishbone/libwishbone.la ../src/common/libcommon.la ../src/tcp_server/libtcpserver.la ../src/reg_map/libregmap.la 
+libtool: link: g++ -g -O2 -o fmc_config_130m_4ch_ext_clk_no_pll fmc_config_130m_4ch_ext_clk_no_pll.o  ../src/chip/.libs/libchip.a ../src/commlink/.libs/libcommlink.a ../src/fmc_config/.libs/libfmcconfig.a ../src/interface/.libs/libinterface.a ../src/wishbone/.libs/libwishbone.a -lmxml -lserial -lpcidriver -lpthread ../src/common/.libs/libcommon.a ../src/tcp_server/.libs/libtcpserver.a -lbsmp ../src/reg_map/.libs/libregmap.a
+g++ -DHAVE_CONFIG_H -I. -I..  -I. -I../src/include -I../src/reg_map -I../src/reg_map/mod_regs -I../src/fmc_config -I../src/common -I../src/commlink -I../src/tcp_server -I../src/reg_map   -g -O2 -MT fmc_config_130m_4ch_crystek.o -MD -MP -MF .deps/fmc_config_130m_4ch_crystek.Tpo -c -o fmc_config_130m_4ch_crystek.o fmc_config_130m_4ch_crystek.cpp
+mv -f .deps/fmc_config_130m_4ch_crystek.Tpo .deps/fmc_config_130m_4ch_crystek.Po
+/bin/sh ../libtool --tag=CXX   --mode=link g++  -g -O2   -o fmc_config_130m_4ch_crystek fmc_config_130m_4ch_crystek.o ../src/chip/libchip.la ../src/commlink/libcommlink.la ../src/fmc_config/libfmcconfig.la ../src/interface/libinterface.la ../src/wishbone/libwishbone.la ../src/common/libcommon.la ../src/tcp_server/libtcpserver.la ../src/reg_map/libregmap.la 
+libtool: link: g++ -g -O2 -o fmc_config_130m_4ch_crystek fmc_config_130m_4ch_crystek.o  ../src/chip/.libs/libchip.a ../src/commlink/.libs/libcommlink.a ../src/fmc_config/.libs/libfmcconfig.a ../src/interface/.libs/libinterface.a ../src/wishbone/.libs/libwishbone.a -lmxml -lserial -lpcidriver -lpthread ../src/common/.libs/libcommon.a ../src/tcp_server/.libs/libtcpserver.a -lbsmp ../src/reg_map/.libs/libregmap.a
+g++ -DHAVE_CONFIG_H -I. -I..  -I. -I../src/include -I../src/reg_map -I../src/reg_map/mod_regs -I../src/fmc_config -I../src/common -I../src/commlink -I../src/tcp_server -I../src/reg_map   -g -O2 -MT fmc_config_130m_4ch_passive.o -MD -MP -MF .deps/fmc_config_130m_4ch_passive.Tpo -c -o fmc_config_130m_4ch_passive.o fmc_config_130m_4ch_passive.cpp
+mv -f .deps/fmc_config_130m_4ch_passive.Tpo .deps/fmc_config_130m_4ch_passive.Po
+/bin/sh ../libtool --tag=CXX   --mode=link g++  -g -O2   -o fmc_config_130m_4ch_passive fmc_config_130m_4ch_passive.o ../src/chip/libchip.la ../src/commlink/libcommlink.la ../src/fmc_config/libfmcconfig.la ../src/interface/libinterface.la ../src/wishbone/libwishbone.la ../src/common/libcommon.la ../src/tcp_server/libtcpserver.la ../src/reg_map/libregmap.la 
+libtool: link: g++ -g -O2 -o fmc_config_130m_4ch_passive fmc_config_130m_4ch_passive.o  ../src/chip/.libs/libchip.a ../src/commlink/.libs/libcommlink.a ../src/fmc_config/.libs/libfmcconfig.a ../src/interface/.libs/libinterface.a ../src/wishbone/.libs/libwishbone.a -lmxml -lserial -lpcidriver -lpthread ../src/common/.libs/libcommon.a ../src/tcp_server/.libs/libtcpserver.a -lbsmp ../src/reg_map/.libs/libregmap.a
+g++ -DHAVE_CONFIG_H -I. -I..  -I. -I../src/include -I../src/reg_map -I../src/reg_map/mod_regs -I../src/fmc_config -I../src/common -I../src/commlink -I../src/tcp_server -I../src/reg_map   -g -O2 -MT fmc_config_130m_4ch_passive_pcie_server.o -MD -MP -MF .deps/fmc_config_130m_4ch_passive_pcie_server.Tpo -c -o fmc_config_130m_4ch_passive_pcie_server.o fmc_config_130m_4ch_passive_pcie_server.cpp
+In file included from fmc_config_130m_4ch_passive_pcie_server.cpp:39:0:
+../src/tcp_server/tcp_server.h:44:15: warning: attribute ignored in declaration of ‘struct _recv_pkt_t’ [enabled by default]
+../src/tcp_server/tcp_server.h:44:15: warning: attribute for ‘struct _recv_pkt_t’ must follow the ‘struct’ keyword [enabled by default]
+../src/tcp_server/tcp_server.h:49:15: warning: attribute ignored in declaration of ‘struct _send_pkt_t’ [enabled by default]
+../src/tcp_server/tcp_server.h:49:15: warning: attribute for ‘struct _send_pkt_t’ must follow the ‘struct’ keyword [enabled by default]
+fmc_config_130m_4ch_passive_pcie_server.cpp: In function ‘uint8_t fmc130m_get_kx(uint8_t*, uint8_t*)’:
+fmc_config_130m_4ch_passive_pcie_server.cpp:146:55: warning: passing NULL to non-pointer argument 1 of ‘int fmc_config_130m_4ch_board::set_kx(uint32_t, uint32_t*)’ [-Wconversion-null]
+fmc_config_130m_4ch_passive_pcie_server.cpp: In function ‘uint8_t fmc130m_get_ky(uint8_t*, uint8_t*)’:
+fmc_config_130m_4ch_passive_pcie_server.cpp:192:55: warning: passing NULL to non-pointer argument 1 of ‘int fmc_config_130m_4ch_board::set_ky(uint32_t, uint32_t*)’ [-Wconversion-null]
+fmc_config_130m_4ch_passive_pcie_server.cpp: In function ‘uint8_t fmc130m_get_ksum(uint8_t*, uint8_t*)’:
+fmc_config_130m_4ch_passive_pcie_server.cpp:238:59: warning: passing NULL to non-pointer argument 1 of ‘int fmc_config_130m_4ch_board::set_ksum(uint32_t, uint32_t*)’ [-Wconversion-null]
+fmc_config_130m_4ch_passive_pcie_server.cpp: In function ‘uint8_t fmc130m_get_sw_divclk(uint8_t*, uint8_t*)’:
+fmc_config_130m_4ch_passive_pcie_server.cpp:348:61: warning: passing NULL to non-pointer argument 1 of ‘int fmc_config_130m_4ch_board::set_sw_divclk(uint32_t, uint32_t*)’ [-Wconversion-null]
+fmc_config_130m_4ch_passive_pcie_server.cpp: In function ‘uint8_t fmc130m_get_sw_phaseclk(uint8_t*, uint8_t*)’:
+fmc_config_130m_4ch_passive_pcie_server.cpp:394:62: warning: passing NULL to non-pointer argument 1 of ‘int fmc_config_130m_4ch_board::set_sw_phase(uint32_t, uint32_t*)’ [-Wconversion-null]
+fmc_config_130m_4ch_passive_pcie_server.cpp: In function ‘uint8_t fmc130m_get_adc_clk(uint8_t*, uint8_t*)’:
+fmc_config_130m_4ch_passive_pcie_server.cpp:440:59: warning: passing NULL to non-pointer argument 1 of ‘int fmc_config_130m_4ch_board::set_adc_clk(uint32_t, uint32_t*)’ [-Wconversion-null]
+fmc_config_130m_4ch_passive_pcie_server.cpp: In function ‘uint8_t fmc130m_get_dds_freq(uint8_t*, uint8_t*)’:
+fmc_config_130m_4ch_passive_pcie_server.cpp:486:61: warning: passing NULL to non-pointer argument 1 of ‘int fmc_config_130m_4ch_board::set_dds_freq(uint32_t, uint32_t*)’ [-Wconversion-null]
+mv -f .deps/fmc_config_130m_4ch_passive_pcie_server.Tpo .deps/fmc_config_130m_4ch_passive_pcie_server.Po
+/bin/sh ../libtool --tag=CXX   --mode=link g++  -g -O2   -o fmc_config_130m_4ch_passive_pcie_server fmc_config_130m_4ch_passive_pcie_server.o ../src/chip/libchip.la ../src/commlink/libcommlink.la ../src/fmc_config/libfmcconfig.la ../src/interface/libinterface.la ../src/wishbone/libwishbone.la ../src/common/libcommon.la ../src/tcp_server/libtcpserver.la ../src/reg_map/libregmap.la 
+libtool: link: g++ -g -O2 -o fmc_config_130m_4ch_passive_pcie_server fmc_config_130m_4ch_passive_pcie_server.o  ../src/chip/.libs/libchip.a ../src/commlink/.libs/libcommlink.a ../src/fmc_config/.libs/libfmcconfig.a ../src/interface/.libs/libinterface.a ../src/wishbone/.libs/libwishbone.a -lmxml -lserial -lpcidriver -lpthread ../src/common/.libs/libcommon.a ../src/tcp_server/.libs/libtcpserver.a -lbsmp ../src/reg_map/.libs/libregmap.a
+g++ -DHAVE_CONFIG_H -I. -I..  -I. -I../src/include -I../src/reg_map -I../src/reg_map/mod_regs -I../src/fmc_config -I../src/common -I../src/commlink -I../src/tcp_server -I../src/reg_map   -g -O2 -MT fmc_config_130m_4ch_pcie_server.o -MD -MP -MF .deps/fmc_config_130m_4ch_pcie_server.Tpo -c -o fmc_config_130m_4ch_pcie_server.o fmc_config_130m_4ch_pcie_server.cpp
+mv -f .deps/fmc_config_130m_4ch_pcie_server.Tpo .deps/fmc_config_130m_4ch_pcie_server.Po
+/bin/sh ../libtool --tag=CXX   --mode=link g++  -g -O2   -o fmc_config_130m_4ch_pcie_server fmc_config_130m_4ch_pcie_server.o ../src/chip/libchip.la ../src/commlink/libcommlink.la ../src/fmc_config/libfmcconfig.la ../src/interface/libinterface.la ../src/wishbone/libwishbone.la ../src/common/libcommon.la ../src/tcp_server/libtcpserver.la ../src/reg_map/libregmap.la 
+libtool: link: g++ -g -O2 -o fmc_config_130m_4ch_pcie_server fmc_config_130m_4ch_pcie_server.o  ../src/chip/.libs/libchip.a ../src/commlink/.libs/libcommlink.a ../src/fmc_config/.libs/libfmcconfig.a ../src/interface/.libs/libinterface.a ../src/wishbone/.libs/libwishbone.a -lmxml -lserial -lpcidriver -lpthread ../src/common/.libs/libcommon.a ../src/tcp_server/.libs/libtcpserver.a -lbsmp ../src/reg_map/.libs/libregmap.a
+g++ -DHAVE_CONFIG_H -I. -I..  -I. -I../src/include -I../src/reg_map -I../src/reg_map/mod_regs -I../src/fmc_config -I../src/common -I../src/commlink -I../src/tcp_server -I../src/reg_map   -g -O2 -MT fmc_config_250m_4ch.o -MD -MP -MF .deps/fmc_config_250m_4ch.Tpo -c -o fmc_config_250m_4ch.o fmc_config_250m_4ch.cpp
+mv -f .deps/fmc_config_250m_4ch.Tpo .deps/fmc_config_250m_4ch.Po
+/bin/sh ../libtool --tag=CXX   --mode=link g++  -g -O2   -o fmc_config_250m_4ch fmc_config_250m_4ch.o ../src/chip/libchip.la ../src/commlink/libcommlink.la ../src/fmc_config/libfmcconfig.la ../src/interface/libinterface.la ../src/wishbone/libwishbone.la ../src/common/libcommon.la ../src/tcp_server/libtcpserver.la ../src/reg_map/libregmap.la 
+libtool: link: g++ -g -O2 -o fmc_config_250m_4ch fmc_config_250m_4ch.o  ../src/chip/.libs/libchip.a ../src/commlink/.libs/libcommlink.a ../src/fmc_config/.libs/libfmcconfig.a ../src/interface/.libs/libinterface.a ../src/wishbone/.libs/libwishbone.a -lmxml -lserial -lpcidriver -lpthread ../src/common/.libs/libcommon.a ../src/tcp_server/.libs/libtcpserver.a -lbsmp ../src/reg_map/.libs/libregmap.a
+g++ -DHAVE_CONFIG_H -I. -I..  -I. -I../src/include -I../src/reg_map -I../src/reg_map/mod_regs -I../src/fmc_config -I../src/common -I../src/commlink -I../src/tcp_server -I../src/reg_map   -g -O2 -MT fmc_config_250m_4ch_passive.o -MD -MP -MF .deps/fmc_config_250m_4ch_passive.Tpo -c -o fmc_config_250m_4ch_passive.o fmc_config_250m_4ch_passive.cpp
+mv -f .deps/fmc_config_250m_4ch_passive.Tpo .deps/fmc_config_250m_4ch_passive.Po
+/bin/sh ../libtool --tag=CXX   --mode=link g++  -g -O2   -o fmc_config_250m_4ch_passive fmc_config_250m_4ch_passive.o ../src/chip/libchip.la ../src/commlink/libcommlink.la ../src/fmc_config/libfmcconfig.la ../src/interface/libinterface.la ../src/wishbone/libwishbone.la ../src/common/libcommon.la ../src/tcp_server/libtcpserver.la ../src/reg_map/libregmap.la 
+libtool: link: g++ -g -O2 -o fmc_config_250m_4ch_passive fmc_config_250m_4ch_passive.o  ../src/chip/.libs/libchip.a ../src/commlink/.libs/libcommlink.a ../src/fmc_config/.libs/libfmcconfig.a ../src/interface/.libs/libinterface.a ../src/wishbone/.libs/libwishbone.a -lmxml -lserial -lpcidriver -lpthread ../src/common/.libs/libcommon.a ../src/tcp_server/.libs/libtcpserver.a -lbsmp ../src/reg_map/.libs/libregmap.a
+make[2]: Leaving directory `/home/lerwys/Repos/fcs/src'
+make[2]: Entering directory `/home/lerwys/Repos/fcs'
+make[2]: Leaving directory `/home/lerwys/Repos/fcs'
+make[1]: Leaving directory `/home/lerwys/Repos/fcs'

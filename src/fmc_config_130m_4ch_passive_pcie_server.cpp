@@ -45,7 +45,7 @@ using namespace std;
 fmc_config_130m_4ch_board *fmc_config_130m_4ch_board_p;
 tcp_server *tcp_server_p;
 
-/***************************************************************/ 
+/***************************************************************/
 /**********************   BSMP methods  **********************/
 /***************************************************************/
 
@@ -120,7 +120,7 @@ static struct bsmp_func fmc130m_config_defaults_func = {
 uint8_t fmc130m_set_kx(uint8_t *input, uint8_t *output)
 {
     uint32_t kx = *((uint32_t *) input);
-    
+
     printf(S"Setting Kx value...\n");
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_kx(kx, NULL);
 
@@ -141,7 +141,7 @@ static struct bsmp_func fmc130m_set_kx_func = {
 uint8_t fmc130m_get_kx(uint8_t *input, uint8_t *output)
 {
     uint32_t kx_out;
-    
+
     printf(S"Getting Kx value...\n");
      fmc_config_130m_4ch_board_p->set_kx(NULL, &kx_out);
     *((uint32_t *)output) = kx_out;
@@ -187,7 +187,7 @@ static struct bsmp_func fmc130m_set_ky_func = {
 uint8_t fmc130m_get_ky(uint8_t *input, uint8_t *output)
 {
     uint32_t ky_out;
-    
+
     printf(S"Getting Ky value...\n");
      fmc_config_130m_4ch_board_p->set_ky(NULL, &ky_out);
     *((uint32_t *)output) = ky_out;
@@ -233,7 +233,7 @@ static struct bsmp_func fmc130m_set_ksum_func = {
 uint8_t fmc130m_get_ksum(uint8_t *input, uint8_t *output)
 {
     uint32_t ksum_out;
-    
+
     printf(S"Getting Ksum value...\n");
      fmc_config_130m_4ch_board_p->set_ksum(NULL, &ksum_out);
     *((uint32_t *)output) = ksum_out;
@@ -297,7 +297,7 @@ static struct bsmp_func fmc130m_set_sw_off_func = {
 uint8_t fmc130m_get_sw(uint8_t *input, uint8_t *output)
 {
     uint32_t sw_state;
-    
+
     printf(S"Getting Switching State!\n");
     fmc_config_130m_4ch_board_p->set_sw_on(&sw_state);
     *((uint32_t *)output) = sw_state;
@@ -343,7 +343,7 @@ static struct bsmp_func fmc130m_set_sw_divclk_func = {
 uint8_t fmc130m_get_sw_divclk(uint8_t *input, uint8_t *output)
 {
     uint32_t divclk;
-    
+
     printf(S"Getting DIVCLK value!\n");
     fmc_config_130m_4ch_board_p->set_sw_divclk(NULL, &divclk);
     *((uint32_t *)output) = divclk;
@@ -389,7 +389,7 @@ static struct bsmp_func fmc130m_set_sw_phaseclk_func = {
 uint8_t fmc130m_get_sw_phaseclk(uint8_t *input, uint8_t *output)
 {
     uint32_t phaseclk;
-    
+
     printf(S"Getting PHASECLK value!\n");
     fmc_config_130m_4ch_board_p->set_sw_phase(NULL, &phaseclk);
     *((uint32_t *)output) = phaseclk;
@@ -415,8 +415,11 @@ static struct bsmp_func fmc130m_get_sw_phaseclk_func = {
 uint8_t fmc130m_set_adc_clk(uint8_t *input, uint8_t *output)
 {
     uint32_t adcclk = *((uint32_t *) input);
+    uint32_t adcclk_out;
     printf(S"Setting ADC_CLK value...\n");
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_adc_clk(adcclk, NULL);
+    fmc_config_130m_4ch_board_p->set_adc_clk(NULL, &adcclk_out);
+    printf ("adc clock out = %d\n", adcclk_out);
 
     return 0; // Success!!
 }
@@ -435,7 +438,7 @@ static struct bsmp_func fmc130m_set_adc_clk_func = {
 uint8_t fmc130m_get_adc_clk(uint8_t *input, uint8_t *output)
 {
     uint32_t adcclk;
-    
+
     printf(S"Getting ADC_CLK value!\n");
     fmc_config_130m_4ch_board_p->set_adc_clk(NULL, &adcclk);
     *((uint32_t *)output) = adcclk;
@@ -481,7 +484,7 @@ static struct bsmp_func fmc130m_set_dds_freq_func = {
 uint8_t fmc130m_get_dds_freq(uint8_t *input, uint8_t *output)
 {
     uint32_t ddsfreq;
-    
+
     printf(S"Getting DDS_FREQ value!\n");
     fmc_config_130m_4ch_board_p->set_dds_freq(NULL, &ddsfreq);
     *((uint32_t *)output) = ddsfreq;
@@ -507,21 +510,29 @@ static struct bsmp_func fmc130m_get_dds_freq_func = {
 uint8_t fmc130m_set_acq_params(uint8_t *input, uint8_t *output)
 {
     uint32_t nsamples = *((uint32_t *) input);
-    uint32_t acq_chan = *((uint32_t *) input + sizeof(uint32_t));
+    uint32_t acq_chan = *((uint32_t *) input + 1);
     printf(S"Setting DATA_ACQ values...\n");
 
     // Do some checking
     if (acq_chan > END_CHAN_ID-1) {
         return -1; // invalid channel
     }
-    
+
     if (nsamples > ddr3_acq_chan[acq_chan].max_samples) {
         return -2; // invalid number of samples
     }
 
-    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_acq_params(nsamples,
-            acq_chan, ddr3_acq_chan[acq_chan].start_addr, NULL, NULL, NULL);
+    printf(S"Setting acq_chan to %d and num_samples to %d\n", acq_chan,
+            nsamples);
 
+  /*  *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_acq_params(nsamples,
+            acq_chan, ddr3_acq_chan[acq_chan].start_addr, NULL, NULL, NULL);*/
+
+    fmc_config_130m_4ch_board_p->set_acq_nsamples(nsamples);
+    fmc_config_130m_4ch_board_p->set_acq_chan(acq_chan);
+    fmc_config_130m_4ch_board_p->set_acq_offset(ddr3_acq_chan[acq_chan].start_addr);
+
+    *((uint32_t *)output) = 0;
     return 0; // Success!!
 }
 
@@ -539,15 +550,15 @@ static struct bsmp_func fmc130m_set_acq_params_func = {
 uint8_t fmc130m_get_acq_nsamples(uint8_t *input, uint8_t *output)
 {
     uint32_t nsamples;
-    uint32_t acq_chan;
-    uint32_t acq_offset;
     printf(S"Getting ACQ_NSAMPLES...\n");
 
-    fmc_config_130m_4ch_board_p->set_acq_params(NULL, NULL, NULL,
-            &nsamples, &acq_chan, &acq_offset);
+    /*fmc_config_130m_4ch_board_p->set_acq_params(NULL, NULL, NULL,
+            &nsamples, &acq_chan, &acq_offset);*/
+    fmc_config_130m_4ch_board_p->get_acq_nsamples(&nsamples);
 
+    printf(S"Getting num_samples to %d\n", nsamples);
     *((uint32_t *)output) = nsamples;
-    
+
     return 0; // Success!!
 }
 
@@ -564,16 +575,15 @@ static struct bsmp_func fmc130m_get_acq_nsamples_func = {
 
 uint8_t fmc130m_get_acq_chan(uint8_t *input, uint8_t *output)
 {
-    uint32_t nsamples;
     uint32_t acq_chan;
-    uint32_t acq_offset;
     printf(S"Getting ACQ_CHAN...\n");
 
-    fmc_config_130m_4ch_board_p->set_acq_params(NULL, NULL, NULL,
-            &nsamples, &acq_chan, &acq_offset);
+    /*fmc_config_130m_4ch_board_p->set_acq_params(NULL, NULL, NULL,
+            &nsamples, &acq_chan, &acq_offset);*/
+    fmc_config_130m_4ch_board_p->get_acq_chan(&acq_chan);
 
     *((uint32_t *)output) = acq_chan;
-    
+
     return 0; // Success!!
 }
 
@@ -623,7 +633,7 @@ static void curve_read_block (struct bsmp_curve *curve, uint16_t block,
      * can check the block limits yourself.
      */
 
-     printf(S"Readding curve block...\n");
+     printf(S"Reading curve block...\n");
 
     uint8_t *block_data;
     uint16_t block_size = curve->info.block_size;
@@ -834,8 +844,8 @@ int main(int argc, const char **argv) {
 
   // Initialize TCP server and BSMP library
 
-  tcp_server_p = new tcp_server(string("8080"), fmc_config_130m_4ch_board_p);
-  
+  tcp_server_p = new tcp_server(string("8080")/*, fmc_config_130m_4ch_board_p*/);
+
   // Register functions
   tcp_server_p->register_func(&fmc130m_blink_leds_func);
   tcp_server_p->register_func(&fmc130m_config_defaults_func);
@@ -845,7 +855,7 @@ int main(int argc, const char **argv) {
   tcp_server_p->register_func(&fmc130m_get_ky_func);
   tcp_server_p->register_func(&fmc130m_set_ksum_func);
   tcp_server_p->register_func(&fmc130m_get_ksum_func);
-  
+
   tcp_server_p->register_func(&fmc130m_set_sw_on_func);
   tcp_server_p->register_func(&fmc130m_set_sw_off_func);
   tcp_server_p->register_func(&fmc130m_get_sw_func);
@@ -853,12 +863,12 @@ int main(int argc, const char **argv) {
   tcp_server_p->register_func(&fmc130m_get_sw_divclk_func);
   tcp_server_p->register_func(&fmc130m_set_sw_phaseclk_func);
   tcp_server_p->register_func(&fmc130m_get_sw_phaseclk_func);
-  
+
   tcp_server_p->register_func(&fmc130m_set_adc_clk_func);
   tcp_server_p->register_func(&fmc130m_get_adc_clk_func);
   tcp_server_p->register_func(&fmc130m_set_dds_freq_func);
   tcp_server_p->register_func(&fmc130m_get_dds_freq_func);
-  
+
   tcp_server_p->register_func(&fmc130m_set_acq_params_func);
   tcp_server_p->register_func(&fmc130m_get_acq_nsamples_func);
   tcp_server_p->register_func(&fmc130m_get_acq_chan_func);

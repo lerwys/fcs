@@ -14,6 +14,14 @@ fmc_config_130m_4ch_board::fmc_config_130m_4ch_board(WBMaster_unit* wb_master_un
 	init(wb_master_unit, delay_data_l, delay_clk_l);
 	config_defaults();
 
+    this->acq_nsamples_n = 4096;
+    this->acq_chan_n = 0;        //ADC
+    this->acq_offset_n = 0x0;
+
+    for (unsigned int i = 0; i < ARRAY_SIZE(acq_last_params); ++i) {
+        this->acq_last_params[i].acq_nsamples = 0 ;
+    }
+
 	cout << "fmc_config_130m_4ch_board initilized!" << endl;
 
 }
@@ -303,21 +311,13 @@ int fmc_config_130m_4ch_board::config_defaults() {
   // toggle valid signal for all four DDS's
   data.data_send[0] = (0x1) | (0x1 << 8) | (0x1 << 16) | (0x1 << 24);
   _commLink->fmc_config_send(&data);
-  
+
   // ======================================================
   //                Acq configuration
   // ======================================================
   cout << "============================================" << endl <<
           "            Acq configuration         " << endl <<
           "============================================" << endl;
-          
-  this->acq_nsamples = 4096;
-  this->acq_chan = 0;        //ADC
-  this->acq_offset = 0x0;
-
-  for (unsigned int i = 0; i < ARRAY_SIZE(acq_last_params); ++i) {
-    this->acq_last_params[i].acq_nsamples = 0 ;
-  }
 
   return 0;
 }
@@ -367,7 +367,7 @@ int fmc_config_130m_4ch_board::set_kx(uint32_t kx, uint32_t *kx_out) {
     data.data_send[0] = POS_CALC_KX_VAL_W(kx);
     _commLink->fmc_config_send(&data);
   }
-  
+
   return 0;
 }
 
@@ -376,18 +376,18 @@ int fmc_config_130m_4ch_board::set_ky(uint32_t ky,  uint32_t *ky_out) {
 
   data.data_send.resize(10);
   data.extra.resize(2);
-  
+
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_KY;
 
   if (ky_out) {
     _commLink->fmc_config_read(&data);
     *ky_out = POS_CALC_KY_VAL_R(data.data_read[0]);
   }
-  else {  
+  else {
     data.data_send[0] = POS_CALC_KY_VAL_W(ky);
     _commLink->fmc_config_send(&data);
   }
-  
+
   return 0;
 }
 
@@ -396,7 +396,7 @@ int fmc_config_130m_4ch_board::set_ksum(uint32_t ksum, uint32_t *ksum_out) {
 
   data.data_send.resize(10);
   data.extra.resize(2);
-  
+
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_KSUM;
 
   if (ksum_out) {
@@ -407,7 +407,7 @@ int fmc_config_130m_4ch_board::set_ksum(uint32_t ksum, uint32_t *ksum_out) {
     data.data_send[0] = POS_CALC_KSUM_VAL_W(ksum);
     _commLink->fmc_config_send(&data);
   }
-  
+
   return 0;
 }
 
@@ -417,7 +417,7 @@ int fmc_config_130m_4ch_board::set_sw_on(uint32_t *swon_out) {
   data.data_send.resize(10);
   data.data_read.resize(1);
   data.extra.resize(2);
-  
+
   // Switching mode
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
 
@@ -433,7 +433,7 @@ int fmc_config_130m_4ch_board::set_sw_on(uint32_t *swon_out) {
                             BPM_SWAP_CTRL_MODE2_W(0x3); // Switching mode for both sets of channels
     _commLink->fmc_config_send(&data);
   }
-  
+
   return 0;
 }
 
@@ -443,7 +443,7 @@ int fmc_config_130m_4ch_board::set_sw_off(uint32_t *swoff_out) {
   data.data_send.resize(10);
   data.data_read.resize(1);
   data.extra.resize(2);
-  
+
   // Switching mode
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
 
@@ -459,7 +459,7 @@ int fmc_config_130m_4ch_board::set_sw_off(uint32_t *swoff_out) {
                           BPM_SWAP_CTRL_MODE2_W(0x1); // Switching mode for both sets of channels
     _commLink->fmc_config_send(&data);
   }
-  
+
   return 0;
 }
 
@@ -469,7 +469,7 @@ int fmc_config_130m_4ch_board::set_sw_divclk(uint32_t divclk, uint32_t *divclk_o
   data.data_send.resize(10);
   data.data_read.resize(1);
   data.extra.resize(2);
-  
+
   // Switching mode
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
 
@@ -483,7 +483,7 @@ int fmc_config_130m_4ch_board::set_sw_divclk(uint32_t divclk, uint32_t *divclk_o
                             BPM_SWAP_CTRL_SWAP_DIV_F_W(divclk); // Clock divider for swap clk
     _commLink->fmc_config_send(&data);
   }
-  
+
   return 0;
 }
 
@@ -492,7 +492,7 @@ int fmc_config_130m_4ch_board::set_sw_phase(uint32_t phase, uint32_t *phase_out)
 
   data.data_send.resize(10);
   data.extra.resize(2);
-  
+
   // Switching mode
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_DLY;
 
@@ -506,7 +506,7 @@ int fmc_config_130m_4ch_board::set_sw_phase(uint32_t phase, uint32_t *phase_out)
                           BPM_SWAP_DLY_2_W(phase); // Phase delay for swap clk
     _commLink->fmc_config_send(&data);
   }
-  
+
   return 0;
 }
 
@@ -527,7 +527,7 @@ int fmc_config_130m_4ch_board::set_dds_freq(uint32_t dds_freq, uint32_t *dds_fre
 
   data.data_send.resize(10);
   data.extra.resize(2);
-  
+
   // Phase increment mode
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH0;
 
@@ -538,28 +538,28 @@ int fmc_config_130m_4ch_board::set_dds_freq(uint32_t dds_freq, uint32_t *dds_fre
   }
   else {
     uint32_t pinc =  floor((dds_freq / (double) this->adc_clk) * (1 << 30));
-    
+
     data.data_send[0] = POS_CALC_DDS_PINC_CH0_VAL_W(pinc);  // phase increment ch0
     _commLink->fmc_config_send(&data);
-    
+
     data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH1;
     data.data_send[0] = POS_CALC_DDS_PINC_CH1_VAL_W(pinc);  // phase increment ch1
     _commLink->fmc_config_send(&data);
-    
+
     data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH2;
     data.data_send[0] = POS_CALC_DDS_PINC_CH2_VAL_W(pinc);  // phase increment ch2
     _commLink->fmc_config_send(&data);
-    
+
     data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH3;
     data.data_send[0] = POS_CALC_DDS_PINC_CH3_VAL_W(pinc);  // phase increment ch3
     _commLink->fmc_config_send(&data);
-    
+
     data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_CFG;
     // toggle valid signal for all four DDS's
     data.data_send[0] = (0x1) | (0x1 << 8) | (0x1 << 16) | (0x1 << 24);
     _commLink->fmc_config_send(&data);
   }
-  
+
   return 0;
 }
 
@@ -575,17 +575,24 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
   data.data_send.resize(10);
   data.extra.resize(2);
 
-  // sabe the number of samples of this acq_chan
-  acq_last_params[this->acq_chan].acq_nsamples = this->acq_nsamples;
-  
-  // Num shots	
+  printf ("set_data_acq: parameters:\n");
+  printf ("num samples = %d\n", this->acq_nsamples_n);
+  printf ("acq_chan = %d\n", this->acq_chan_n);
+  printf ("acq_offset = %d\n", this->acq_offset_n);
+
+  // sets the number of samples of this acq_chan
+  acq_last_params[this->acq_chan_n].acq_nsamples = this->acq_nsamples_n;
+  printf ("last params nsamples = %d\n",
+          acq_last_params[this->acq_chan_n].acq_nsamples);
+
+  // Num shots
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_SHOTS;
   data.data_send[0] = ACQ_CORE_SHOTS_NB_W(1);
   _commLink->fmc_config_send(&data);
 
   // Pre-trigger samples
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_PRE_SAMPLES;
-  data.data_send[0] = this->acq_nsamples;
+  data.data_send[0] = this->acq_nsamples_n;
   _commLink->fmc_config_send(&data);
 
   // Pos-trigger samples
@@ -595,7 +602,7 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
 
   // DDR3 start address
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_DDR3_START_ADDR;
-  data.data_send[0] = this->acq_offset;
+  data.data_send[0] = this->acq_offset_n;
   _commLink->fmc_config_send(&data);
 
   // Prepare core_ctl register
@@ -606,7 +613,7 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
 
   // Prepare acquisition channel control
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_ACQ_CHAN_CTL;
-  data.data_send[0] = ACQ_CORE_ACQ_CHAN_CTL_WHICH_W(this->acq_chan);
+  data.data_send[0] = ACQ_CORE_ACQ_CHAN_CTL_WHICH_W(this->acq_chan_n);
   _commLink->fmc_config_send(&data);
 
   // Starting acquisition...
@@ -615,46 +622,95 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
   data.data_send[0] = acq_core_ctl_reg;
   _commLink->fmc_config_send(&data);
 
+  printf ("acquisition started!\n");
+
   // Check for completion
   do {
     data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_STA;
-    _commLink->fmc_config_send(&data);
+    _commLink->fmc_config_read(&data);
     ++tries;
+    printf ("waiting for completion... #%d\n", tries);
   } while (!(data.data_read[0] & ACQ_CORE_STA_DDR3_TRANS_DONE) && (tries < MAX_TRIES));
 
   if (tries == MAX_TRIES) {
     return -3; // exceeded number of tries
   }
-  
+
   return 0;
 }
 
-int fmc_config_130m_4ch_board::set_acq_params(uint32_t acq_nsamples, uint32_t acq_chan,
+/*int fmc_config_130m_4ch_board::set_acq_params(uint32_t acq_nsamples, uint32_t acq_chan,
                                                 uint32_t acq_offset, uint32_t *acq_nsamples_out,
                                                 uint32_t *acq_chan_out, uint32_t *acq_offset_out)
 {
   if (acq_nsamples_out) {
-    *acq_nsamples_out = this->acq_nsamples;
+      printf ("set_acq_params: getting acq_nsamples to %d\n", this->acq_nsamples_n);
+    *acq_nsamples_out = acq_nsamples_n;
   }
   else {
-    this->acq_nsamples = acq_nsamples;
+      printf ("set_acq_params: setting acq_nsamples to %d\n", acq_nsamples);
+    acq_nsamples_n = acq_nsamples;
+      printf ("set_acq_params: this->acq_nsamples_n = %d\n", acq_nsamples_n);
   }
-  
+
   if (acq_chan_out) {
-    *acq_chan_out = this->acq_chan;
+    *acq_chan_out = this->acq_chan_n;
   }
   else {
-    this->acq_chan = acq_chan;
+    this->acq_chan_n = acq_chan;
   }
-  
+
   if (acq_offset_out) {
-    *acq_offset_out = this->acq_offset;
+    *acq_offset_out = this->acq_offset_n;
   }
   else {
-    this->acq_offset = acq_offset;
+    this->acq_offset_n = acq_offset;
   }
-  
+
   return 0;
+}*/
+
+
+int fmc_config_130m_4ch_board::set_acq_nsamples(uint32_t acq_nsamples)
+{
+    printf ("set_acq_nsamples....\n");
+    this->acq_nsamples_n = acq_nsamples;
+    printf ("this->nsamples is: %d\n", this->acq_nsamples_n);
+    printf ("acq_nsamples is: %d\n", acq_nsamples);
+    return 0;
+}
+
+int fmc_config_130m_4ch_board::get_acq_nsamples(uint32_t *acq_nsamples)
+{
+    printf ("get_acq_nsamples....\n");
+    *acq_nsamples = this->acq_nsamples_n;
+    printf ("this->nsamples_n is: %d\n", this->acq_nsamples_n);
+    printf ("*acq_nsamples is: %d\n", *acq_nsamples);
+    return 0;
+}
+
+int fmc_config_130m_4ch_board::set_acq_chan(uint32_t acq_chan)
+{
+    this->acq_chan_n = acq_chan;
+    return 0;
+}
+
+int fmc_config_130m_4ch_board::get_acq_chan(uint32_t *acq_chan)
+{
+    *acq_chan = this->acq_chan_n;
+    return 0;
+}
+
+int fmc_config_130m_4ch_board::set_acq_offset(uint32_t acq_offset)
+{
+    this->acq_offset_n = acq_offset;
+    return 0;
+}
+
+int fmc_config_130m_4ch_board::get_acq_offset(uint32_t *acq_offset)
+{
+    *acq_offset = this->acq_offset_n;
+    return 0;
 }
 
 int fmc_config_130m_4ch_board::get_acq_data_block(uint32_t acq_chan, uint32_t acq_offs, uint32_t acq_bytes,
@@ -667,12 +723,21 @@ int fmc_config_130m_4ch_board::get_acq_data_block(uint32_t acq_chan, uint32_t ac
   uint32_t acq_end = acq_last_params[acq_chan].acq_nsamples *
                             ddr3_acq_chan[acq_chan].samples_size;
 
+  printf ("get_acq_block: last_nsamples = %d\n",
+          acq_last_params[acq_chan].acq_nsamples);
+  printf ("get_acq_block: samples size = %d\n",
+          ddr3_acq_chan[acq_chan].samples_size);
+  printf ("get_acq_block: addr = %d, acq_offs = %d\n",
+          data.wb_addr, acq_offs);
+  printf ("acq_bytes = %d, acq_end = %d\n", acq_bytes, acq_end);
+
   // No data to be read
   if (acq_offs > acq_end) {
     *acq_bytes_out = 0;
     return 0;
   }
 
+  printf ("Checking out of bounds request...\n");
   // ughhhh... check for out of bounds request
   if (acq_offs + acq_bytes >= acq_end) {
     data.extra[0] = acq_end - acq_offs;
@@ -684,6 +749,7 @@ int fmc_config_130m_4ch_board::get_acq_data_block(uint32_t acq_chan, uint32_t ac
   *acq_bytes_out = data.extra[0];
 
   // always from bar2
+  printf ("reading %d bytes from bar2\n", data.extra[0]);
   _commLink->fmc_config_read_unsafe(&data, data_out);
 
   return 0;

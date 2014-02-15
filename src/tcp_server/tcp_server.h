@@ -1,7 +1,7 @@
 //============================================================================
 // Author      : Lucas Russo
 // Version     : 1.0
-// Description : 
+// Description :
 //============================================================================
 #ifndef __TCP_SERVER_H
 #define __TCP_SERVER_H
@@ -54,7 +54,7 @@ typedef struct _send_pkt_t send_pkt_t;
 class tcp_server {
 public:
 
-	tcp_server(string port, fmc_config_130m_4ch_board *_fmc_config_130m_4ch_board);
+	tcp_server(string port/*, fmc_config_130m_4ch_board *_fmc_config_130m_4ch_board*/);
 	~tcp_server();
 
   void *get_in_addr(struct sockaddr *sa);
@@ -62,6 +62,7 @@ public:
   int register_curve (struct bsmp_curve *bsmp_curve);
   int start(void);
 
+  friend void *tcp_thread (void *arg);
   /* BSMP exported functions */
   //friend uint8_t fmc130m_blink_leds(uint8_t *input, uint8_t *output);
 
@@ -71,7 +72,7 @@ private:
   string port;
   bsmp_server_t *bsmp_server;
 
-  fmc_config_130m_4ch_board *_fmc_config_130m_4ch_board;
+  /*fmc_config_130m_4ch_board *_fmc_config_130m_4ch_board;*/
 
   /* Private functions */
   int tcp_server_handle_client(int s, int *disconnected);

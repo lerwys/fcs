@@ -270,17 +270,29 @@ int pcie_link_driver::wb_read_data_unsafe(struct wb_data* data, uint32_t *data_o
     uint32_t offset = data->wb_addr % bar2size;
     uint32_t num_bytes_rem = num_bytes;
 
+    fprintf (stderr, "num_bytes: %d, num_pages %d, page_start %d\n",
+            num_bytes, num_pages, page_start);
+    fprintf (stderr, "offset: %d, num_bytes_rem %d\n",
+            offset, num_bytes_rem);
+
 	for (unsigned int i = page_start; i < page_start+num_pages; ++i) {
         bar0[REG_SDRAM_PG >> 2] = i;
-        num_bytes_page = (num_bytes_rem > bar2size) ? 
+        num_bytes_page = (num_bytes_rem > bar2size) ?
 				(bar2size-offset) : (num_bytes_rem-offset);
         num_bytes_rem -= num_bytes_page;
-        
+
+        fprintf (stderr, "in page %d, acquiring %d bytes from offset %d\n",
+            i, num_bytes_page, offset);
+
         memcpy ((uint8_t *)data_out,
                 (uint8_t *)bar2 + offset,
                 num_bytes_page);
         data_out = (uint32_t *)((uint8_t *)data_out + num_bytes_page);
         offset = 0; // after the first page this will always be 0
+
+        for (unsigned int j = 0; j < num_bytes_page/2; ++j) {
+            printf ("%d\n",*((int16_t *)((uint8_t *)bar2 + j*2)));
+        }
 	}
 
 	data->extra[0] = 1; // reset counter

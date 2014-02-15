@@ -78,7 +78,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = src/commlink
+subdir = src/reg_map
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/depcomp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -93,9 +93,9 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
-libcommlink_la_DEPENDENCIES = @LTLIBOBJS@
-am_libcommlink_la_OBJECTS = commLink.lo
-libcommlink_la_OBJECTS = $(am_libcommlink_la_OBJECTS)
+libregmap_la_DEPENDENCIES = @LTLIBOBJS@
+am_libregmap_la_OBJECTS = fmc_config_130m_4ch.lo
+libregmap_la_OBJECTS = $(am_libregmap_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -134,26 +134,8 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
-AM_V_CC = $(am__v_CC_@AM_V@)
-am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
-am__v_CC_0 = @echo "  CC      " $@;
-am__v_CC_1 = 
-CCLD = $(CC)
-LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CCLD = $(am__v_CCLD_@AM_V@)
-am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
-am__v_CCLD_0 = @echo "  CCLD    " $@;
-am__v_CCLD_1 = 
-SOURCES = $(libcommlink_la_SOURCES)
-DIST_SOURCES = $(libcommlink_la_SOURCES)
+SOURCES = $(libregmap_la_SOURCES)
+DIST_SOURCES = $(libregmap_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -300,15 +282,15 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-noinst_LTLIBRARIES = libcommlink.la
-libcommlink_la_SOURCES = \
-	commLink.cpp \
-	commLink.h
+noinst_LTLIBRARIES = libregmap.la
+libregmap_la_SOURCES = \
+	fmc_config_130m_4ch.cpp
 
-libcommlink_la_LIBADD = @LTLIBOBJS@
+libregmap_la_LIBADD = @LTLIBOBJS@
 AM_CPPFLAGS = \
 	-I. \
-	-I$(top_srcdir)/src/include
+	-I$(top_srcdir)/src/reg_map \
+	-I$(top_srcdir)/src/reg_map/mod_regs
 
 all: all-am
 
@@ -323,9 +305,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/commlink/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/reg_map/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu src/commlink/Makefile
+	  $(AUTOMAKE) --gnu src/reg_map/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -356,8 +338,8 @@ clean-noinstLTLIBRARIES:
 	  rm -f $${locs}; \
 	}
 
-libcommlink.la: $(libcommlink_la_OBJECTS) $(libcommlink_la_DEPENDENCIES) $(EXTRA_libcommlink_la_DEPENDENCIES) 
-	$(AM_V_CXXLD)$(CXXLINK)  $(libcommlink_la_OBJECTS) $(libcommlink_la_LIBADD) $(LIBS)
+libregmap.la: $(libregmap_la_OBJECTS) $(libregmap_la_DEPENDENCIES) $(EXTRA_libregmap_la_DEPENDENCIES) 
+	$(AM_V_CXXLD)$(CXXLINK)  $(libregmap_la_OBJECTS) $(libregmap_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -365,7 +347,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commLink.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fmc_config_130m_4ch.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

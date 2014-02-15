@@ -7,7 +7,8 @@ AC_PROG_CXX
 
 LT_INIT
 
-AM_INIT_AUTOMAKE([-Wall -Werror])
+AM_INIT_AUTOMAKE([-Wall -Wextra -Werror])
+AM_PROG_AR
 
 AC_PROG_INSTALL
 AC_CONFIG_MACRO_DIR([m4])
@@ -63,6 +64,7 @@ AC_CONFIG_FILES([src/interface/Makefile])
 AC_CONFIG_FILES([src/wishbone/Makefile])
 AC_CONFIG_FILES([src/fmc_config/Makefile])
 AC_CONFIG_FILES([src/tcp_server/Makefile])
+AC_CONFIG_FILES([src/reg_map/Makefile])
 
 # generate the final Makefile etc.
 AC_OUTPUT

@@ -24,6 +24,7 @@ SUBDIRS = \
 	src/interface \
 	src/wishbone \
 	src/tcp_server \
+	src/reg_map \
 	src
 
 dist_noinst_SCRIPTS = autogen.sh

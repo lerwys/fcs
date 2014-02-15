@@ -521,8 +521,6 @@ int fmc_config_130m_4ch_board::set_dds_freq(uint32_t dds_freq, uint32_t *dds_fre
   }
   else {
     uint32_t pinc =  floor((dds_freq / (double) this->adc_clk) * (1 << 30));
-
-    printf ("pinc = %d\n", pinc);
     
     data.data_send[0] = POS_CALC_DDS_PINC_CH0_VAL_W(pinc);  // phase increment ch0
     _commLink->fmc_config_send(&data);
@@ -543,6 +541,68 @@ int fmc_config_130m_4ch_board::set_dds_freq(uint32_t dds_freq, uint32_t *dds_fre
     // toggle valid signal for all four DDS's
     data.data_send[0] = (0x1) | (0x1 << 8) | (0x1 << 16) | (0x1 << 24);
     _commLink->fmc_config_send(&data);
+  }
+  
+  return 0;
+}
+
+#define MAX_TRIES 10
+
+int fmc_config_130m_4ch_board::set_data_acquire(uint32_t num_samples, uint32_t offset, int acq_chan)
+{
+  wb_data data;
+  uint32_t acq_core_ctl_reg;
+  int tries = 0;
+
+  data.data_send.resize(10);
+  data.extra.resize(2);
+  
+  // Num shots	
+  data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_SHOTS;
+  data.data_send[0] = ACQ_CORE_SHOTS_NB_W(1);
+  _commLink->fmc_config_send(&data);
+
+  // Pre-trigger samples
+  data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_PRE_SAMPLES;
+  data.data_send[0] = num_samples;
+  _commLink->fmc_config_send(&data);
+
+  // Pos-trigger samples
+  data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_POST_SAMPLES;
+  data.data_send[0] = 0;
+  _commLink->fmc_config_send(&data);
+
+  // DDR3 start address
+  data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_DDR3_START_ADDR;
+  data.data_send[0] = offset;
+  _commLink->fmc_config_send(&data);
+
+  // Prepare core_ctl register
+  acq_core_ctl_reg = ACQ_CORE_CTL_FSM_ACQ_NOW;
+  data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_CTL;
+  data.data_send[0] = acq_core_ctl_reg;
+  _commLink->fmc_config_send(&data);
+
+  // Prepare acquisition channel control
+  data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_ACQ_CHAN_CTL;
+  data.data_send[0] = ACQ_CORE_ACQ_CHAN_CTL_WHICH_W(acq_chan);
+  _commLink->fmc_config_send(&data);
+
+  // Starting acquisition...
+  acq_core_ctl_reg |= ACQ_CORE_CTL_FSM_START_ACQ;
+  data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_CTL;
+  data.data_send[0] = acq_core_ctl_reg;
+  _commLink->fmc_config_send(&data);
+
+  // Check for completion
+  do {
+    data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_STA;
+    _commLink->fmc_config_send(&data);
+    ++tries;
+  } while (!(data.data_read[0] & ACQ_CORE_STA_DDR3_TRANS_DONE) && (tries < MAX_TRIES));
+
+  if (tries == MAX_TRIES) {
+    return -3; // exceeded number of tries
   }
   
   return 0;

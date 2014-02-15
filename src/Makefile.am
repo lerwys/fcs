@@ -57,7 +57,8 @@ LDADD = \
 	$(top_builddir)/src/interface/libinterface.la \
 	$(top_builddir)/src/wishbone/libwishbone.la \
 	$(top_builddir)/src/common/libcommon.la \
-	$(top_builddir)/src/tcp_server/libtcpserver.la
+	$(top_builddir)/src/tcp_server/libtcpserver.la \
+	$(top_builddir)/src/reg_map/libregmap.la
 
 AM_CPPFLAGS = \
 	-I. \
@@ -67,7 +68,8 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/src/fmc_config \
 	-I$(top_srcdir)/src/common \
 	-I$(top_srcdir)/src/commlink \
-	-I$(top_srcdir)/src/tcp_server
+	-I$(top_srcdir)/src/tcp_server \
+	-I$(top_srcdir)/src/reg_map
 
 # install these headers
 nobase_include_HEADERS = \

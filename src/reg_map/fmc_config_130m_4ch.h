@@ -7,6 +7,8 @@
 #ifndef FMC_ADC_130M_4CH_REG_MAP_H_
 #define FMC_ADC_130M_4CH_REG_MAP_H_
 
+#include <inttypes.h>
+
 // REGISTER MAP FOR FMC ADC 130M 4CH
 // FPGA register map
 
@@ -25,6 +27,59 @@
 
 #define DSP_CTRL_REGS                   (DSP_BASE_ADDR + 0x00000000)
 #define DSP_BPM_SWAP                    (DSP_BASE_ADDR + 0x00000100)
+
+#define WB_ACQ_BASE_ADDR 0x00330000
+
+/*************** Memory Regions *************/
+#define MEM_TOTAL_SIZE                  (1 << 29) // 512 MB
+#define MEM_REGION_SIZE                 (MEM_TOTAL_SIZE / 8)
+
+// ADC
+#define ADC_CHAN_ID                     0
+#define DDR3_ADC_SAMPLE_SIZE            8 // 8 Bytes -> ADC0 = 16-bit / ADC1 = 16-bit ...
+#define DDR3_ADC_START_ADDR             0x0
+#define DDR3_ADC_END_ADDR               (DDR3_ADC_START_ADDR + 2*MEM_REGION_SIZE - DDR3_ADC_SAMPLE_SIZE)
+#define DDR3_ADC_MAX_SAMPLES            ((DDR3_ADC_END_ADDR-DDR3_ADC_START_ADDR) / DDR3_ADC_SAMPLE_SIZE)
+
+// TBT AMP
+#define TBTAMP_CHAN_ID                  1
+#define DDR3_TBTAMP_SAMPLE_SIZE         16 // 16 Bytes -> TBTAMP0 = 32-bit / TBTAMP1 = 32-bit ...
+#define DDR3_TBTAMP_START_ADDR          (DDR3_ADC_END_ADDR + DDR3_ADC_SAMPLE_SIZE)
+#define DDR3_TBTAMP_END_ADDR            (DDR3_TBTAMP_START_ADDR + MEM_REGION_SIZE - DDR3_TBTAMP_SAMPLE_SIZE)
+#define DDR3_TBTAMP_MAX_SAMPLES         ((DDR3_TBTAMP_END_ADDR-DDR3_TBTAMP_START_ADDR) / DDR3_TBTAMP_SAMPLE_SIZE)
+
+// TBT POS
+#define TBTPOS_CHAN_ID                  2
+#define DDR3_TBTPOS_SAMPLE_SIZE         16 // 16 Bytes -> X = 32-bit / Y = 32-bit ...
+#define DDR3_TBTPOS_START_ADDR          (DDR3_TBTAMP_END_ADDR + DDR3_TBTAMP_MAX_SAMPLES)
+#define DDR3_TBTPOS_END_ADDR            (DDR3_TBTPOS_START_ADDR + 2*MEM_REGION_SIZE - DDR3_TBTPOS_SAMPLE_SIZE)
+#define DDR3_TBTPOS_MAX_SAMPLES         ((DDR3_TBTPOS_END_ADDR-DDR3_TBTPOS_START_ADDR) / DDR3_TBTPOS_SAMPLE_SIZE)
+
+// FOFB AMP
+#define FOFBAMP_CHAN_ID                 3
+#define DDR3_FOFBAMP_SAMPLE_SIZE        16 // 16 Bytes -> FOFBAMP0 = 32-bit / FOFBAMP1 = 32-bit ...
+#define DDR3_FOFBAMP_START_ADDR         (DDR3_TBTPOS_END_ADDR + DDR3_TBTPOS_SAMPLE_SIZE)
+#define DDR3_FOFBAMP_END_ADDR           (DDR3_FOFBAMP_START_ADDR + MEM_REGION_SIZE - DDR3_FOFBAMP_SAMPLE_SIZE)
+#define DDR3_FOFBAMP_MAX_SAMPLES        ((DDR3_FOFBAMP_END_ADDR-DDR3_FOFBAMP_START_ADDR) / DDR3_FOFBAMP_SAMPLE_SIZE)
+
+// FOFB POS
+#define FOFBPOS_CHAN_ID                 4
+#define DDR3_FOFBPOS_SAMPLE_SIZE        16 // 16 Bytes -> X = 32-bit / Y = 32-bit ...
+#define DDR3_FOFBPOS_START_ADDR         (DDR3_FOFBAMP_END_ADDR + DDR3_FOFBAMP_MAX_SAMPLES)
+#define DDR3_FOFBPOS_END_ADDR           (DDR3_FOFBPOS_START_ADDR + 2*MEM_REGION_SIZE - DDR3_FOFBPOS_SAMPLE_SIZE)
+#define DDR3_FOFBPOS_MAX_SAMPLES        ((DDR3_FOFBPOS_END_ADDR-DDR3_FOFBPOS_START_ADDR) / DDR3_FOFBPOS_SAMPLE_SIZE)
+
+#define END_CHAN_ID                     5
+
+struct ddr3_acq_chan_s {
+  uint32_t id;
+  uint32_t start_addr;
+  uint32_t end_addr;
+  uint32_t max_samples;
+};
+
+extern const struct ddr3_acq_chan_s ddr3_acq_chan[END_CHAN_ID];
+
 /**********************************************************************/
 
 /********************** FMC-ADC-HDL firmware **************************/
@@ -78,5 +133,7 @@
 #include "pos_calc_regs.h"
 // DSP control register addresses
 #include "wb_bpm_swap.h"
+// ACQ core control register addresses
+#include "wb_acq_core_regs.h"
 
 #endif /* FMC_ADC_130M_4CH_REG_MAP_H_ */

@@ -58,6 +58,8 @@ public:
   int set_adc_clk(uint32_t adc_clk, uint32_t *adc_clk_out);
   int set_dds_freq(uint32_t dds_freq, uint32_t *dds_freq_out);
 
+  int set_data_acquire(uint32_t num_samples, uint32_t offset, int acq_chan);
+
 private:
 
 	commLink* _commLink;

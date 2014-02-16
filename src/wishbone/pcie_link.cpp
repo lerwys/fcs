@@ -78,9 +78,9 @@ pcie_link_driver::pcie_link_driver(int num) {
 pcie_link_driver::~pcie_link_driver() {
 
 	// Unmap BARs
-	dev->unmapBAR(0,bar0);
-	dev->unmapBAR(2,bar2);
-	dev->unmapBAR(4,bar4);
+	dev->unmapBAR(0,(void *)bar0);
+	dev->unmapBAR(2,(void *)bar2);
+	dev->unmapBAR(4,(void *)bar4);
 
 	// Close device
 	dev->close();
@@ -140,7 +140,7 @@ int pcie_link_driver::init(int num) {
 }
 
 // Set page and return address offset
-uint64_t pcie_link_driver::setPage(uint32_t* bar0, uint64_t* bar4, uint64_t bar4_size, uint64_t addr) {
+uint64_t pcie_link_driver::setPage(volatile uint32_t* bar0, volatile uint64_t* bar4, uint64_t bar4_size, uint64_t addr) {
 
 	uint32_t page;
 	uint32_t offset;
@@ -151,6 +151,9 @@ uint64_t pcie_link_driver::setPage(uint32_t* bar0, uint64_t* bar4, uint64_t bar4
 
 	bar0[REG_WB_PG >> 2] = page;
 
+	//fprintf(stderr, "Set WB page to: %d\n", page);
+	//fprintf(stderr, "Set WB offset to: %lx\n", offset);
+
 	//if (debug == 1)
 		//fprintf(stderr, "PCIe Link driver: setPage: addr: %x page: %x offset: %x\n", addr, page, offset);
 
@@ -158,12 +161,12 @@ uint64_t pcie_link_driver::setPage(uint32_t* bar0, uint64_t* bar4, uint64_t bar4
 }
 
 // Set page and return address offset
-uint32_t pcie_link_driver::setPageRAM(uint32_t* bar0, uint32_t* bar2, uint32_t bar2_size, uint32_t addr) {
+uint32_t pcie_link_driver::setPageRAM(volatile uint32_t* bar0, volatile uint32_t* bar2, uint32_t bar2_size, uint32_t addr) {
 
 	uint32_t page;
 	uint32_t offset;
 
-	bar2_size = bar2_size >> 3;
+	bar2_size = bar2_size >> 2; /*FIXME: FPGA SDRAM bar2 has 1 bit more than FPGA Wishbone bar4. Bug?*/
 	page = addr / bar2_size;
 	offset = addr % bar2_size;
 
@@ -181,8 +184,12 @@ int pcie_link_driver::wb_send_data(struct wb_data* data) {
 	addr =  data->wb_addr;
 
     // check extra vector before using it
-    if (data->extra.size() == 0) {
-      data->extra.resize(2);
+    /* FIXME: wrong FPGA firmware! */
+    //if (data->extra.size() == 0) {
+    if (data->extra.size() < 3) {
+    /* FIXME: wrong FPGA firmware! */
+      //data->extra.resize(2);
+      data->extra.resize(3);
     }
     // extra field 0 for number of data to be read
     else if (data->extra[0] == 0) {
@@ -191,7 +198,18 @@ int pcie_link_driver::wb_send_data(struct wb_data* data) {
 
 	for (unsigned int i = 0; i < data->extra[0]; i++) {
 		offset = setPage(bar0, bar4, bar4size, addr);
-		bar4[offset] = data->data_send[0];
+        /* FIXME: wrong FPGA firmware! */
+		//bar4[offset] = data->data_send[0];
+		//fprintf(stderr, "Send addr full = 0x%lx\n", bar4 + offset);
+        if (data->extra[2] == 1) {
+		    *((uint64_t *)((uint32_t *)bar4+offset)) = data->data_send[0];
+		    fprintf(stderr, "Send addr mod full = 0x%lx\n",
+                    (uint32_t *)bar4 + offset);
+        }
+        else {
+		    bar4[offset] = data->data_send[0];
+		    //fprintf(stderr, "Send addr full = 0x%lx\n", bar4 + offset);
+        }
 
 		if (debug == 1)
 			fprintf(stderr, "PCIe Link driver: Write function, offset: %x value: %x\n", offset, data->data_send[0]);
@@ -201,6 +219,7 @@ int pcie_link_driver::wb_send_data(struct wb_data* data) {
 
 	data->extra[0] = 1; // reset counter
 	data->extra[1] = 0; // default is Wishbone mode
+	data->extra[2] = 0; // default is correct firmware... =]
 
 	return STATUS_OK;
 
@@ -213,12 +232,15 @@ int pcie_link_driver::wb_read_data(struct wb_data* data) {
 	addr =  data->wb_addr;
 	data->data_read.clear();
 
-    // check extra vector before using it
-    if (data->extra.size() == 0) {
-      data->extra.resize(2);
+    /* FIXME: wrong FPGA firmware! */
+    //if (data->extra.size() == 0) {
+    if (data->extra.size() < 3) {
+    /* FIXME: wrong FPGA firmware! */
+      //data->extra.resize(2);
+      data->extra.resize(3);
     }
     // extra field 0 for number of data to be read
-    else if (data->extra[0] == 0) {
+    if (data->extra[0] == 0) {
       data->extra[0] = 1;
     }
 
@@ -229,8 +251,22 @@ int pcie_link_driver::wb_read_data(struct wb_data* data) {
 			val = bar2[offset];
 		}
 		else {
-			offset = setPage(bar0, bar4, bar4size, addr);
-			val = bar4[offset];
+		    offset = setPage(bar0, bar4, bar4size, addr);
+            /* FIXME: wrong FPGA firmware! */
+            if (data->extra[2] == 1) {
+		        //val = *((uint32_t *)bar4+offset);
+		        val = *((uint64_t *)((uint32_t *)bar4+offset));
+		        //fprintf(stderr, "Read addr mod full = 0x%lx\n",
+                //        (uint32_t *)bar4 + offset);
+            }
+            else {
+		        val = bar4[offset];
+		        //fprintf(stderr, "Read addr full = 0x%lx\n", bar4 + offset);
+            }
+
+            /* FIXME: wrong FPGA firmware! */
+		    //offset = setPage(bar0, bar4, bar4size, addr);
+		    //val = bar4[offset];
 		}
 
 		data->data_read.push_back(val);
@@ -243,6 +279,7 @@ int pcie_link_driver::wb_read_data(struct wb_data* data) {
 
 	data->extra[0] = 1; // reset counter
 	data->extra[1] = 0; // default is Wishbone mode
+	data->extra[2] = 0; // default is correct firmware... =]
 
 	return STATUS_OK;
 
@@ -257,43 +294,59 @@ int pcie_link_driver::wb_read_data_unsafe(struct wb_data* data, uint32_t *data_o
     }
     // extra field 0 for number of data to be read
     else if (data->extra[0] == 0) {
-      data->extra[0] = 1;
+      return 0;
+      //data->extra[0] = 1;
     }
 
     fprintf (stderr, "wb_read_data_unsafe: reading %d bytes from addr %lX\n", data->extra[0],
             data->wb_addr);
 
+    uint32_t bar2size_l = bar2size >> 2; /*FIXME: FPGA SDRAM bar2 has 1 bit more than FPGA Wishbone bar4. Bug?*/
     uint32_t num_bytes_page;
     uint32_t num_bytes = data->extra[0];/**sizeof(uint32_t);*/
-    uint32_t num_pages = (num_bytes < bar2size) ? 1 : num_bytes/bar2size;
-    uint32_t page_start = data->wb_addr / bar2size;
-    uint32_t offset = data->wb_addr % bar2size;
+    uint32_t num_pages = (num_bytes < bar2size_l) ? 1 : num_bytes/bar2size_l;
+    uint32_t page_start = data->wb_addr / bar2size_l;
+    uint32_t offset = data->wb_addr % bar2size_l;
     uint32_t num_bytes_rem = num_bytes;
 
+    fprintf (stderr, "bar2size = %d, bar2size_l = %d\n",
+            bar2size, bar2size_l);
     fprintf (stderr, "num_bytes: %d, num_pages %d, page_start %d\n",
             num_bytes, num_pages, page_start);
-    fprintf (stderr, "offset: %d, num_bytes_rem %d\n",
+    fprintf (stderr, "offset: 0x%X, num_bytes_rem %d\n",
             offset, num_bytes_rem);
 
 	for (unsigned int i = page_start; i < page_start+num_pages; ++i) {
         bar0[REG_SDRAM_PG >> 2] = i;
-        num_bytes_page = (num_bytes_rem > bar2size) ?
-				(bar2size-offset) : (num_bytes_rem-offset);
+        num_bytes_page = (num_bytes_rem > bar2size_l) ?
+				(bar2size_l-offset) : (num_bytes_rem/*-offset*/);
         num_bytes_rem -= num_bytes_page;
 
-        fprintf (stderr, "in page %d, acquiring %d bytes from offset %d\n",
+        fprintf (stderr, "in page %d, acquiring %d bytes from offset 0x%X\n",
             i, num_bytes_page, offset);
 
-        memcpy ((uint8_t *)data_out,
-                (uint8_t *)bar2 + offset,
-                num_bytes_page);
-        data_out = (uint32_t *)((uint8_t *)data_out + num_bytes_page);
+        for (unsigned int j = offset/4; j < offset/4 +
+                num_bytes_page/4; ++j) {
+            *((uint32_t *)data_out + j - offset/4) = *((uint32_t *)bar2 + j);
+        }
+
+        for (unsigned int j = offset/4; j < offset/4 + 16; ++j) {
+            printf ("%d\n",*((int32_t *)bar2 + j));
+            //val = bar2[j];
+        }
+        //memcpy ((void *)data_out,
+        //        (void *)bar2 + offset/4,
+        //        128/*num_bytes_page*/);
+        //data_out = (uint32_t *)((uint8_t *)data_out + num_bytes_page);
         offset = 0; // after the first page this will always be 0
 
-        for (unsigned int j = 0; j < num_bytes_page/2; ++j) {
-            printf ("%d\n",*((int16_t *)((uint8_t *)bar2 + j*2)));
-        }
 	}
+
+    //bar0[REG_SDRAM_PG >> 2] = 0;
+    //for (unsigned int j = 0; j < 16; ++j) {
+    //    printf ("%d\n",*((int16_t *)bar2 + j + offset/2));
+    //    //val = bar2[j];
+    //}
 
 	data->extra[0] = 1; // reset counter
 	data->extra[1] = 0; // default is Wishbone mode

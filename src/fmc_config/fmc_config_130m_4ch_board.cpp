@@ -19,7 +19,7 @@ fmc_config_130m_4ch_board::fmc_config_130m_4ch_board(WBMaster_unit* wb_master_un
     this->acq_offset_n = 0x0;
 
     for (unsigned int i = 0; i < ARRAY_SIZE(acq_last_params); ++i) {
-        this->acq_last_params[i].acq_nsamples = 0 ;
+        this->acq_last_params[i].acq_nsamples = 1024; /* FIXME! Test! */
     }
 
 	cout << "fmc_config_130m_4ch_board initilized!" << endl;
@@ -564,6 +564,10 @@ int fmc_config_130m_4ch_board::set_dds_freq(uint32_t dds_freq, uint32_t *dds_fre
 }
 
 #define MAX_TRIES 10
+/* FIXME: In FPGA ADC samples fill both streams
+ * of the acquisition channel, so the number of samples
+ * the user wants are interpreted as only half */
+#define NUM_SAMPLES_CORR 2
 
 // Acquire data with previously set parameters
 int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t offset, int acq_chan*/)
@@ -573,7 +577,7 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
   int tries = 0;
 
   data.data_send.resize(10);
-  data.extra.resize(2);
+  data.extra.resize(3);
 
   printf ("set_data_acq: parameters:\n");
   printf ("num samples = %d\n", this->acq_nsamples_n);
@@ -585,38 +589,71 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
   printf ("last params nsamples = %d\n",
           acq_last_params[this->acq_chan_n].acq_nsamples);
 
+  printf ("wb_acq_addr = 0x%x\n", WB_ACQ_BASE_ADDR);
+  printf ("shot reg offset = 0x%x\n", ACQ_CORE_REG_SHOTS);
+
   // Num shots
+  printf ("Num shots offset = 0x%x\n", ACQ_CORE_REG_PRE_SAMPLES);
+  /* FIXME!! */
+  /* Wrong FPGA firmware */
+  data.extra[2] = 1;
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_SHOTS;
   data.data_send[0] = ACQ_CORE_SHOTS_NB_W(1);
   _commLink->fmc_config_send(&data);
 
   // Pre-trigger samples
+  printf ("Pre trig offset = 0x%x\n", ACQ_CORE_REG_PRE_SAMPLES);
+  /* FIXME!! */
+  /* Wrong FPGA firmware */
+  data.extra[2] = 1;
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_PRE_SAMPLES;
-  data.data_send[0] = this->acq_nsamples_n;
+  data.data_send[0] = this->acq_nsamples_n * NUM_SAMPLES_CORR;
   _commLink->fmc_config_send(&data);
 
   // Pos-trigger samples
+  printf ("pos trig offset = 0x%x\n", ACQ_CORE_REG_POST_SAMPLES);
+  /* FIXME!! */
+  /* Wrong FPGA firmware */
+  data.extra[2] = 1;
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_POST_SAMPLES;
   data.data_send[0] = 0;
   _commLink->fmc_config_send(&data);
 
   // DDR3 start address
+  printf ("DDR3 Start addr = 0x%x\n", ACQ_CORE_REG_DDR3_START_ADDR);
+  printf ("DDR3 Start val = 0x%x\n", ddr3_acq_chan[this->acq_chan_n].start_addr);
+  /* FIXME!! */
+  /* Wrong FPGA firmware */
+  data.extra[2] = 1;
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_DDR3_START_ADDR;
-  data.data_send[0] = this->acq_offset_n;
+  //data.data_send[0] = this->acq_offset_n;
+  data.data_send[0] = ddr3_acq_chan[this->acq_chan_n].start_addr;
   _commLink->fmc_config_send(&data);
 
   // Prepare core_ctl register
+  printf ("Skip trigger addr = 0x%x\n", ACQ_CORE_REG_CTL);
+  /* FIXME!! */
+  /* Wrong FPGA firmware */
+  data.extra[2] = 1;
   acq_core_ctl_reg = ACQ_CORE_CTL_FSM_ACQ_NOW;
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_CTL;
   data.data_send[0] = acq_core_ctl_reg;
   _commLink->fmc_config_send(&data);
 
   // Prepare acquisition channel control
+  printf ("Acq Channel addr = 0x%x\n", ACQ_CORE_REG_ACQ_CHAN_CTL);
+  /* FIXME!! */
+  /* Wrong FPGA firmware */
+  data.extra[2] = 1;
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_ACQ_CHAN_CTL;
   data.data_send[0] = ACQ_CORE_ACQ_CHAN_CTL_WHICH_W(this->acq_chan_n);
   _commLink->fmc_config_send(&data);
 
   // Starting acquisition...
+  printf ("Start Acq addr = 0x%x\n", ACQ_CORE_REG_CTL);
+  /* FIXME!! */
+  /* Wrong FPGA firmware */
+  data.extra[2] = 1;
   acq_core_ctl_reg |= ACQ_CORE_CTL_FSM_START_ACQ;
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_CTL;
   data.data_send[0] = acq_core_ctl_reg;
@@ -626,10 +663,16 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
 
   // Check for completion
   do {
+    /* FIXME!! */
+    /* Wrong FPGA firmware */
+    usleep(10000); // 10msec wait
+    data.extra[2] = 1;
+    data.data_read.clear();
     data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_STA;
     _commLink->fmc_config_read(&data);
     ++tries;
     printf ("waiting for completion... #%d\n", tries);
+    printf ("status done = 0x%X\n", data.data_read[0]);
   } while (!(data.data_read[0] & ACQ_CORE_STA_DDR3_TRANS_DONE) && (tries < MAX_TRIES));
 
   if (tries == MAX_TRIES) {

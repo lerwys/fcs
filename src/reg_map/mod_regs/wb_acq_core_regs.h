@@ -160,33 +160,61 @@
 #define ACQ_CORE_ACQ_CHAN_CTL_WHICH_W(value)  WBGEN2_GEN_WRITE(value, 0, 5)
 #define ACQ_CORE_ACQ_CHAN_CTL_WHICH_R(reg)    WBGEN2_GEN_READ(reg, 0, 5)
 
+/* FIXME: Wrong FPGA firmware demands for this */
+#define WEIRD_SHIFT 1
+
 /* [0x0]: REG Control register */
-#define ACQ_CORE_REG_CTL (0x00000000 << WB_GR_SHIFT)
+#define ACQ_CORE_REG_CTL (0x00000000 << WEIRD_SHIFT)
 /* [0x4]: REG Status register */
-#define ACQ_CORE_REG_STA (0x00000004 << WB_GR_SHIFT)
+#define ACQ_CORE_REG_STA (0x00000001 << WEIRD_SHIFT)
 /* [0x8]: REG Trigger configuration */
-#define ACQ_CORE_REG_TRIG_CFG (0x00000008 << WB_GR_SHIFT)
+#define ACQ_CORE_REG_TRIG_CFG (0x00000002 << WEIRD_SHIFT)
 /* [0xc]: REG Trigger delay */
-#define ACQ_CORE_REG_TRIG_DLY (0x0000000c << WB_GR_SHIFT)
+#define ACQ_CORE_REG_TRIG_DLY (0x00000003 << WEIRD_SHIFT)
 /* [0x10]: REG Software trigger */
-#define ACQ_CORE_REG_SW_TRIG (0x00000010 << WB_GR_SHIFT)
+#define ACQ_CORE_REG_SW_TRIG (0x00000004 << WEIRD_SHIFT)
 /* [0x14]: REG Number of shots */
-#define ACQ_CORE_REG_SHOTS (0x00000014 << WB_GR_SHIFT)
+#define ACQ_CORE_REG_SHOTS (0x00000005 << WEIRD_SHIFT)
 /* [0x18]: REG Trigger address register */
-#define ACQ_CORE_REG_TRIG_POS (0x00000018 << WB_GR_SHIFT)
+#define ACQ_CORE_REG_TRIG_POS (0x00000006 << WEIRD_SHIFT)
 /* [0x1c]: REG Pre-trigger samples */
-#define ACQ_CORE_REG_PRE_SAMPLES (0x0000001c << WB_GR_SHIFT)
+#define ACQ_CORE_REG_PRE_SAMPLES (0x00000007 << WEIRD_SHIFT)
 /* [0x20]: REG Post-trigger samples */
-#define ACQ_CORE_REG_POST_SAMPLES (0x00000020 << WB_GR_SHIFT)
+#define ACQ_CORE_REG_POST_SAMPLES (0x00000008 << WEIRD_SHIFT)
 /* [0x24]: REG Samples counter */
-#define ACQ_CORE_REG_SAMPLES_CNT (0x00000024 << WB_GR_SHIFT)
+#define ACQ_CORE_REG_SAMPLES_CNT (0x00000009 << WEIRD_SHIFT)
 /* [0x28]: REG DDR3 Start Address */
-#define ACQ_CORE_REG_DDR3_START_ADDR (0x00000028 << WB_GR_SHIFT)
+#define ACQ_CORE_REG_DDR3_START_ADDR (0x0000000a << WEIRD_SHIFT)
 /* [0x2c]: REG Acquisition channel control */
-#define ACQ_CORE_REG_ACQ_CHAN_CTL (0x0000002c << WB_GR_SHIFT)
+#define ACQ_CORE_REG_ACQ_CHAN_CTL (0x0000000b << WEIRD_SHIFT)
 
 ///* [0x0]: REG Control register */
-//#define ACQ_CORE_REG_CTL 0x00000000 
+//#define ACQ_CORE_REG_CTL (0x00000000 << WB_GR_SHIFT)
+///* [0x4]: REG Status register */
+//#define ACQ_CORE_REG_STA (0x00000001 << WB_GR_SHIFT)
+///* [0x8]: REG Trigger configuration */
+//#define ACQ_CORE_REG_TRIG_CFG (0x00000002 << WB_GR_SHIFT)
+///* [0xc]: REG Trigger delay */
+//#define ACQ_CORE_REG_TRIG_DLY (0x00000003 << WB_GR_SHIFT)
+///* [0x10]: REG Software trigger */
+//#define ACQ_CORE_REG_SW_TRIG (0x00000004 << WB_GR_SHIFT)
+///* [0x14]: REG Number of shots */
+//#define ACQ_CORE_REG_SHOTS (0x00000005 << WB_GR_SHIFT)
+///* [0x18]: REG Trigger address register */
+//#define ACQ_CORE_REG_TRIG_POS (0x00000006 << WB_GR_SHIFT)
+///* [0x1c]: REG Pre-trigger samples */
+//#define ACQ_CORE_REG_PRE_SAMPLES (0x00000007 << WB_GR_SHIFT)
+///* [0x20]: REG Post-trigger samples */
+//#define ACQ_CORE_REG_POST_SAMPLES (0x00000008 << WB_GR_SHIFT)
+///* [0x24]: REG Samples counter */
+//#define ACQ_CORE_REG_SAMPLES_CNT (0x00000009 << WB_GR_SHIFT)
+///* [0x28]: REG DDR3 Start Address */
+//#define ACQ_CORE_REG_DDR3_START_ADDR (0x0000000a << WB_GR_SHIFT)
+///* [0x2c]: REG Acquisition channel control */
+//#define ACQ_CORE_REG_ACQ_CHAN_CTL (0x0000000b << WB_GR_SHIFT)
+
+///* [0x0]: REG Control register */
+//#define ACQ_CORE_REG_CTL 0x00000000
 ///* [0x4]: REG Status register */
 //#define ACQ_CORE_REG_STA 0x00000004
 ///* [0x8]: REG Trigger configuration */

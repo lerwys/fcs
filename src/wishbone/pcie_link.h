@@ -45,8 +45,8 @@ private:
 
 	pciDriver::PciDevice *dev;
 
-	uint32_t *bar0, *bar2;
-	uint64_t  *bar4;
+	volatile uint32_t *bar0, *bar2;
+	volatile uint64_t  *bar4;
 
 	uint32_t bar0size, bar2size;
 	uint64_t bar4size;
@@ -58,8 +58,8 @@ private:
 	int init(int num);
 	int reset();
 
-	uint64_t setPage(uint32_t* bar0, uint64_t* bar4, uint64_t bar4_size, uint64_t addr);
-	uint32_t setPageRAM(uint32_t* bar0, uint32_t* bar2, uint32_t bar2_size, uint32_t addr);
+	uint64_t setPage(volatile uint32_t* bar0, volatile uint64_t* bar4, uint64_t bar4_size, uint64_t addr);
+	uint32_t setPageRAM(volatile uint32_t* bar0, volatile uint32_t* bar2, uint32_t bar2_size, uint32_t addr);
 
 };
 

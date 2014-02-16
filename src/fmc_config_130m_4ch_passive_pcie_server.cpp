@@ -522,8 +522,8 @@ uint8_t fmc130m_set_acq_params(uint8_t *input, uint8_t *output)
         return -2; // invalid number of samples
     }
 
-    printf(S"Setting acq_chan to %d and num_samples to %d\n", acq_chan,
-            nsamples);
+    printf(S"Setting acq_chan to %d, num_samples to %d and offset to 0x%X\n", acq_chan,
+            nsamples, ddr3_acq_chan[acq_chan].start_addr);
 
   /*  *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_acq_params(nsamples,
             acq_chan, ddr3_acq_chan[acq_chan].start_addr, NULL, NULL, NULL);*/

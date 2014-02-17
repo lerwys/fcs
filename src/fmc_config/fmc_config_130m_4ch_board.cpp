@@ -563,18 +563,26 @@ int fmc_config_130m_4ch_board::set_dds_freq(uint32_t dds_freq, uint32_t *dds_fre
   return 0;
 }
 
-#define MAX_TRIES 10
+//#define MAX_TRIES 10
+#define MAX_TRIES (1 << 28)
 /* FIXME: In FPGA ADC samples fill both streams
  * of the acquisition channel, so the number of samples
  * the user wants are interpreted as only half */
-//#define NUM_SAMPLES_CORR 2
-#define NUM_SAMPLES_CORR 4
+#define NUM_SAMPLES_8_CORR 8 /* Correction factor for 16-bit
+                                (8-byte, 4 channels) samples */
+#define NUM_SAMPLES_16_CORR 8 /* Correction factor for 32-bit
+                                 (16-byte, 4 channels) samples */
+//#define NUM_SAMPLES_8_CORR 1 /* Correction factor for 16-bit
+//                                (8-byte, 4 channels) samples */
+//#define NUM_SAMPLES_16_CORR 1 /* Correction factor for 32-bit
+//                                 (16-byte, 4 channels) samples */
 
 // Acquire data with previously set parameters
 int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t offset, int acq_chan*/)
 {
   wb_data data;
   uint32_t acq_core_ctl_reg;
+  uint32_t samples_size = ddr3_acq_chan[this->acq_chan_n].samples_size;
   int tries = 0;
 
   data.data_send.resize(10);
@@ -608,7 +616,15 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
   /* Wrong FPGA firmware */
   data.extra[2] = 1;
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_PRE_SAMPLES;
-  data.data_send[0] = this->acq_nsamples_n * NUM_SAMPLES_CORR;
+
+  /* Apply correction factor */
+  if (samples_size == 8) { // ADC
+    data.data_send[0] = this->acq_nsamples_n * NUM_SAMPLES_8_CORR;
+  }
+  else { // All others
+    data.data_send[0] = this->acq_nsamples_n * NUM_SAMPLES_16_CORR;
+  }
+
   _commLink->fmc_config_send(&data);
 
   // Pos-trigger samples

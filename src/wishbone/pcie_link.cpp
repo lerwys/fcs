@@ -301,7 +301,7 @@ int pcie_link_driver::wb_read_data_unsafe(struct wb_data* data, uint32_t *data_o
     fprintf (stderr, "wb_read_data_unsafe: reading %d bytes from addr %lX\n", data->extra[0],
             data->wb_addr);
 
-    uint32_t bar2size_l = bar2size >> 2; /*FIXME: FPGA SDRAM bar2 has 1 bit more than FPGA Wishbone bar4. Bug?*/
+    uint32_t bar2size_l = bar2size >> 3; /*FIXME: FPGA SDRAM bar2 has 1 bit more than FPGA Wishbone bar4. Bug?*/
     uint32_t num_bytes_page;
     uint32_t num_bytes = data->extra[0];/**sizeof(uint32_t);*/
     uint32_t num_pages = (num_bytes < bar2size_l) ? 1 : num_bytes/bar2size_l;
@@ -330,10 +330,10 @@ int pcie_link_driver::wb_read_data_unsafe(struct wb_data* data, uint32_t *data_o
             *((uint32_t *)data_out + j - offset/4) = *((uint32_t *)bar2 + j);
         }
 
-        for (unsigned int j = offset/4; j < offset/4 + 16; ++j) {
-            printf ("%d\n",*((int32_t *)bar2 + j));
-            //val = bar2[j];
-        }
+        //for (unsigned int j = offset/4; j < offset/4 + 16; ++j) {
+        //    printf ("%d\n",*((int32_t *)bar2 + j));
+        //    //val = bar2[j];
+        //}
         //memcpy ((void *)data_out,
         //        (void *)bar2 + offset/4,
         //        128/*num_bytes_page*/);

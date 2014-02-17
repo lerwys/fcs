@@ -31,10 +31,11 @@
 #define WB_ACQ_BASE_ADDR 0x00330000
 
 /*************** Memory Regions *************/
-#define MEM_TOTAL_SIZE                  (1 << 29) // 512 MB
-//#define MEM_TOTAL_SIZE                  (1 << 28) // 256 MB
+//#define MEM_TOTAL_SIZE                  (1 << 29) // 512 MB
+#define MEM_TOTAL_SIZE                  (1 << 28) // 256 MB
 #define MEM_REGION_SIZE                 (MEM_TOTAL_SIZE / 8)
-//#define MEM_REGION_SIZE                 (MEM_TOTAL_SIZE / 32)
+//#define MEM_REGION_SIZE                 (MEM_TOTAL_SIZE / 2)
+//#define MEM_REGION_SIZE                 (MEM_TOTAL_SIZE / 64)
 
 // ADC
 #define ADC_CHAN_ID                     0
@@ -50,8 +51,8 @@
 #define TBTAMP_CHAN_ID                  1
 #define DDR3_TBTAMP_SAMPLE_SIZE         16 // 16 Bytes -> TBTAMP0 = 32-bit / TBTAMP1 = 32-bit ...
 /* FIXME: Testing! */
-#define DDR3_TBTAMP_START_ADDR          (0x0)
-//#define DDR3_TBTAMP_START_ADDR          (DDR3_ADC_END_ADDR + DDR3_ADC_SAMPLE_SIZE)
+//#define DDR3_TBTAMP_START_ADDR          (0x800000)
+#define DDR3_TBTAMP_START_ADDR          (DDR3_ADC_END_ADDR + DDR3_ADC_SAMPLE_SIZE)
 #define DDR3_TBTAMP_END_ADDR            (DDR3_TBTAMP_START_ADDR + MEM_REGION_SIZE - DDR3_TBTAMP_SAMPLE_SIZE)
 //FIXME TESTING
 //#define DDR3_TBTAMP_MAX_SAMPLES         ((DDR3_TBTAMP_END_ADDR-DDR3_TBTAMP_START_ADDR) / DDR3_TBTAMP_SAMPLE_SIZE)
@@ -61,8 +62,8 @@
 #define TBTPOS_CHAN_ID                  2
 #define DDR3_TBTPOS_SAMPLE_SIZE         16 // 16 Bytes -> X = 32-bit / Y = 32-bit ...
 // TESTING !!!
-#define DDR3_TBTPOS_START_ADDR          (0x0)
-//#define DDR3_TBTPOS_START_ADDR          (DDR3_TBTAMP_END_ADDR + DDR3_TBTAMP_SAMPLE_SIZE)
+//#define DDR3_TBTPOS_START_ADDR          (0x0)
+#define DDR3_TBTPOS_START_ADDR          (DDR3_TBTAMP_END_ADDR + DDR3_TBTAMP_SAMPLE_SIZE)
 #define DDR3_TBTPOS_END_ADDR            (DDR3_TBTPOS_START_ADDR + 2*MEM_REGION_SIZE - DDR3_TBTPOS_SAMPLE_SIZE)
 //#define DDR3_TBTPOS_MAX_SAMPLES         ((DDR3_TBTPOS_END_ADDR-DDR3_TBTPOS_START_ADDR) / DDR3_TBTPOS_SAMPLE_SIZE)
 //FIXME TESTING
@@ -82,6 +83,7 @@
 // FOFB POS
 #define FOFBPOS_CHAN_ID                 4
 #define DDR3_FOFBPOS_SAMPLE_SIZE        16 // 16 Bytes -> X = 32-bit / Y = 32-bit ...
+//#define DDR3_FOFBPOS_START_ADDR         (DDR3_FOFBAMP_START_ADDR)
 #define DDR3_FOFBPOS_START_ADDR         (0x0)
 //#define DDR3_FOFBPOS_START_ADDR         (DDR3_FOFBAMP_END_ADDR + DDR3_FOFBAMP_SAMPLE_SIZE)
 #define DDR3_FOFBPOS_END_ADDR           (DDR3_FOFBPOS_START_ADDR + 2*MEM_REGION_SIZE - DDR3_FOFBPOS_SAMPLE_SIZE)

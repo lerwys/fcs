@@ -21,6 +21,7 @@
 
 #include "wbmaster_unit.h"
 #include "wbint_drv.h"
+#include "plat_opts.h"
 
 using namespace std;
 

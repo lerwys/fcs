@@ -283,14 +283,16 @@ int AD9510_drv::AD9510_config_si570_fmc_adc_130m_4ch(uint32_t chip_select) {
   AD9510_spi_write(chip_select, 0x4A, 0x00); // divide by 2 (off)
   AD9510_spi_write(chip_select, 0x4C, 0x00); // divide by 2 (off)
   AD9510_spi_write(chip_select, 0x4E, 0x00); // divide by 2 (off)
-  AD9510_spi_write(chip_select, 0x50, 0x00); // divide by 2 (off)
+  //AD9510_spi_write(chip_select, 0x50, 0x00); // divide by 2 (off)
+  AD9510_spi_write(chip_select, 0x50, (1 << 4) | (1 << 0)); // divide by 4
   AD9510_spi_write(chip_select, 0x56, 0x00); // divider
 
   AD9510_spi_write(chip_select, 0x49, 0x90); // phase offset = 0 , divider off
   AD9510_spi_write(chip_select, 0x4B, 0x90); // phase
   AD9510_spi_write(chip_select, 0x4D, 0x90); // phase
   AD9510_spi_write(chip_select, 0x4F, 0x90); // phase
-  AD9510_spi_write(chip_select, 0x51, 0x90); // phase
+  //AD9510_spi_write(chip_select, 0x51, 0x90); // phase
+  AD9510_spi_write(chip_select, 0x51, 0x10); // divider on
   AD9510_spi_write(chip_select, 0x57, 0x90); // phase
 
   // Function pin is SYNCB
@@ -328,14 +330,16 @@ int AD9510_drv::AD9510_config_si570_fmc_adc_130m_4ch(uint32_t chip_select) {
   AD9510_assert(chip_select, 0x4A, 0x00);
   AD9510_assert(chip_select, 0x4C, 0x00);
   AD9510_assert(chip_select, 0x4E, 0x00);
-  AD9510_assert(chip_select, 0x50, 0x00);
+  //AD9510_assert(chip_select, 0x50, 0x00);
+  AD9510_assert(chip_select, 0x50, (1 << 4) | (1 << 0));
   AD9510_assert(chip_select, 0x56, 0x00);
 
   AD9510_assert(chip_select, 0x49, 0x90);
   AD9510_assert(chip_select, 0x4B, 0x90);
   AD9510_assert(chip_select, 0x4D, 0x90);
   AD9510_assert(chip_select, 0x4F, 0x90);
-  AD9510_assert(chip_select, 0x51, 0x90);
+  //AD9510_assert(chip_select, 0x51, 0x90);
+  AD9510_assert(chip_select, 0x51, 0x10);
   AD9510_assert(chip_select, 0x57, 0x90);
 
   return 0;

@@ -260,9 +260,9 @@ int main(int argc, const char **argv) {
   // RFreq = 00 0010 1011 1000 1011 1011 1110 0100 0111 0010 = 11689256050d
   // RFreq = 11689256050d / 2^28 = 43.545872159
   // fxtal = 114.26164683147 (previously 114.262954 MHz previously 114.285 MHz )
-  
-  
-  
+
+
+
   //fxtal = 92.698155690157???
 
   cout << "============================================" << endl <<
@@ -498,13 +498,13 @@ int main(int argc, const char **argv) {
   data.extra[0] = SI571_ADDR;
   data.extra[1] = 6;
 
-  Si570_drv::si570_set_freq(&data);
+  //Si570_drv::si570_set_freq(&data);
 
   sleep(1);
 
   data.data_send.clear();
   data.data_read.clear();
-  //Si570_drv::si570_read_freq(&data); // check if data is the same, //not working
+  Si570_drv::si570_read_freq(&data); // check if data is the same, //not working
 
 // 125MHz
 /*
@@ -570,12 +570,12 @@ int main(int argc, const char **argv) {
 
 // 113.376415 MHz output
 
-  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
-  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
-  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xBA);
-  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x89);
-  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0xAF);
-  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x5B);
+  //Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
+  //Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  //Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xBA);
+  //Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x89);
+  //Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0xAF);
+  //Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x5B);
 
 
 /*
@@ -676,8 +676,8 @@ int main(int argc, const char **argv) {
   AD9510_drv::AD9510_setCommLink(_commLink, AD9510_SPI_DRV);
 
   // FPGA working with clock copy for ADC (FMC ADC 130M 4CH rev.1)
-  //AD9510_drv::AD9510_config_si570_fmc_adc_130m_4ch(AD9510_ADDR); // with config check included
-  AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(AD9510_ADDR); // with config check included
+  AD9510_drv::AD9510_config_si570_fmc_adc_130m_4ch(AD9510_ADDR); // with config check included
+  //AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(AD9510_ADDR); // with config check included
 
   // Check PLL lock
 

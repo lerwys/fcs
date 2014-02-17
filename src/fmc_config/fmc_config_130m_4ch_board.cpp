@@ -567,7 +567,8 @@ int fmc_config_130m_4ch_board::set_dds_freq(uint32_t dds_freq, uint32_t *dds_fre
 /* FIXME: In FPGA ADC samples fill both streams
  * of the acquisition channel, so the number of samples
  * the user wants are interpreted as only half */
-#define NUM_SAMPLES_CORR 2
+//#define NUM_SAMPLES_CORR 2
+#define NUM_SAMPLES_CORR 4
 
 // Acquire data with previously set parameters
 int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t offset, int acq_chan*/)
@@ -665,7 +666,7 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
   do {
     /* FIXME!! */
     /* Wrong FPGA firmware */
-    usleep(10000); // 10msec wait
+    usleep(100000); // 100msec wait
     data.extra[2] = 1;
     data.data_read.clear();
     data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_STA;

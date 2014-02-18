@@ -166,7 +166,7 @@ uint32_t pcie_link_driver::setPageRAM(volatile uint32_t* bar0, volatile uint32_t
 	uint32_t page;
 	uint32_t offset;
 
-	bar2_size = bar2_size >> 2; /*FIXME: FPGA SDRAM bar2 has 1 bit more than FPGA Wishbone bar4. Bug?*/
+	bar2_size = bar2_size >> 3; /*FIXME: FPGA SDRAM bar2 has 1 bit more than FPGA Wishbone bar4. Bug?*/
 	page = addr / bar2_size;
 	offset = addr % bar2_size;
 
@@ -304,9 +304,13 @@ int pcie_link_driver::wb_read_data_unsafe(struct wb_data* data, uint32_t *data_o
     uint32_t bar2size_l = bar2size >> 3; /*FIXME: FPGA SDRAM bar2 has 1 bit more than FPGA Wishbone bar4. Bug?*/
     uint32_t num_bytes_page;
     uint32_t num_bytes = data->extra[0];/**sizeof(uint32_t);*/
-    uint32_t num_pages = (num_bytes < bar2size_l) ? 1 : num_bytes/bar2size_l;
-    uint32_t page_start = data->wb_addr / bar2size_l;
-    uint32_t offset = data->wb_addr % bar2size_l;
+    uint32_t num_pages = (num_bytes < bar2size) ? 1 : num_bytes/bar2size;
+    //uint32_t num_pages = (num_bytes < bar2size_l) ? 1 : num_bytes/bar2size_l;
+    //uint32_t page_start = data->wb_addr / bar2size_l;
+    //FIXME: TESTING
+    uint32_t page_start = data->wb_addr / (bar2size);
+    //uint32_t offset = data->wb_addr % bar2size_l;
+    uint32_t offset = data->wb_addr % bar2size;
     uint32_t num_bytes_rem = num_bytes;
 
     fprintf (stderr, "bar2size = %d, bar2size_l = %d\n",
@@ -318,8 +322,10 @@ int pcie_link_driver::wb_read_data_unsafe(struct wb_data* data, uint32_t *data_o
 
 	for (unsigned int i = page_start; i < page_start+num_pages; ++i) {
         bar0[REG_SDRAM_PG >> 2] = i;
-        num_bytes_page = (num_bytes_rem > bar2size_l) ?
-				(bar2size_l-offset) : (num_bytes_rem/*-offset*/);
+        //num_bytes_page = (num_bytes_rem > bar2size_l) ?
+		//		(bar2size_l-offset) : (num_bytes_rem/*-offset*/);
+        num_bytes_page = (num_bytes_rem > bar2size) ?
+				(bar2size-offset) : (num_bytes_rem/*-offset*/);
         num_bytes_rem -= num_bytes_page;
 
         fprintf (stderr, "in page %d, acquiring %d bytes from offset 0x%X\n",

@@ -568,9 +568,9 @@ int fmc_config_130m_4ch_board::set_dds_freq(uint32_t dds_freq, uint32_t *dds_fre
 /* FIXME: In FPGA ADC samples fill both streams
  * of the acquisition channel, so the number of samples
  * the user wants are interpreted as only half */
-#define NUM_SAMPLES_8_CORR 8 /* Correction factor for 16-bit
+#define NUM_SAMPLES_8_CORR 1 /* Correction factor for 16-bit
                                 (8-byte, 4 channels) samples */
-#define NUM_SAMPLES_16_CORR 8 /* Correction factor for 32-bit
+#define NUM_SAMPLES_16_CORR 1 /* Correction factor for 32-bit
                                  (16-byte, 4 channels) samples */
 //#define NUM_SAMPLES_8_CORR 1 /* Correction factor for 16-bit
 //                                (8-byte, 4 channels) samples */
@@ -644,7 +644,9 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
   data.extra[2] = 1;
   data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_DDR3_START_ADDR;
   //data.data_send[0] = this->acq_offset_n;
-  data.data_send[0] = ddr3_acq_chan[this->acq_chan_n].start_addr;
+  //data.data_send[0] = ddr3_acq_chan[this->acq_chan_n].start_addr;
+  data.data_send[0] = ddr3_acq_chan[this->acq_chan_n].start_addr/8;
+  //data.data_send[0] = 0x100000/8;
   _commLink->fmc_config_send(&data);
 
   // Prepare core_ctl register

@@ -31,8 +31,8 @@
 #define WB_ACQ_BASE_ADDR 0x00330000
 
 /*************** Memory Regions *************/
-#define MEM_TOTAL_SIZE                  (1 << 29) // 512 MB
-//#define MEM_TOTAL_SIZE                  (1 << 28) // 256 MB
+//#define MEM_TOTAL_SIZE                  (1 << 29) // 512 MB
+#define MEM_TOTAL_SIZE                  (1 << 28) // 256 MB
 #define MEM_REGION_SIZE                 (MEM_TOTAL_SIZE / 8)
 //#define MEM_REGION_SIZE                 (MEM_TOTAL_SIZE / 2)
 //#define MEM_REGION_SIZE                 (MEM_TOTAL_SIZE / 64)
@@ -51,7 +51,7 @@
 #define TBTAMP_CHAN_ID                  1
 #define DDR3_TBTAMP_SAMPLE_SIZE         16 // 16 Bytes -> TBTAMP0 = 32-bit / TBTAMP1 = 32-bit ...
 /* FIXME: Testing! */
-//#define DDR3_TBTAMP_START_ADDR          (0x800000)
+//#define DDR3_TBTAMP_START_ADDR          (0x100000)
 #define DDR3_TBTAMP_START_ADDR          (DDR3_ADC_END_ADDR + DDR3_ADC_SAMPLE_SIZE)
 #define DDR3_TBTAMP_END_ADDR            (DDR3_TBTAMP_START_ADDR + MEM_REGION_SIZE - DDR3_TBTAMP_SAMPLE_SIZE)
 //FIXME TESTING

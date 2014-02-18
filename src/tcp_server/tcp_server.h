@@ -58,8 +58,8 @@ public:
 	~tcp_server();
 
   void *get_in_addr(struct sockaddr *sa);
-  int register_func (struct bsmp_func *bsmp_func);
-  int register_curve (struct bsmp_curve *bsmp_curve);
+  enum bsmp_err register_func (struct bsmp_func *bsmp_func);
+  enum bsmp_err register_curve (struct bsmp_curve *bsmp_curve);
   int start(void);
 
   friend void *tcp_thread (void *arg);

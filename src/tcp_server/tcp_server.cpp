@@ -245,12 +245,6 @@ int tcp_server::bsmp_init (void)
     }
 
     /*
-     * Register all Functions
-     */
-    //TRY("reg_func", bsmp_register_function(bsmp_server, &ad_convert_func));  // ID 0
-    //TRY("reg_func", bsmp_register_function(bsmp_server, &fmc130m_blink_leds_func));  // ID 1
-
-    /*
      * Great! Now our server is up and ready to receive some commands.
      * This will be done in the function server_process_message.
      */
@@ -297,12 +291,12 @@ void *tcp_thread (void *arg)
 /**********************   Class methods  **********************/
 /***************************************************************/
 
-int tcp_server::register_func (struct bsmp_func *bsmp_func)
+enum bsmp_err tcp_server::register_func (struct bsmp_func *bsmp_func)
 {
   return bsmp_register_function(bsmp_server, bsmp_func);
 }
 
-int tcp_server::register_curve (struct bsmp_curve *bsmp_curve)
+enum bsmp_err tcp_server::register_curve (struct bsmp_curve *bsmp_curve)
 {
   return bsmp_register_curve(bsmp_server, bsmp_curve);
 }

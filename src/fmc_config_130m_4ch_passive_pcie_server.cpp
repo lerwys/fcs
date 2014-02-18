@@ -757,6 +757,80 @@ static struct bsmp_curve fofbpos_curve = {
     (void*) &fofbpos_id    //user
 };
 
+// Monit Amp
+#define MONITAMP_CHAN_ID                 0
+
+static void curve_read_monitamp_block (struct bsmp_curve *curve, uint16_t block,
+                              uint8_t *data, uint16_t *len)
+{
+
+    DEBUGP(S"Reading curve monit. amp block...\n");
+
+    uint8_t *block_data;
+    uint16_t block_size = curve->info.block_size;
+    uint32_t curve_id = *((uint32_t*)curve->user);
+
+    if (curve_id != MONITAMP_CHAN_ID) {
+      fprintf(stderr,S"That's weird. I've got an unexpected Curve to read\n");
+      return;
+    }
+
+    fmc_config_130m_4ch_board_p->get_acq_sample_monit_amp((uint32_t *)data,
+            (uint32_t *)len);
+}
+
+static uint32_t monitamp_id = MONITAMP_CHAN_ID;
+// Whole cruve can get up to 512 MB
+static struct bsmp_curve monitamp_curve = {
+    {  // info
+        0,      // Internal protocol id
+        false,  // writable = Read-only
+        1,      // 1 blocks
+        16,     // 16 bytes per block
+        {0}     // checksum
+    },
+    curve_read_monitamp_block, // read_block
+    NULL,             // write_block
+    (void*) &monitamp_id
+};
+
+// Monit Pos
+#define MONITPOS_CHAN_ID                 1
+
+static void curve_read_monitpos_block (struct bsmp_curve *curve, uint16_t block,
+                              uint8_t *data, uint16_t *len)
+{
+
+    DEBUGP(S"Reading curve monit. pos block...\n");
+
+    uint8_t *block_data;
+    uint16_t block_size = curve->info.block_size;
+    uint32_t curve_id = *((uint32_t*)curve->user);
+
+    if (curve_id != MONITPOS_CHAN_ID) {
+      fprintf(stderr,S"That's weird. I've got an unexpected Curve to read\n");
+      return;
+    }
+
+    fmc_config_130m_4ch_board_p->get_acq_sample_monit_pos((uint32_t *)data,
+            (uint32_t *)len);
+}
+
+static uint32_t monitpos_id = MONITPOS_CHAN_ID;
+// Whole cruve can get up to 512 MB
+static struct bsmp_curve monitpos_curve = {
+    {  // info
+        0,      // Internal protocol id
+        false,  // writable = Read-only
+        1,      // 1 blocks
+        16,     // 16 bytes per block
+        {0}     // checksum
+    },
+    curve_read_monitpos_block, // read_block
+    NULL,             // write_block
+    (void*) &monitpos_id
+};
+
 int main(int argc, const char **argv) {
 
   cout << "FMC configuration software for FMC ADC 130M 4CH card (PASSIVE version)" << endl <<
@@ -880,6 +954,8 @@ int main(int argc, const char **argv) {
   tcp_server_p->register_curve(&tbtpos_curve);
   tcp_server_p->register_curve(&fofbamp_curve);
   tcp_server_p->register_curve(&fofbpos_curve);
+  tcp_server_p->register_curve(&monitamp_curve);
+  tcp_server_p->register_curve(&monitpos_curve);
 
   /* Endless tcp loop */
   tcp_server_p->start();

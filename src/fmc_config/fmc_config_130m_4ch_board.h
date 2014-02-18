@@ -74,11 +74,15 @@ public:
   int set_acq_offset(uint32_t acq_offset);
   int get_acq_offset(uint32_t *acq_offset);
 
-  int get_acq_data_block(uint32_t acq_chan, uint32_t acq_offs, uint32_t acq_bytes,
-                        uint32_t *data_out, uint32_t *acq_bytes_out);
+  int get_acq_data_block(uint32_t acq_chan, uint32_t acq_offs,
+          uint32_t acq_bytes, uint32_t *data_out,
+          uint32_t *acq_bytes_out);
+  int get_acq_sample_monit_amp(uint32_t *data_out, uint32_t *len);
+  int get_acq_sample_monit_pos(uint32_t *data_out, uint32_t *len);
+
 private:
 
-	commLink* _commLink;
+  commLink* _commLink;
 
   WBInt_drv* int_drv;
   //wb_data data;

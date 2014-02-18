@@ -793,8 +793,9 @@ int fmc_config_130m_4ch_board::get_acq_offset(uint32_t *acq_offset)
     return 0;
 }
 
-int fmc_config_130m_4ch_board::get_acq_data_block(uint32_t acq_chan, uint32_t acq_offs, uint32_t acq_bytes,
-                                            uint32_t *data_out, uint32_t *acq_bytes_out)
+int fmc_config_130m_4ch_board::get_acq_data_block(uint32_t acq_chan,
+        uint32_t acq_offs, uint32_t acq_bytes,
+        uint32_t *data_out, uint32_t *acq_bytes_out)
 {
   wb_data data;
   data.extra.resize(2);
@@ -831,6 +832,62 @@ int fmc_config_130m_4ch_board::get_acq_data_block(uint32_t acq_chan, uint32_t ac
   // always from bar2
   DEBUGP ("reading %d bytes from bar2\n", data.extra[0]);
   _commLink->fmc_config_read_unsafe(&data, data_out);
+
+  return 0;
+}
+
+/* For monitoring rates */
+/* data_out must be 4*32-bits !! */
+int fmc_config_130m_4ch_board::get_acq_sample_monit_amp(uint32_t *data_out, uint32_t *len)
+{
+  wb_data data;
+  data.extra.resize(2);
+
+  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_AMP_CH0;
+  _commLink->fmc_config_read(&data);
+  data_out[0] = data.data_read[0];
+
+  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_AMP_CH1;
+  _commLink->fmc_config_read(&data);
+  data_out[1] = data.data_read[0];
+
+  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_AMP_CH2;
+  _commLink->fmc_config_read(&data);
+  data_out[2] = data.data_read[0];
+
+  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_AMP_CH3;
+  _commLink->fmc_config_read(&data);
+  data_out[3] = data.data_read[0];
+
+  *len = 16; // 4 32-bit samples
+
+  return 0;
+}
+
+/* For monitoring rates */
+/* data_out must be 4*32-bits !! */
+int fmc_config_130m_4ch_board::get_acq_sample_monit_pos(uint32_t *data_out, uint32_t *len)
+{
+  wb_data data;
+  data.extra.resize(2);
+
+  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_POS_X;
+  _commLink->fmc_config_read(&data);
+  data_out[0] = data.data_read[0];
+
+  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_POS_Y;
+  _commLink->fmc_config_read(&data);
+  data_out[1] = data.data_read[0];
+
+  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_POS_Q;
+  _commLink->fmc_config_read(&data);
+  data_out[2] = data.data_read[0];
+
+  data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DSP_MONIT_POS_SUM;
+  _commLink->fmc_config_read(&data);
+  data_out[3] = data.data_read[0];
+
+  *len = 16; // 4 32-bit samples
 
   return 0;
 }

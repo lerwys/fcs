@@ -5,6 +5,7 @@
 //============================================================================
 #include "fmc_config_130m_4ch_board.h"
 #include <math.h>
+#include "debug.h"
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
@@ -247,15 +248,21 @@ int fmc_config_130m_4ch_board::config_defaults() {
   data.data_send[0] = 32768 | 32768 << 16; // no gain for DD and DB
   _commLink->fmc_config_send(&data);
 
+  printf("BPM Swap static gain set to: %d\n", 32768);
+
   // Switching DIVCLK
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
   data.data_send[0] = 4288 << 8;
   _commLink->fmc_config_send(&data);
 
+  printf("BPM Swap DIVCLK set to: %d\n", 4288);
+
   // Switching mode
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
   data.data_send[0] |= data.data_send[0] | 0x1 << 1 | 0x1 << 3; // Direct mode for both sets of channels
   _commLink->fmc_config_send(&data);
+
+  printf("BPM Swap Switching set to OFF!\n");
 
   // ======================================================
   //                DSP configuration
@@ -277,6 +284,9 @@ int fmc_config_130m_4ch_board::config_defaults() {
   data.data_send[0] = 0x0200;  // 1.2207e-04 FIX26_22
   _commLink->fmc_config_send(&data);
 
+  printf("BPM DSP Threshold Calculation set to %f\n",
+          1.2207e-4);
+
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_KX;
   data.data_send[0] = 8388608;  // 10000000 UFIX25_0
   _commLink->fmc_config_send(&data);
@@ -285,9 +295,13 @@ int fmc_config_130m_4ch_board::config_defaults() {
   data.data_send[0] = 8388608;  // 10000000 UFIX25_0
   _commLink->fmc_config_send(&data);
 
+  printf("BPM DSP KX, KY set to %d\n", 10000000);
+
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_KSUM;
   data.data_send[0] = 0x0FFFFFF;  // 1.0 FIX25_24
   _commLink->fmc_config_send(&data);
+
+  printf("BPM DSP KSum set to %f\n", 1.0);
 
   // DDS config.
 
@@ -307,6 +321,8 @@ int fmc_config_130m_4ch_board::config_defaults() {
   data.data_send[0] = 245366784;  // phase increment
   _commLink->fmc_config_send(&data);
 
+  printf("BPM DSP DDS Phase increment set to %d\n", 245366784);
+
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_CFG;
   // toggle valid signal for all four DDS's
   data.data_send[0] = (0x1) | (0x1 << 8) | (0x1 << 16) | (0x1 << 24);
@@ -318,6 +334,8 @@ int fmc_config_130m_4ch_board::config_defaults() {
   cout << "============================================" << endl <<
           "            Acq configuration         " << endl <<
           "============================================" << endl;
+
+  printf("Acq Config. is done!\n");
 
   return 0;
 }
@@ -588,21 +606,21 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
   data.data_send.resize(10);
   data.extra.resize(3);
 
-  printf ("set_data_acq: parameters:\n");
-  printf ("num samples = %d\n", this->acq_nsamples_n);
-  printf ("acq_chan = %d\n", this->acq_chan_n);
-  printf ("acq_offset = %d\n", this->acq_offset_n);
+  DEBUGP ("set_data_acq: parameters:\n");
+  DEBUGP ("num samples = %d\n", this->acq_nsamples_n);
+  DEBUGP ("acq_chan = %d\n", this->acq_chan_n);
+  DEBUGP ("acq_offset = %d\n", this->acq_offset_n);
 
   // sets the number of samples of this acq_chan
   acq_last_params[this->acq_chan_n].acq_nsamples = this->acq_nsamples_n;
-  printf ("last params nsamples = %d\n",
+  DEBUGP ("last params nsamples = %d\n",
           acq_last_params[this->acq_chan_n].acq_nsamples);
 
-  printf ("wb_acq_addr = 0x%x\n", WB_ACQ_BASE_ADDR);
-  printf ("shot reg offset = 0x%x\n", ACQ_CORE_REG_SHOTS);
+  DEBUGP ("wb_acq_addr = 0x%x\n", WB_ACQ_BASE_ADDR);
+  DEBUGP ("shot reg offset = 0x%x\n", ACQ_CORE_REG_SHOTS);
 
   // Num shots
-  printf ("Num shots offset = 0x%x\n", ACQ_CORE_REG_PRE_SAMPLES);
+  DEBUGP ("Num shots offset = 0x%x\n", ACQ_CORE_REG_PRE_SAMPLES);
   /* FIXME!! */
   /* Wrong FPGA firmware */
   data.extra[2] = 1;
@@ -611,7 +629,7 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
   _commLink->fmc_config_send(&data);
 
   // Pre-trigger samples
-  printf ("Pre trig offset = 0x%x\n", ACQ_CORE_REG_PRE_SAMPLES);
+  DEBUGP ("Pre trig offset = 0x%x\n", ACQ_CORE_REG_PRE_SAMPLES);
   /* FIXME!! */
   /* Wrong FPGA firmware */
   data.extra[2] = 1;
@@ -628,7 +646,7 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
   _commLink->fmc_config_send(&data);
 
   // Pos-trigger samples
-  printf ("pos trig offset = 0x%x\n", ACQ_CORE_REG_POST_SAMPLES);
+  DEBUGP ("pos trig offset = 0x%x\n", ACQ_CORE_REG_POST_SAMPLES);
   /* FIXME!! */
   /* Wrong FPGA firmware */
   data.extra[2] = 1;
@@ -637,8 +655,8 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
   _commLink->fmc_config_send(&data);
 
   // DDR3 start address
-  printf ("DDR3 Start addr = 0x%x\n", ACQ_CORE_REG_DDR3_START_ADDR);
-  printf ("DDR3 Start val = 0x%x\n", ddr3_acq_chan[this->acq_chan_n].start_addr);
+  DEBUGP ("DDR3 Start addr = 0x%x\n", ACQ_CORE_REG_DDR3_START_ADDR);
+  DEBUGP ("DDR3 Start val = 0x%x\n", ddr3_acq_chan[this->acq_chan_n].start_addr);
   /* FIXME!! */
   /* Wrong FPGA firmware */
   data.extra[2] = 1;
@@ -650,7 +668,7 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
   _commLink->fmc_config_send(&data);
 
   // Prepare core_ctl register
-  printf ("Skip trigger addr = 0x%x\n", ACQ_CORE_REG_CTL);
+  DEBUGP ("Skip trigger addr = 0x%x\n", ACQ_CORE_REG_CTL);
   /* FIXME!! */
   /* Wrong FPGA firmware */
   data.extra[2] = 1;
@@ -660,7 +678,7 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
   _commLink->fmc_config_send(&data);
 
   // Prepare acquisition channel control
-  printf ("Acq Channel addr = 0x%x\n", ACQ_CORE_REG_ACQ_CHAN_CTL);
+  DEBUGP ("Acq Channel addr = 0x%x\n", ACQ_CORE_REG_ACQ_CHAN_CTL);
   /* FIXME!! */
   /* Wrong FPGA firmware */
   data.extra[2] = 1;
@@ -669,7 +687,7 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
   _commLink->fmc_config_send(&data);
 
   // Starting acquisition...
-  printf ("Start Acq addr = 0x%x\n", ACQ_CORE_REG_CTL);
+  DEBUGP ("Start Acq addr = 0x%x\n", ACQ_CORE_REG_CTL);
   /* FIXME!! */
   /* Wrong FPGA firmware */
   data.extra[2] = 1;
@@ -678,7 +696,7 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
   data.data_send[0] = acq_core_ctl_reg;
   _commLink->fmc_config_send(&data);
 
-  printf ("acquisition started!\n");
+  DEBUGP ("acquisition started!\n");
 
   // Check for completion
   do {
@@ -690,8 +708,8 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
     data.wb_addr = WB_ACQ_BASE_ADDR | ACQ_CORE_REG_STA;
     _commLink->fmc_config_read(&data);
     ++tries;
-    printf ("waiting for completion... #%d\n", tries);
-    printf ("status done = 0x%X\n", data.data_read[0]);
+    DEBUGP ("waiting for completion... #%d\n", tries);
+    DEBUGP ("status done = 0x%X\n", data.data_read[0]);
   } while (!(data.data_read[0] & ACQ_CORE_STA_DDR3_TRANS_DONE) && (tries < MAX_TRIES));
 
   if (tries == MAX_TRIES) {
@@ -706,13 +724,13 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
                                                 uint32_t *acq_chan_out, uint32_t *acq_offset_out)
 {
   if (acq_nsamples_out) {
-      printf ("set_acq_params: getting acq_nsamples to %d\n", this->acq_nsamples_n);
+      DEBUGP ("set_acq_params: getting acq_nsamples to %d\n", this->acq_nsamples_n);
     *acq_nsamples_out = acq_nsamples_n;
   }
   else {
-      printf ("set_acq_params: setting acq_nsamples to %d\n", acq_nsamples);
+      DEBUGP ("set_acq_params: setting acq_nsamples to %d\n", acq_nsamples);
     acq_nsamples_n = acq_nsamples;
-      printf ("set_acq_params: this->acq_nsamples_n = %d\n", acq_nsamples_n);
+      DEBUGP ("set_acq_params: this->acq_nsamples_n = %d\n", acq_nsamples_n);
   }
 
   if (acq_chan_out) {
@@ -735,19 +753,19 @@ int fmc_config_130m_4ch_board::set_data_acquire(/*uint32_t num_samples, uint32_t
 
 int fmc_config_130m_4ch_board::set_acq_nsamples(uint32_t acq_nsamples)
 {
-    printf ("set_acq_nsamples....\n");
+    DEBUGP ("set_acq_nsamples....\n");
     this->acq_nsamples_n = acq_nsamples;
-    printf ("this->nsamples is: %d\n", this->acq_nsamples_n);
-    printf ("acq_nsamples is: %d\n", acq_nsamples);
+    DEBUGP ("this->nsamples is: %d\n", this->acq_nsamples_n);
+    DEBUGP ("acq_nsamples is: %d\n", acq_nsamples);
     return 0;
 }
 
 int fmc_config_130m_4ch_board::get_acq_nsamples(uint32_t *acq_nsamples)
 {
-    printf ("get_acq_nsamples....\n");
+    DEBUGP ("get_acq_nsamples....\n");
     *acq_nsamples = this->acq_nsamples_n;
-    printf ("this->nsamples_n is: %d\n", this->acq_nsamples_n);
-    printf ("*acq_nsamples is: %d\n", *acq_nsamples);
+    DEBUGP ("this->nsamples_n is: %d\n", this->acq_nsamples_n);
+    DEBUGP ("*acq_nsamples is: %d\n", *acq_nsamples);
     return 0;
 }
 
@@ -785,13 +803,13 @@ int fmc_config_130m_4ch_board::get_acq_data_block(uint32_t acq_chan, uint32_t ac
   uint32_t acq_end = acq_last_params[acq_chan].acq_nsamples *
                             ddr3_acq_chan[acq_chan].samples_size;
 
-  printf ("get_acq_block: last_nsamples = %d\n",
+  DEBUGP ("get_acq_block: last_nsamples = %d\n",
           acq_last_params[acq_chan].acq_nsamples);
-  printf ("get_acq_block: samples size = %d\n",
+  DEBUGP ("get_acq_block: samples size = %d\n",
           ddr3_acq_chan[acq_chan].samples_size);
-  printf ("get_acq_block: addr = %d, acq_offs = %d\n",
+  DEBUGP ("get_acq_block: addr = %d, acq_offs = %d\n",
           data.wb_addr, acq_offs);
-  printf ("acq_bytes = %d, acq_end = %d\n", acq_bytes, acq_end);
+  DEBUGP ("acq_bytes = %d, acq_end = %d\n", acq_bytes, acq_end);
 
   // No data to be read
   if (acq_offs > acq_end) {
@@ -799,7 +817,7 @@ int fmc_config_130m_4ch_board::get_acq_data_block(uint32_t acq_chan, uint32_t ac
     return 0;
   }
 
-  printf ("Checking out of bounds request...\n");
+  DEBUGP ("Checking out of bounds request...\n");
   // ughhhh... check for out of bounds request
   if (acq_offs + acq_bytes >= acq_end) {
     data.extra[0] = acq_end - acq_offs;
@@ -811,7 +829,7 @@ int fmc_config_130m_4ch_board::get_acq_data_block(uint32_t acq_chan, uint32_t ac
   *acq_bytes_out = data.extra[0];
 
   // always from bar2
-  printf ("reading %d bytes from bar2\n", data.extra[0]);
+  DEBUGP ("reading %d bytes from bar2\n", data.extra[0]);
   _commLink->fmc_config_read_unsafe(&data, data_out);
 
   return 0;

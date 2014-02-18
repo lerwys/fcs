@@ -3,8 +3,11 @@
 // Version     : 1.0
 // Description : based on http://beej.us/guide/bgnet/output/html/singlepage/bgnet.html#simpleserver
 //============================================================================
-#include "tcp_server.h"
 #include <pthread.h>
+
+#include "tcp_server.h"
+#include "debug.h"
+
 #define S "bsmp_server: "
 
 #define TRY(name, func)\
@@ -98,6 +101,7 @@ int tcp_server::recvall(int fd, uint8_t *buf, uint32_t *len)
 
 void tcp_server::print_packet (char* pre, uint8_t *data, uint32_t size)
 {
+#ifdef DEBUG
     printf("%s: [", pre);
 
     if(size < 32)
@@ -109,6 +113,7 @@ void tcp_server::print_packet (char* pre, uint8_t *data, uint32_t size)
     }
     else
         printf("%d bytes ]\n", size);
+#endif
 }
 
 int tcp_server::bpm_send(int fd, uint8_t *data, uint32_t *count)

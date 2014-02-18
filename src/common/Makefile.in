@@ -63,7 +63,7 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libcommon_la_DEPENDENCIES = @LTLIBOBJS@
-am_libcommon_la_OBJECTS = common.lo
+am_libcommon_la_OBJECTS = common.lo debug.lo
 libcommon_la_OBJECTS = $(am_libcommon_la_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -220,7 +220,9 @@ top_srcdir = @top_srcdir@
 noinst_LTLIBRARIES = libcommon.la
 libcommon_la_SOURCES = \
 	common.cpp \
-	common.h
+	common.h \
+	debug.cpp \
+	debug.h
 
 libcommon_la_LIBADD = @LTLIBOBJS@
 AM_CPPFLAGS = \
@@ -281,6 +283,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/common.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/debug.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

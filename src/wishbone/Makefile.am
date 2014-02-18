@@ -27,5 +27,6 @@ libwishbone_la_LIBADD = -lmxml -lserial -lpcidriver -lpthread @LTLIBOBJS@
 
 AM_CPPFLAGS = \
 	-I. \
+	-I$(top_srcdir)/src/common/ \
 	-I$(top_srcdir)/src/include \
 	-I$(top_srcdir)/src/wishbone/pcie_headers

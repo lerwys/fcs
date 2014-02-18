@@ -10,6 +10,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
+
+void debug_print(const char *fmt, ...)
+{
+    va_list args;
+
+    va_start(args, fmt);
+    vprintf(fmt, args);
+    va_end(args);
+}
 
 #define NKEYS (sizeof(lookuptable)/sizeof(struct sym_t))
 
@@ -82,7 +92,7 @@ void set_fpga_delay(commLink* _commLink, uint32_t addr, uint32_t delay_val,
 
   if (dly_type == DLY_DATA)
     data.data_send[0] = IDELAY_DATA_LINES;
-    
+
   if (dly_type == DLY_CLK)
     data.data_send[0] |= IDELAY_CLK_LINE;
 

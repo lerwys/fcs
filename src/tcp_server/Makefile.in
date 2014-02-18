@@ -63,7 +63,8 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libtcpserver_la_DEPENDENCIES =  \
-	$(top_builddir)/src/fmc_config/libfmcconfig.la
+	$(top_builddir)/src/fmc_config/libfmcconfig.la \
+	$(top_builddir)/src/common/libcommon.la
 am_libtcpserver_la_OBJECTS = tcp_server.lo
 libtcpserver_la_OBJECTS = $(am_libtcpserver_la_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -225,6 +226,7 @@ libtcpserver_la_SOURCES = \
 
 libtcpserver_la_LIBADD = \
 	$(top_builddir)/src/fmc_config/libfmcconfig.la \
+	$(top_builddir)/src/common/libcommon.la \
 	-lbsmp
 
 AM_CPPFLAGS = \

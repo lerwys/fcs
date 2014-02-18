@@ -4,6 +4,7 @@
 // Description : Software driver for PCIe-Wishbone Master IP core
 //============================================================================
 #include "pcie_link.h"
+#include "debug.h"
 
 #define STATUS_OK 0
 #define STATUS_ERR 1
@@ -203,7 +204,7 @@ int pcie_link_driver::wb_send_data(struct wb_data* data) {
 		//fprintf(stderr, "Send addr full = 0x%lx\n", bar4 + offset);
         if (data->extra[2] == 1) {
 		    *((uint64_t *)((uint32_t *)bar4+offset)) = data->data_send[0];
-		    fprintf(stderr, "Send addr mod full = 0x%lx\n",
+		    DEBUGP (stderr, "Send addr mod full = 0x%lx\n",
                     (uint32_t *)bar4 + offset);
         }
         else {
@@ -256,8 +257,8 @@ int pcie_link_driver::wb_read_data(struct wb_data* data) {
             if (data->extra[2] == 1) {
 		        //val = *((uint32_t *)bar4+offset);
 		        val = *((uint64_t *)((uint32_t *)bar4+offset));
-		        //fprintf(stderr, "Read addr mod full = 0x%lx\n",
-                //        (uint32_t *)bar4 + offset);
+		        DEBUGP ("Read addr mod full = 0x%lx\n",
+                        (uint32_t *)bar4 + offset);
             }
             else {
 		        val = bar4[offset];
@@ -298,7 +299,7 @@ int pcie_link_driver::wb_read_data_unsafe(struct wb_data* data, uint32_t *data_o
       //data->extra[0] = 1;
     }
 
-    fprintf (stderr, "wb_read_data_unsafe: reading %d bytes from addr %lX\n", data->extra[0],
+    DEBUGP ("wb_read_data_unsafe: reading %d bytes from addr %lX\n", data->extra[0],
             data->wb_addr);
 
     uint32_t bar2size_l = bar2size >> 3; /*FIXME: FPGA SDRAM bar2 has 1 bit more than FPGA Wishbone bar4. Bug?*/
@@ -313,11 +314,11 @@ int pcie_link_driver::wb_read_data_unsafe(struct wb_data* data, uint32_t *data_o
     uint32_t offset = data->wb_addr % bar2size;
     uint32_t num_bytes_rem = num_bytes;
 
-    fprintf (stderr, "bar2size = %d, bar2size_l = %d\n",
+    DEBUGP ("bar2size = %d, bar2size_l = %d\n",
             bar2size, bar2size_l);
-    fprintf (stderr, "num_bytes: %d, num_pages %d, page_start %d\n",
+    DEBUGP ("num_bytes: %d, num_pages %d, page_start %d\n",
             num_bytes, num_pages, page_start);
-    fprintf (stderr, "offset: 0x%X, num_bytes_rem %d\n",
+    DEBUGP ("offset: 0x%X, num_bytes_rem %d\n",
             offset, num_bytes_rem);
 
 	for (unsigned int i = page_start; i < page_start+num_pages; ++i) {
@@ -328,7 +329,7 @@ int pcie_link_driver::wb_read_data_unsafe(struct wb_data* data, uint32_t *data_o
 				(bar2size-offset) : (num_bytes_rem/*-offset*/);
         num_bytes_rem -= num_bytes_page;
 
-        fprintf (stderr, "in page %d, acquiring %d bytes from offset 0x%X\n",
+        DEBUGP ("in page %d, acquiring %d bytes from offset 0x%X\n",
             i, num_bytes_page, offset);
 
         for (unsigned int j = offset/4; j < offset/4 +
@@ -347,12 +348,6 @@ int pcie_link_driver::wb_read_data_unsafe(struct wb_data* data, uint32_t *data_o
         offset = 0; // after the first page this will always be 0
 
 	}
-
-    //bar0[REG_SDRAM_PG >> 2] = 0;
-    //for (unsigned int j = 0; j < 16; ++j) {
-    //    printf ("%d\n",*((int16_t *)bar2 + j + offset/2));
-    //    //val = bar2[j];
-    //}
 
 	data->extra[0] = 1; // reset counter
 	data->extra[1] = 0; // default is Wishbone mode

@@ -633,13 +633,13 @@ static void curve_read_block (struct bsmp_curve *curve, uint16_t block,
      * can check the block limits yourself.
      */
 
-     printf(S"Reading curve block...\n");
+     DEBUGP(S"Reading curve block...\n");
 
     uint8_t *block_data;
     uint16_t block_size = curve->info.block_size;
     uint32_t curve_id = *((uint32_t*)curve->user);
 
-    printf(S"curve id = %d, block_size = %d\n", curve_id, block_size);
+    DEBUGP(S"curve id = %d, block_size = %d\n", curve_id, block_size);
 
     if (curve_id > END_CHAN_ID-1) {
       fprintf(stderr,S"That's weird. I've got an unexpected Curve to read\n");

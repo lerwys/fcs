@@ -18,7 +18,9 @@ noinst_LTLIBRARIES = libcommon.la
 
 libcommon_la_SOURCES = \
 	common.cpp \
-	common.h
+	common.h \
+	debug.cpp \
+	debug.h
 
 libcommon_la_LIBADD = @LTLIBOBJS@
 

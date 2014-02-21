@@ -156,7 +156,7 @@ uint64_t pcie_link_driver::setPage(volatile uint32_t* bar0, volatile uint64_t* b
 	//fprintf(stderr, "Set WB offset to: %lx\n", offset);
 
 	//if (debug == 1)
-		//fprintf(stderr, "PCIe Link driver: setPage: addr: %x page: %x offset: %x\n", addr, page, offset);
+	DEBUGP ("PCIe Link driver: setPage: addr: %x page: %x offset: %x\n", addr, page, offset);
 
 	return offset;
 }
@@ -174,7 +174,7 @@ uint32_t pcie_link_driver::setPageRAM(volatile uint32_t* bar0, volatile uint32_t
 	bar0[REG_SDRAM_PG >> 2] = page;
 
 	//if (debug == 1)
-		//fprintf(stderr, "PCIe Link driver: setPage: addr: %x page: %x offset: %x\n", addr, page, offset);
+	DEBUGP ("PCIe Link driver: setPage: addr: %x page: %x offset: %x\n", addr, page, offset);
 
 	return offset;
 }
@@ -193,7 +193,8 @@ int pcie_link_driver::wb_send_data(struct wb_data* data) {
       data->extra.resize(3);
     }
     // extra field 0 for number of data to be read
-    else if (data->extra[0] == 0) {
+    //else if (data->extra[0] == 0) {
+    if (data->extra[0] == 0) {
       data->extra[0] = 1;
     }
 
@@ -209,7 +210,11 @@ int pcie_link_driver::wb_send_data(struct wb_data* data) {
         }
         else {
 		    bar4[offset] = data->data_send[0];
-		    //fprintf(stderr, "Send addr full = 0x%lx\n", bar4 + offset);
+            //DEBUGP ("wb_send_data: &bar[offset] = %p\n", &bar4[offset]);
+            //DEBUGP ("wb_send_data: (uint32_t *)bar4 + offset = %p\n",
+            //            (uint32_t *)bar4 + offset);
+            //DEBUGP ("wb_send_data: (uint64_t *)bar4 + offset = %p\n",
+            //            (uint64_t *)bar4 + offset);
         }
 
 		if (debug == 1)
@@ -227,6 +232,8 @@ int pcie_link_driver::wb_send_data(struct wb_data* data) {
 }
 
 int pcie_link_driver::wb_read_data(struct wb_data* data) {
+    DEBUGP("---------------------\n");
+    DEBUGP("entering wb_read_data\n");
 
 	uint64_t val;
 
@@ -244,24 +251,37 @@ int pcie_link_driver::wb_read_data(struct wb_data* data) {
     if (data->extra[0] == 0) {
       data->extra[0] = 1;
     }
+    DEBUGP ("data->extra[0] = %d\n", data->extra[0]);
 
 	for (unsigned int i = 0; i < data->extra[0]; i++) {
 
 		if (data->extra[1] == 1) { // change to ram
+            DEBUGP ("read from RAM\n");
+			// FIXME FIXME FIXME: Bug if this second line is removed!!
+			// Driver or FPGA Firmware bug???
 			offset = setPageRAM(bar0, bar2, bar2size, addr);
+			offset = setPageRAM(bar0, bar2, bar2size, addr);
+            DEBUGP ("offset = 0x%x\n", offset);
 			val = bar2[offset];
 		}
 		else {
+            DEBUGP ("read from Wishbone\n");
 		    offset = setPage(bar0, bar4, bar4size, addr);
+		    offset = setPage(bar0, bar4, bar4size, addr);
+            DEBUGP ("offset = 0x%x\n", offset);
             /* FIXME: wrong FPGA firmware! */
             if (data->extra[2] == 1) {
 		        //val = *((uint32_t *)bar4+offset);
+                DEBUGP ("Wrong FPGA firmware read\n");
 		        val = *((uint64_t *)((uint32_t *)bar4+offset));
 		        DEBUGP ("Read addr mod full = 0x%lx\n",
                         (uint32_t *)bar4 + offset);
             }
             else {
+                DEBUGP ("OK FPGA firmware read\n");
 		        val = bar4[offset];
+		        DEBUGP ("Read addr full = 0x%lx\n",
+                        (uint32_t *)bar4 + offset);
 		        //fprintf(stderr, "Read addr full = 0x%lx\n", bar4 + offset);
             }
 
@@ -270,6 +290,7 @@ int pcie_link_driver::wb_read_data(struct wb_data* data) {
 		    //val = bar4[offset];
 		}
 
+        DEBUGP ("val read = 0x%x\n", val);
 		data->data_read.push_back(val);
 
 		if (debug == 1)
@@ -281,6 +302,9 @@ int pcie_link_driver::wb_read_data(struct wb_data* data) {
 	data->extra[0] = 1; // reset counter
 	data->extra[1] = 0; // default is Wishbone mode
 	data->extra[2] = 0; // default is correct firmware... =]
+
+    DEBUGP("exiting wb_read_data\n");
+    DEBUGP("---------------------\n");
 
 	return STATUS_OK;
 
@@ -306,6 +330,9 @@ int pcie_link_driver::wb_read_data_unsafe(struct wb_data* data, uint32_t *data_o
     uint32_t num_bytes_page;
     uint32_t num_bytes = data->extra[0];/**sizeof(uint32_t);*/
     uint32_t num_pages = (num_bytes < bar2size) ? 1 : num_bytes/bar2size;
+    //uint32_t num_pages = (num_bytes < bar2size_l) ? 1 : num_bytes/bar2size_l;
+    //uint32_t page_start = data->wb_addr / bar2size_l;
+    //FIXME: TESTING
     uint32_t page_start = data->wb_addr / (bar2size);
     //uint32_t offset = data->wb_addr % bar2size_l;
     uint32_t offset = data->wb_addr % bar2size;
@@ -323,6 +350,8 @@ int pcie_link_driver::wb_read_data_unsafe(struct wb_data* data, uint32_t *data_o
 
 	for (unsigned int i = page_start; i < page_start+num_pages; ++i) {
         bar0[REG_SDRAM_PG >> 2] = i;
+        //num_bytes_page = (num_bytes_rem > bar2size_l) ?
+		//		(bar2size_l-offset) : (num_bytes_rem/*-offset*/);
         num_bytes_page = (num_bytes_rem > bar2size) ?
 				(bar2size-offset) : (num_bytes_rem/*-offset*/);
         num_bytes_rem -= num_bytes_page;

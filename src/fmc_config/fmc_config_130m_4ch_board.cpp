@@ -542,9 +542,8 @@ int fmc_config_130m_4ch_board::set_adc_clk(uint32_t adc_clk, uint32_t *adc_clk_o
 
 int fmc_config_130m_4ch_board::set_dds_freq(uint32_t dds_freq, uint32_t *dds_freq_out) {
   wb_data data;
-  data.data_send.clear();
   data.data_send.resize(10);
-  data.extra.resize(3);
+  data.extra.resize(2);
   data.extra[0] = 1;
 
   // Phase increment mode

@@ -9,28 +9,9 @@
 
 #include "config.h"
 #include "commLink.h"
+#include "debug.h"
 
 #include <stdint.h>
-
-void debug_print (const char *fmt, ...) __attribute__((format(printf,1,2)));
-
-// Debug print
-#ifdef DEBUG
-#define dbg_print(fmt, ...) \
-    debug_print(fmt, ## __VA_ARGS__)
-#else
-#define dbg_print(fmt, ...)
-#endif /* Debug print */
-
-#ifdef DEBUG
-#define DEBUGP(fmt, ...)                 \
-    do{                                     \
-            dbg_print(fmt, ## __VA_ARGS__); \
-        }                                   \
-    } while(0)
-#else
-#define DEBUGP(fmt, ...)
-#endif
 
 #define MAX_PLATFORM_SIZE_ID 8
 #define ML605_STRING "ML605"

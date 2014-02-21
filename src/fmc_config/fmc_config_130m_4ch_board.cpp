@@ -321,7 +321,7 @@ int fmc_config_130m_4ch_board::config_defaults() {
   data.data_send[0] = 245366784;  // phase increment
   _commLink->fmc_config_send(&data);
 
-  printf("BPM DSP DDS Phase increment set to %d\n", 245366784);
+  printf("BPM DSP DDS Phase increment set to %d\n", data.data_send[0]);
 
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_CFG;
   // toggle valid signal for all four DDS's
@@ -542,9 +542,10 @@ int fmc_config_130m_4ch_board::set_adc_clk(uint32_t adc_clk, uint32_t *adc_clk_o
 
 int fmc_config_130m_4ch_board::set_dds_freq(uint32_t dds_freq, uint32_t *dds_freq_out) {
   wb_data data;
-
+  data.data_send.clear();
   data.data_send.resize(10);
-  data.extra.resize(2);
+  data.extra.resize(3);
+  data.extra[0] = 1;
 
   // Phase increment mode
   data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH0;
@@ -558,24 +559,32 @@ int fmc_config_130m_4ch_board::set_dds_freq(uint32_t dds_freq, uint32_t *dds_fre
     uint32_t pinc =  floor((dds_freq / (double) this->adc_clk) * (1 << 30));
 
     data.data_send[0] = POS_CALC_DDS_PINC_CH0_VAL_W(pinc);  // phase increment ch0
+    //data.data_send[0] = 23536678;  // phase increment ch0
     _commLink->fmc_config_send(&data);
 
     data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH1;
     data.data_send[0] = POS_CALC_DDS_PINC_CH1_VAL_W(pinc);  // phase increment ch1
+    //data.data_send[0] = 23536678;  // phase increment ch1
     _commLink->fmc_config_send(&data);
 
     data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH2;
     data.data_send[0] = POS_CALC_DDS_PINC_CH2_VAL_W(pinc);  // phase increment ch2
+    //data.data_send[0] = 23536678;  // phase increment ch2
     _commLink->fmc_config_send(&data);
 
     data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH3;
     data.data_send[0] = POS_CALC_DDS_PINC_CH3_VAL_W(pinc);  // phase increment ch3
+    //data.data_send[0] = 23536678;  // phase increment ch3
     _commLink->fmc_config_send(&data);
 
     data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_CFG;
     // toggle valid signal for all four DDS's
     data.data_send[0] = (0x1) | (0x1 << 8) | (0x1 << 16) | (0x1 << 24);
     _commLink->fmc_config_send(&data);
+
+    data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH0;
+    _commLink->fmc_config_read(&data);
+    printf ("DDS PINC set to: %d\n", data.data_read[0]);
   }
 
   return 0;

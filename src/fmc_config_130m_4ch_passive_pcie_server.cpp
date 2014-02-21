@@ -633,7 +633,7 @@ static void curve_read_block (struct bsmp_curve *curve, uint16_t block,
      * can check the block limits yourself.
      */
 
-     DEBUGP(S"Reading curve block...\n");
+    DEBUGP(S"Reading curve block...\n");
 
     uint8_t *block_data;
     uint16_t block_size = curve->info.block_size;
@@ -648,6 +648,7 @@ static void curve_read_block (struct bsmp_curve *curve, uint16_t block,
 
     fmc_config_130m_4ch_board_p->get_acq_data_block(curve_id, block*block_size,
                         block_size, (uint32_t *)data, (uint32_t *)len);
+    //printf ("%d\n", *(uint32_t *)data);
 }
 
 //struct bsmp_curve_info

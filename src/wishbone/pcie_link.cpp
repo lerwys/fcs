@@ -204,7 +204,7 @@ int pcie_link_driver::wb_send_data(struct wb_data* data) {
 		//fprintf(stderr, "Send addr full = 0x%lx\n", bar4 + offset);
         if (data->extra[2] == 1) {
 		    *((uint64_t *)((uint32_t *)bar4+offset)) = data->data_send[0];
-		    DEBUGP (stderr, "Send addr mod full = 0x%lx\n",
+		    DEBUGP ("Send addr mod full = 0x%lx\n",
                     (uint32_t *)bar4 + offset);
         }
         else {
@@ -302,20 +302,20 @@ int pcie_link_driver::wb_read_data_unsafe(struct wb_data* data, uint32_t *data_o
     DEBUGP ("wb_read_data_unsafe: reading %d bytes from addr %lX\n", data->extra[0],
             data->wb_addr);
 
-    uint32_t bar2size_l = bar2size >> 3; /*FIXME: FPGA SDRAM bar2 has 1 bit more than FPGA Wishbone bar4. Bug?*/
+    //uint32_t bar2size_l = bar2size >> 3; /*FIXME: FPGA SDRAM bar2 has 1 bit more than FPGA Wishbone bar4. Bug?*/
     uint32_t num_bytes_page;
     uint32_t num_bytes = data->extra[0];/**sizeof(uint32_t);*/
     uint32_t num_pages = (num_bytes < bar2size) ? 1 : num_bytes/bar2size;
-    //uint32_t num_pages = (num_bytes < bar2size_l) ? 1 : num_bytes/bar2size_l;
-    //uint32_t page_start = data->wb_addr / bar2size_l;
-    //FIXME: TESTING
     uint32_t page_start = data->wb_addr / (bar2size);
     //uint32_t offset = data->wb_addr % bar2size_l;
     uint32_t offset = data->wb_addr % bar2size;
     uint32_t num_bytes_rem = num_bytes;
+    // FIXME for PCIe page change "bug". MAYBE, the PCIe
+    // takes a long time to change pages and we ended up
+    // reading the first value wrongly
+    bar0[REG_SDRAM_PG >> 2] = page_start;
 
-    DEBUGP ("bar2size = %d, bar2size_l = %d\n",
-            bar2size, bar2size_l);
+    DEBUGP ("bar2size = %d\n", bar2size);
     DEBUGP ("num_bytes: %d, num_pages %d, page_start %d\n",
             num_bytes, num_pages, page_start);
     DEBUGP ("offset: 0x%X, num_bytes_rem %d\n",
@@ -323,8 +323,6 @@ int pcie_link_driver::wb_read_data_unsafe(struct wb_data* data, uint32_t *data_o
 
 	for (unsigned int i = page_start; i < page_start+num_pages; ++i) {
         bar0[REG_SDRAM_PG >> 2] = i;
-        //num_bytes_page = (num_bytes_rem > bar2size_l) ?
-		//		(bar2size_l-offset) : (num_bytes_rem/*-offset*/);
         num_bytes_page = (num_bytes_rem > bar2size) ?
 				(bar2size-offset) : (num_bytes_rem/*-offset*/);
         num_bytes_rem -= num_bytes_page;
@@ -332,14 +330,22 @@ int pcie_link_driver::wb_read_data_unsafe(struct wb_data* data, uint32_t *data_o
         DEBUGP ("in page %d, acquiring %d bytes from offset 0x%X\n",
             i, num_bytes_page, offset);
 
-        for (unsigned int j = offset/4; j < offset/4 +
-                num_bytes_page/4; ++j) {
-            *((uint32_t *)data_out + j - offset/4) = *((uint32_t *)bar2 + j);
+        //printf ("ptr_data_out = %p\n", (uint32_t *)data_out);
+        //printf ("bar2_ptr = %p\n", (uint32_t *)bar2 + offset/4);
+        //usleep(1000);
+        //for (uint32_t j = offset/4; j < offset/4 +
+
+        for (uint32_t j = 0; j < num_bytes_page/4; ++j) {
+            *(((volatile uint32_t *)data_out) + j) = *((uint32_t *)bar2 + j + offset/4);
         }
 
-        //for (unsigned int j = offset/4; j < offset/4 + 16; ++j) {
+        //for (unsigned int j = offset/4; j < offset/4 + 2; ++j) {
         //    printf ("%d\n",*((int32_t *)bar2 + j));
-        //    //val = bar2[j];
+        //    //printf ("%d\n",*((int32_t *)data_out + j - offset/4));
+        //}
+        //printf("---------\n");
+        //for (unsigned int j = offset/4; j < offset/4 + 2; ++j) {
+        //    printf ("%d\n",*((int32_t *)data_out + (j - offset/4)));
         //}
         //memcpy ((void *)data_out,
         //        (void *)bar2 + offset/4,

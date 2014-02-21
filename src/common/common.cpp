@@ -10,16 +10,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdarg.h>
-
-void debug_print(const char *fmt, ...)
-{
-    va_list args;
-
-    va_start(args, fmt);
-    vprintf(fmt, args);
-    va_end(args);
-}
 
 #define NKEYS (sizeof(lookuptable)/sizeof(struct sym_t))
 
@@ -90,21 +80,33 @@ void set_fpga_delay(commLink* _commLink, uint32_t addr, uint32_t delay_val,
   data.data_send.resize(1);
   data.wb_addr = addr;
 
-  if (dly_type == DLY_DATA)
+  if (dly_type == DLY_DATA) {
     data.data_send[0] = IDELAY_DATA_LINES;
+    printf ("dly type DLY_DATA\n");
+  }
 
-  if (dly_type == DLY_CLK)
+  if (dly_type == DLY_CLK) {
     data.data_send[0] |= IDELAY_CLK_LINE;
+    printf ("dly type DLY_CLK\n");
+  }
 
   //data.data_send[0] = IDELAY_ALL_LINES | IDELAY_TAP(delay_val) | IDELAY_UPDATE; // should be 0x0050003f
-  data.data_send[0] |= IDELAY_TAP(delay_val) | IDELAY_UPDATE; // should be 0x0050003f
+  //data.data_send[0] |= IDELAY_TAP(delay_val) | IDELAY_UPDATE; // should be 0x0050003f
+  data.data_send[0] |= IDELAY_TAP(delay_val);
+  _commLink->fmc_config_send(&data);
+  data.data_send[0] |= IDELAY_UPDATE;
+  _commLink->fmc_config_send(&data);
+  data.data_send[0] |= IDELAY_UPDATE;
+  _commLink->fmc_config_send(&data);
+  data.data_send[0] |= IDELAY_UPDATE;
   _commLink->fmc_config_send(&data);
   // check data
   _commLink->fmc_config_read(&data);
-  //assert(data.data_read[0] == (IDELAY_ALL_LINES | IDELAY_TAP(delay_l[0]) | IDELAY_UPDATE));
+  printf ("dly data: 0x%X\n", data.data_read[0]);
+  //assert(data.data_read[0] == (IDELAY_ALL_LINES | IDELAY_TAP(delay_val) | IDELAY_UPDATE));
   usleep(1000);
-  data.data_send[0] = (IDELAY_ALL_LINES | IDELAY_TAP(delay_val)) & 0xFFFFFFFE; // should be 0x0050003f
-  _commLink->fmc_config_send(&data);
+  //data.data_send[0] = (IDELAY_ALL_LINES | IDELAY_TAP(delay_val)) & 0xFFFFFFFE; // should be 0x0050003f
+  //_commLink->fmc_config_send(&data);
 }
 
 // safer set FPGA delay

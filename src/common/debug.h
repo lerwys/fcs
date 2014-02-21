@@ -22,7 +22,7 @@ void debug_print (const char *fmt, ...) __attribute__((format(printf,1,2)));
 #ifdef DEBUG
 #define DEBUGP(fmt, ...)                \
     do{                                 \
-        dbg_print(fmt, ## __VA_ARGS__); \
+        dbg_print(fmt, ## __VA_ARGS__);    \
     } while(0)
 #else
 #define DEBUGP(fmt, ...)

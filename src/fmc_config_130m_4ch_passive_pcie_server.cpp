@@ -405,10 +405,116 @@ static struct bsmp_func fmc130m_get_sw_phaseclk_func = {
 };
 
 /*************************************************/
+/*********** Set/Get Windowing Functions *********/
+/*************************************************/
+
+#define FMC130M_SET_WDW_ON_ID 15
+#define FMC130M_SET_WDW_ON_IN 0
+#define FMC130M_SET_WDW_ON_OUT 4
+
+uint8_t fmc130m_set_wdw_on(uint8_t *input, uint8_t *output)
+{
+    printf(S"Setting Windowing ON!\n");
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_wdw_on(NULL);
+
+    return 0; // Success!!
+}
+
+static struct bsmp_func fmc130m_set_wdw_on_func = {
+  {FMC130M_SET_WDW_ON_ID,
+   FMC130M_SET_WDW_ON_IN,
+   FMC130M_SET_WDW_ON_OUT},
+  fmc130m_set_wdw_on
+};
+
+#define FMC130M_SET_WDW_OFF_ID 16
+#define FMC130M_SET_WDW_OFF_IN 0
+#define FMC130M_SET_WDW_OFF_OUT 4
+
+uint8_t fmc130m_set_wdw_off(uint8_t *input, uint8_t *output)
+{
+    printf(S"Setting Windowing OFF!\n");
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_wdw_off(NULL);
+
+    return 0; // Success!!
+}
+
+static struct bsmp_func fmc130m_set_wdw_off_func = {
+  {FMC130M_SET_WDW_OFF_ID,
+   FMC130M_SET_WDW_OFF_IN,
+   FMC130M_SET_WDW_OFF_OUT},
+  fmc130m_set_wdw_off
+};
+
+#define FMC130M_GET_WDW_ID 17
+#define FMC130M_GET_WDW_IN 0
+#define FMC130M_GET_WDW_OUT 4
+
+uint8_t fmc130m_get_wdw(uint8_t *input, uint8_t *output)
+{
+    uint32_t wdw_state;
+
+    printf(S"Getting Windowing State!\n");
+    fmc_config_130m_4ch_board_p->set_wdw_on(&wdw_state);
+    *((uint32_t *)output) = wdw_state;
+
+    return 0; // Success!!
+}
+
+static struct bsmp_func fmc130m_get_wdw_func = {
+  {FMC130M_GET_WDW_ID,
+   FMC130M_GET_WDW_IN,
+   FMC130M_GET_WDW_OUT},
+  fmc130m_get_wdw
+};
+
+#define FMC130M_SET_WDW_DLY_ID 18
+#define FMC130M_SET_WDW_DLY_IN 4
+#define FMC130M_SET_WDW_DLY_OUT 4
+
+uint8_t fmc130m_set_wdw_dly(uint8_t *input, uint8_t *output)
+{
+    uint32_t wdw_dly = *((uint32_t *) input);
+    printf(S"Setting Windowing Delay...\n");
+    *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_wdw_dly(wdw_dly, NULL);
+
+    return 0; // Success!!
+}
+
+static struct bsmp_func fmc130m_set_wdw_dly_func = {
+  {FMC130M_SET_WDW_DLY_ID,
+   FMC130M_SET_WDW_DLY_IN,
+   FMC130M_SET_WDW_DLY_OUT},
+  fmc130m_set_wdw_dly
+};
+
+#define FMC130M_GET_WDW_DLY_ID 19
+#define FMC130M_GET_WDW_DLY_IN 0
+#define FMC130M_GET_WDW_DLY_OUT 4
+
+uint8_t fmc130m_get_wdw_dly(uint8_t *input, uint8_t *output)
+{
+    uint32_t wdw_dly;
+
+    printf(S"Getting Windowing Delay value!\n");
+    fmc_config_130m_4ch_board_p->set_wdw_dly(NULL, &wdw_dly);
+    *((uint32_t *)output) = wdw_dly;
+
+    return 0; // Success!!
+}
+
+static struct bsmp_func fmc130m_get_wdw_dly_func = {
+  {FMC130M_GET_WDW_DLY_ID,
+   FMC130M_GET_WDW_DLY_IN,
+   FMC130M_GET_WDW_DLY_OUT},
+  fmc130m_get_wdw_dly
+};
+
+/*************************************************/
 /************ Set/Get ADC CLK Functions **********/
 /*************************************************/
 
-#define FMC130M_SET_ADC_CLK_ID 15
+#define FMC130M_SET_ADC_CLK_ID 20
 #define FMC130M_SET_ADC_CLK_IN 4
 #define FMC130M_SET_ADC_CLK_OUT 4
 
@@ -431,7 +537,7 @@ static struct bsmp_func fmc130m_set_adc_clk_func = {
   fmc130m_set_adc_clk
 };
 
-#define FMC130M_GET_ADC_CLK_ID 16
+#define FMC130M_GET_ADC_CLK_ID 21
 #define FMC130M_GET_ADC_CLK_IN 0
 #define FMC130M_GET_ADC_CLK_OUT 4
 
@@ -457,7 +563,7 @@ static struct bsmp_func fmc130m_get_adc_clk_func = {
 /****** Set/Get DDS frequency CLK Functions ******/
 /*************************************************/
 
-#define FMC130M_SET_DDS_FREQ_ID 17
+#define FMC130M_SET_DDS_FREQ_ID 22
 #define FMC130M_SET_DDS_FREQ_IN 4
 #define FMC130M_SET_DDS_FREQ_OUT 4
 
@@ -477,7 +583,7 @@ static struct bsmp_func fmc130m_set_dds_freq_func = {
   fmc130m_set_dds_freq
 };
 
-#define FMC130M_GET_DDS_FREQ_ID 18
+#define FMC130M_GET_DDS_FREQ_ID 23
 #define FMC130M_GET_DDS_FREQ_IN 0
 #define FMC130M_GET_DDS_FREQ_OUT 4
 
@@ -503,7 +609,7 @@ static struct bsmp_func fmc130m_get_dds_freq_func = {
 /****** Set/Get Data Acquisition Functions ******/
 /*************************************************/
 
-#define FMC130M_SET_ACQ_PARAM_ID 19
+#define FMC130M_SET_ACQ_PARAM_ID 24
 #define FMC130M_SET_ACQ_PARAM_IN 8
 #define FMC130M_SET_ACQ_PARAM_OUT 4
 
@@ -543,7 +649,7 @@ static struct bsmp_func fmc130m_set_acq_params_func = {
   fmc130m_set_acq_params
 };
 
-#define FMC130M_GET_ACQ_NSAMPLES_ID 20
+#define FMC130M_GET_ACQ_NSAMPLES_ID 25
 #define FMC130M_GET_ACQ_NSAMPLES_IN 0
 #define FMC130M_GET_ACQ_NSAMPLES_OUT 4
 
@@ -569,7 +675,7 @@ static struct bsmp_func fmc130m_get_acq_nsamples_func = {
   fmc130m_get_acq_nsamples
 };
 
-#define FMC130M_GET_ACQ_CHAN_ID 21
+#define FMC130M_GET_ACQ_CHAN_ID 26
 #define FMC130M_GET_ACQ_CHAN_IN 0
 #define FMC130M_GET_ACQ_CHAN_OUT 4
 
@@ -594,7 +700,7 @@ static struct bsmp_func fmc130m_get_acq_chan_func = {
   fmc130m_get_acq_chan
 };
 
-#define FMC130M_START_ACQ_ID 22
+#define FMC130M_START_ACQ_ID 27
 #define FMC130M_START_ACQ_IN 0
 #define FMC130M_START_ACQ_OUT 4
 
@@ -938,6 +1044,12 @@ int main(int argc, const char **argv) {
   tcp_server_p->register_func(&fmc130m_get_sw_divclk_func);
   tcp_server_p->register_func(&fmc130m_set_sw_phaseclk_func);
   tcp_server_p->register_func(&fmc130m_get_sw_phaseclk_func);
+
+  tcp_server_p->register_func(&fmc130m_set_wdw_on_func);
+  tcp_server_p->register_func(&fmc130m_set_wdw_off_func);
+  tcp_server_p->register_func(&fmc130m_get_wdw_func);
+  tcp_server_p->register_func(&fmc130m_set_wdw_dly_func);
+  tcp_server_p->register_func(&fmc130m_get_wdw_dly_func);
 
   tcp_server_p->register_func(&fmc130m_set_adc_clk_func);
   tcp_server_p->register_func(&fmc130m_get_adc_clk_func);

@@ -126,6 +126,13 @@
 #define BPM_SWAP_D_B_W(value)                 WBGEN2_GEN_WRITE(value, 16, 16)
 #define BPM_SWAP_D_B_R(reg)                   WBGEN2_GEN_READ(reg, 16, 16)
 
+/* definitions for field: Windowing delay */
+/* Thid was included!!! modified!!! FIXME */
+#define BPM_SWAP_WDW_DLY_MASK                 WBGEN2_GEN_MASK(0, 16)
+#define BPM_SWAP_WDW_DLY_SHIFT                16
+#define BPM_SWAP_WDW_DLY_W(value)             WBGEN2_GEN_WRITE(value, 0, 16)
+#define BPM_SWAP_WDW_DLY_R(reg)               WBGEN2_GEN_READ(reg, 0, 16)
+
 /* definitions for register: Dummy */
 /* [0x0]: REG Control Signals */
 #define BPM_SWAP_REG_CTRL (0x00000000 << WB_GR_SHIFT)
@@ -139,8 +146,12 @@
 #define BPM_SWAP_REG_C (0x00000004 << WB_GR_SHIFT)
 /* [0x14]: REG Gain DD and DB */
 #define BPM_SWAP_REG_D (0x00000005 << WB_GR_SHIFT)
-/* [0x18]: REG Dummy */
-#define BPM_SWAP_REG_DUMMY (0x00000006 << WB_GR_SHIFT)
+/* [0x18]: REG Use Windowing */
+#define BPM_SWAP_REG_USE_WDW (0x00000006 << WB_GR_SHIFT)
+/* [0x1C]: REG Windowing Delay */
+#define BPM_SWAP_REG_WDW_DLY (0x00000007 << WB_GR_SHIFT)
+/* [0x2A]: REG Dummy */
+#define BPM_SWAP_REG_DUMMY (0x00000008 << WB_GR_SHIFT)
 
 ///* definitions for register: Dummy */
 ///* [0x0]: REG Control Signals */

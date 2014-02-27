@@ -59,6 +59,9 @@ public:
   int set_sw_off(uint32_t *sw_off_out);
   int set_sw_divclk(uint32_t divclk, uint32_t *divclk_out);
   int set_sw_phase(uint32_t phase, uint32_t *phase_out);
+  int set_wdw_on(uint32_t *wdwon_out);
+  int set_wdw_off(uint32_t *wdwon_out);
+  int set_wdw_dly(uint32_t wdw_dly, uint32_t *wdw_dly_out);
   int set_adc_clk(uint32_t adc_clk, uint32_t *adc_clk_out);
   int set_dds_freq(uint32_t dds_freq, uint32_t *dds_freq_out);
 

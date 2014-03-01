@@ -265,21 +265,23 @@ int fmc_config_130m_4ch_board::config_defaults() {
   printf("BPM Swap Switching set to OFF!\n");
 
   // Set windowing mode
+  data.data_send[0] = 0x0;
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_WDW_CTL;
-  data.data_send[0] = ~BPM_SWAP_WDW_CTL_USE; // No windowing
+  data.data_send[0] &= ~BPM_SWAP_WDW_CTL_USE; // No windowing
   _commLink->fmc_config_send(&data);
 
   printf("BPM Swap Windowing set to OFF!\n");
 
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_WDW_CTL;
-  data.data_send[0] |= ~BPM_SWAP_WDW_CTL_SWCLK_EXT; // Internal clock windowing
+  data.data_send[0] &= ~BPM_SWAP_WDW_CTL_SWCLK_EXT; // Internal clock windowing
   _commLink->fmc_config_send(&data);
 
   printf("BPM Swap switching clock set to internal!\n");
 
   // Set windowing delay
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_WDW_CTL;
-  data.data_send[0] |= BPM_SWAP_WDW_CTL_DLY_W(0x0); // No delay
+  data.data_send[0] = (data.data_read[0] & ~BPM_SWAP_WDW_CTL_DLY_MASK) |
+                        BPM_SWAP_WDW_CTL_DLY_W(0x0); // No delay
   _commLink->fmc_config_send(&data);
 
   printf("BPM Swap Windowing delay set to 0!\n");
@@ -466,7 +468,7 @@ int fmc_config_130m_4ch_board::set_sw_on(uint32_t *swon_out) {
   }
   else {
     _commLink->fmc_config_read(&data);
-    data.data_send[0] |= (data.data_read[0] & ~BPM_SWAP_CTRL_MODE1_MASK & ~BPM_SWAP_CTRL_MODE2_MASK) |
+    data.data_send[0] = (data.data_read[0] & ~BPM_SWAP_CTRL_MODE1_MASK & ~BPM_SWAP_CTRL_MODE2_MASK) |
                             BPM_SWAP_CTRL_MODE1_W(0x3)  |
                             BPM_SWAP_CTRL_MODE2_W(0x3); // Switching mode for both sets of channels
     _commLink->fmc_config_send(&data);
@@ -492,7 +494,7 @@ int fmc_config_130m_4ch_board::set_sw_off(uint32_t *swoff_out) {
   }
   else {
     _commLink->fmc_config_read(&data);
-    data.data_send[0] |= (data.data_read[0] & ~BPM_SWAP_CTRL_MODE1_MASK & ~BPM_SWAP_CTRL_MODE2_MASK) |
+    data.data_send[0] = (data.data_read[0] & ~BPM_SWAP_CTRL_MODE1_MASK & ~BPM_SWAP_CTRL_MODE2_MASK) |
                           BPM_SWAP_CTRL_MODE1_W(0x1)  |
                           BPM_SWAP_CTRL_MODE2_W(0x1); // Switching mode for both sets of channels
     _commLink->fmc_config_send(&data);
@@ -517,7 +519,7 @@ int fmc_config_130m_4ch_board::set_sw_divclk(uint32_t divclk, uint32_t *divclk_o
   }
   else {
     _commLink->fmc_config_read(&data);
-    data.data_send[0] |= (data.data_read[0] & ~BPM_SWAP_CTRL_SWAP_DIV_F_MASK) |
+    data.data_send[0] = (data.data_read[0] & ~BPM_SWAP_CTRL_SWAP_DIV_F_MASK) |
                             BPM_SWAP_CTRL_SWAP_DIV_F_W(divclk); // Clock divider for swap clk
     _commLink->fmc_config_send(&data);
   }
@@ -540,7 +542,10 @@ int fmc_config_130m_4ch_board::set_sw_phase(uint32_t phase, uint32_t *phase_out)
                   BPM_SWAP_DLY_2_R(data.data_read[0]);
   }
   else {
-    data.data_send[0] = BPM_SWAP_DLY_1_W(phase) |
+    _commLink->fmc_config_read(&data);
+    data.data_send[0] = (data.data_read[0] & ~BPM_SWAP_DLY_1_MASK &
+                         ~BPM_SWAP_DLY_2_MASK) |
+                          BPM_SWAP_DLY_1_W(phase) |
                           BPM_SWAP_DLY_2_W(phase); // Phase delay for swap clk
     _commLink->fmc_config_send(&data);
   }
@@ -586,7 +591,8 @@ int fmc_config_130m_4ch_board::set_wdw_off(uint32_t *wdwon_out) {
     *wdwon_out = data.data_read[0];
   }
   else {
-    data.data_send[0] = (~BPM_SWAP_WDW_CTL_USE |
+    _commLink->fmc_config_read(&data);
+    data.data_send[0] = (data.data_read[0] & ~BPM_SWAP_WDW_CTL_USE &
                          ~BPM_SWAP_WDW_CTL_SWCLK_EXT); // Don't use windowing
     _commLink->fmc_config_send(&data);
   }
@@ -610,7 +616,7 @@ int fmc_config_130m_4ch_board::set_wdw_dly(uint32_t wdw_dly, uint32_t *wdw_dly_o
   }
   else {
     _commLink->fmc_config_read(&data);
-    data.data_send[0] |= (data.data_read[0] & ~BPM_SWAP_WDW_CTL_DLY_MASK) |
+    data.data_send[0] = (data.data_read[0] & ~BPM_SWAP_WDW_CTL_DLY_MASK) |
                             BPM_SWAP_WDW_CTL_DLY_W(wdw_dly);
     _commLink->fmc_config_send(&data);
   }

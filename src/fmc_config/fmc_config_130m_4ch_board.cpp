@@ -252,10 +252,10 @@ int fmc_config_130m_4ch_board::config_defaults() {
 
   // Switching DIVCLK
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
-  data.data_send[0] = 4288 << 8;
+  data.data_send[0] = 500 << 8;
   _commLink->fmc_config_send(&data);
 
-  printf("BPM Swap DIVCLK set to: %d\n", 4288);
+  printf("BPM Swap DIVCLK set to: %d\n", 500);
 
   // Switching mode
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
@@ -263,6 +263,12 @@ int fmc_config_130m_4ch_board::config_defaults() {
   _commLink->fmc_config_send(&data);
 
   printf("BPM Swap Switching set to OFF!\n");
+
+  data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_DLY;
+  data.data_send[0] = BPM_SWAP_DLY_1_W(210) |
+                        BPM_SWAP_DLY_2_W(210);
+
+  printf("BPM Swap Delay 210\n");
 
   // Set windowing mode
   data.data_send[0] = 0x0;
@@ -281,10 +287,10 @@ int fmc_config_130m_4ch_board::config_defaults() {
   // Set windowing delay
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_WDW_CTL;
   data.data_send[0] = (data.data_read[0] & ~BPM_SWAP_WDW_CTL_DLY_MASK) |
-                        BPM_SWAP_WDW_CTL_DLY_W(0x0); // No delay
+                        BPM_SWAP_WDW_CTL_DLY_W(210);
   _commLink->fmc_config_send(&data);
 
-  printf("BPM Swap Windowing delay set to 0!\n");
+  printf("BPM Swap Windowing delay set to 210!\n");
 
   // ======================================================
   //                DSP configuration
@@ -569,7 +575,7 @@ int fmc_config_130m_4ch_board::set_wdw_on(uint32_t *wdwon_out) {
   }
   else {
     data.data_send[0] = (BPM_SWAP_WDW_CTL_USE |
-                         BPM_SWAP_WDW_CTL_SWCLK_EXT); // Use windowing
+                         BPM_SWAP_WDW_CTL_SWCLK_EXT); // Use windowing and external clock
     _commLink->fmc_config_send(&data);
   }
 
@@ -593,7 +599,7 @@ int fmc_config_130m_4ch_board::set_wdw_off(uint32_t *wdwon_out) {
   else {
     _commLink->fmc_config_read(&data);
     data.data_send[0] = (data.data_read[0] & ~BPM_SWAP_WDW_CTL_USE &
-                         ~BPM_SWAP_WDW_CTL_SWCLK_EXT); // Don't use windowing
+                         ~BPM_SWAP_WDW_CTL_SWCLK_EXT); // Don't use windowing and switch to internal clock
     _commLink->fmc_config_send(&data);
   }
 

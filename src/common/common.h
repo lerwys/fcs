@@ -58,6 +58,8 @@ extern int verbose;
 extern int quiet;
 extern const struct delay_lines *delay_data_l;
 extern const struct delay_lines *delay_clk_l;
+extern const char *build_revision;
+extern const char *build_date;
 
 void help(void);
 enum platform_t lookupstring_i(const char *key);

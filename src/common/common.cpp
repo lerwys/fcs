@@ -20,6 +20,8 @@ int verbose;
 int quiet;
 const struct delay_lines *delay_data_l;
 const struct delay_lines *delay_clk_l;
+const char *build_revision = "";
+const char *build_date = __DATE__ " " __TIME__;
 
 static const struct sym_t lookuptable[] = {
     { ML605_STRING, ML605 },
@@ -28,6 +30,9 @@ static const struct sym_t lookuptable[] = {
 };
 
 void help(void) {
+  fprintf(stderr, "FCS Server Program\n");
+  fprintf(stderr, "Git commit ID: %s.\n", build_revision);
+  fprintf(stderr, "Build date: %s.\n\n", build_date);
   fprintf(stderr, "Usage: %s [OPTION]\n", program);
   fprintf(stderr, "\n");
   fprintf(stderr, "  -p <platform>  supportted platforms (ML605/KC705/AFC)\n");
@@ -35,7 +40,7 @@ void help(void) {
   fprintf(stderr, "  -q             quiet: do not display warnings\n");
   fprintf(stderr, "  -h             display this help and exit\n");
   fprintf(stderr, "\n");
-  fprintf(stderr, "Report bugs to <a.wojenski@elka.pw.edu.pl>\n");
+  fprintf(stderr, "Report bugs to <a.wojenski@elka.pw.edu.pl> and/or <lucas.russo@lnls.br>\n");
   fprintf(stderr, "Version (%s). Licensed under the GPL v3.\n", VERSION);
 }
 

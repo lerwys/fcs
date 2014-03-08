@@ -110,10 +110,52 @@ static struct bsmp_func fmc130m_config_defaults_func = {
 };
 
 /********************************************/
+/********** Get FMC Temp Functions **********/
+/*******************************************/
+
+#define FMC130M_GET_TEMP1_ID 2
+#define FMC130M_GET_TEMP1_IN 0
+#define FMC130M_GET_TEMP1_OUT 8
+
+uint8_t fmc130m_get_temp1(uint8_t *input, uint8_t *output)
+{
+    printf(S"Getting FMC Temp 1...\n");
+    fmc_config_130m_4ch_board_p->get_fmc_temp1((uint64_t *)output);
+
+    return 0; // Success!!
+}
+
+static struct bsmp_func fmc130m_get_temp1_func = {
+  {FMC130M_GET_TEMP1_ID,
+   FMC130M_GET_TEMP1_IN,
+   FMC130M_GET_TEMP1_OUT},
+  fmc130m_get_temp1
+};
+
+#define FMC130M_GET_TEMP2_ID 3
+#define FMC130M_GET_TEMP2_IN 0
+#define FMC130M_GET_TEMP2_OUT 8
+
+uint8_t fmc130m_get_temp2(uint8_t *input, uint8_t *output)
+{
+    printf(S"Getting FMC Temp 2...\n");
+    fmc_config_130m_4ch_board_p->get_fmc_temp2((uint64_t *)output);
+
+    return 0; // Success!!
+}
+
+static struct bsmp_func fmc130m_get_temp2_func = {
+  {FMC130M_GET_TEMP2_ID,
+   FMC130M_GET_TEMP2_IN,
+   FMC130M_GET_TEMP2_OUT},
+  fmc130m_get_temp2
+};
+
+/********************************************/
 /********** Set/Get KX  Function **********/
 /*******************************************/
 
-#define FMC130M_SET_KX_ID 2
+#define FMC130M_SET_KX_ID 4
 #define FMC130M_SET_KX_IN 4
 #define FMC130M_SET_KX_OUT 4
 
@@ -134,7 +176,7 @@ static struct bsmp_func fmc130m_set_kx_func = {
   fmc130m_set_kx
 };
 
-#define FMC130M_GET_KX_ID 3
+#define FMC130M_GET_KX_ID 5
 #define FMC130M_GET_KX_IN 0
 #define FMC130M_GET_KX_OUT 4
 
@@ -160,7 +202,7 @@ static struct bsmp_func fmc130m_get_kx_func = {
 /********** Set/Get KY  Function **********/
 /*******************************************/
 
-#define FMC130M_SET_KY_ID 4
+#define FMC130M_SET_KY_ID 6
 #define FMC130M_SET_KY_IN 4
 #define FMC130M_SET_KY_OUT 4
 
@@ -180,7 +222,7 @@ static struct bsmp_func fmc130m_set_ky_func = {
   fmc130m_set_ky
 };
 
-#define FMC130M_GET_KY_ID 5
+#define FMC130M_GET_KY_ID 7
 #define FMC130M_GET_KY_IN 0
 #define FMC130M_GET_KY_OUT 4
 
@@ -206,7 +248,7 @@ static struct bsmp_func fmc130m_get_ky_func = {
 /********** Set/Get KSUM  Function **********/
 /*******************************************/
 
-#define FMC130M_SET_KSUM_ID 6
+#define FMC130M_SET_KSUM_ID 8
 #define FMC130M_SET_KSUM_IN 4
 #define FMC130M_SET_KSUM_OUT 4
 
@@ -226,7 +268,7 @@ static struct bsmp_func fmc130m_set_ksum_func = {
   fmc130m_set_ksum
 };
 
-#define FMC130M_GET_KSUM_ID 7
+#define FMC130M_GET_KSUM_ID 9
 #define FMC130M_GET_KSUM_IN 0
 #define FMC130M_GET_KSUM_OUT 4
 
@@ -252,7 +294,7 @@ static struct bsmp_func fmc130m_get_ksum_func = {
 /********** Set/Get Switching Functions **********/
 /*************************************************/
 
-#define FMC130M_SET_SW_ON_ID 8
+#define FMC130M_SET_SW_ON_ID 10
 #define FMC130M_SET_SW_ON_IN 0
 #define FMC130M_SET_SW_ON_OUT 4
 
@@ -271,7 +313,7 @@ static struct bsmp_func fmc130m_set_sw_on_func = {
   fmc130m_set_sw_on
 };
 
-#define FMC130M_SET_SW_OFF_ID 9
+#define FMC130M_SET_SW_OFF_ID 11
 #define FMC130M_SET_SW_OFF_IN 0
 #define FMC130M_SET_SW_OFF_OUT 4
 
@@ -290,7 +332,7 @@ static struct bsmp_func fmc130m_set_sw_off_func = {
   fmc130m_set_sw_off
 };
 
-#define FMC130M_GET_SW_ID 10
+#define FMC130M_GET_SW_ID 12
 #define FMC130M_GET_SW_IN 0
 #define FMC130M_GET_SW_OUT 4
 
@@ -316,7 +358,7 @@ static struct bsmp_func fmc130m_get_sw_func = {
 /****** Set/Get Switching CLK DIV Functions ******/
 /*************************************************/
 
-#define FMC130M_SET_SW_DIVCLK_ID 11
+#define FMC130M_SET_SW_DIVCLK_ID 13
 #define FMC130M_SET_SW_DIVCLK_IN 4
 #define FMC130M_SET_SW_DIVCLK_OUT 4
 
@@ -336,7 +378,7 @@ static struct bsmp_func fmc130m_set_sw_divclk_func = {
   fmc130m_set_sw_divclk
 };
 
-#define FMC130M_GET_SW_DIVCLK_ID 12
+#define FMC130M_GET_SW_DIVCLK_ID 14
 #define FMC130M_GET_SW_DIVCLK_IN 0
 #define FMC130M_GET_SW_DIVCLK_OUT 4
 
@@ -362,7 +404,7 @@ static struct bsmp_func fmc130m_get_sw_divclk_func = {
 /****** Set/Get Switching CLK Phase Functions *****/
 /*************************************************/
 
-#define FMC130M_SET_SW_PHASECLK_ID 13
+#define FMC130M_SET_SW_PHASECLK_ID 15
 #define FMC130M_SET_SW_PHASECLK_IN 4
 #define FMC130M_SET_SW_PHASECLK_OUT 4
 
@@ -382,7 +424,7 @@ static struct bsmp_func fmc130m_set_sw_phaseclk_func = {
   fmc130m_set_sw_phaseclk
 };
 
-#define FMC130M_GET_SW_PHASECLK_ID 14
+#define FMC130M_GET_SW_PHASECLK_ID 16
 #define FMC130M_GET_SW_PHASECLK_IN 0
 #define FMC130M_GET_SW_PHASECLK_OUT 4
 
@@ -408,7 +450,7 @@ static struct bsmp_func fmc130m_get_sw_phaseclk_func = {
 /*********** Set/Get Windowing Functions *********/
 /*************************************************/
 
-#define FMC130M_SET_WDW_ON_ID 15
+#define FMC130M_SET_WDW_ON_ID 17
 #define FMC130M_SET_WDW_ON_IN 0
 #define FMC130M_SET_WDW_ON_OUT 4
 
@@ -427,7 +469,7 @@ static struct bsmp_func fmc130m_set_wdw_on_func = {
   fmc130m_set_wdw_on
 };
 
-#define FMC130M_SET_WDW_OFF_ID 16
+#define FMC130M_SET_WDW_OFF_ID 18
 #define FMC130M_SET_WDW_OFF_IN 0
 #define FMC130M_SET_WDW_OFF_OUT 4
 
@@ -446,7 +488,7 @@ static struct bsmp_func fmc130m_set_wdw_off_func = {
   fmc130m_set_wdw_off
 };
 
-#define FMC130M_GET_WDW_ID 17
+#define FMC130M_GET_WDW_ID 19
 #define FMC130M_GET_WDW_IN 0
 #define FMC130M_GET_WDW_OUT 4
 
@@ -468,7 +510,7 @@ static struct bsmp_func fmc130m_get_wdw_func = {
   fmc130m_get_wdw
 };
 
-#define FMC130M_SET_WDW_DLY_ID 18
+#define FMC130M_SET_WDW_DLY_ID 20
 #define FMC130M_SET_WDW_DLY_IN 4
 #define FMC130M_SET_WDW_DLY_OUT 4
 
@@ -488,7 +530,7 @@ static struct bsmp_func fmc130m_set_wdw_dly_func = {
   fmc130m_set_wdw_dly
 };
 
-#define FMC130M_GET_WDW_DLY_ID 19
+#define FMC130M_GET_WDW_DLY_ID 21
 #define FMC130M_GET_WDW_DLY_IN 0
 #define FMC130M_GET_WDW_DLY_OUT 4
 
@@ -514,7 +556,7 @@ static struct bsmp_func fmc130m_get_wdw_dly_func = {
 /************ Set/Get ADC CLK Functions **********/
 /*************************************************/
 
-#define FMC130M_SET_ADC_CLK_ID 20
+#define FMC130M_SET_ADC_CLK_ID 22
 #define FMC130M_SET_ADC_CLK_IN 4
 #define FMC130M_SET_ADC_CLK_OUT 4
 
@@ -537,7 +579,7 @@ static struct bsmp_func fmc130m_set_adc_clk_func = {
   fmc130m_set_adc_clk
 };
 
-#define FMC130M_GET_ADC_CLK_ID 21
+#define FMC130M_GET_ADC_CLK_ID 23
 #define FMC130M_GET_ADC_CLK_IN 0
 #define FMC130M_GET_ADC_CLK_OUT 4
 
@@ -563,7 +605,7 @@ static struct bsmp_func fmc130m_get_adc_clk_func = {
 /****** Set/Get DDS frequency CLK Functions ******/
 /*************************************************/
 
-#define FMC130M_SET_DDS_FREQ_ID 22
+#define FMC130M_SET_DDS_FREQ_ID 24
 #define FMC130M_SET_DDS_FREQ_IN 4
 #define FMC130M_SET_DDS_FREQ_OUT 4
 
@@ -583,7 +625,7 @@ static struct bsmp_func fmc130m_set_dds_freq_func = {
   fmc130m_set_dds_freq
 };
 
-#define FMC130M_GET_DDS_FREQ_ID 23
+#define FMC130M_GET_DDS_FREQ_ID 25
 #define FMC130M_GET_DDS_FREQ_IN 0
 #define FMC130M_GET_DDS_FREQ_OUT 4
 
@@ -609,7 +651,7 @@ static struct bsmp_func fmc130m_get_dds_freq_func = {
 /****** Set/Get Data Acquisition Functions ******/
 /*************************************************/
 
-#define FMC130M_SET_ACQ_PARAM_ID 24
+#define FMC130M_SET_ACQ_PARAM_ID 26
 #define FMC130M_SET_ACQ_PARAM_IN 8
 #define FMC130M_SET_ACQ_PARAM_OUT 4
 
@@ -649,7 +691,7 @@ static struct bsmp_func fmc130m_set_acq_params_func = {
   fmc130m_set_acq_params
 };
 
-#define FMC130M_GET_ACQ_NSAMPLES_ID 25
+#define FMC130M_GET_ACQ_NSAMPLES_ID 27
 #define FMC130M_GET_ACQ_NSAMPLES_IN 0
 #define FMC130M_GET_ACQ_NSAMPLES_OUT 4
 
@@ -675,7 +717,7 @@ static struct bsmp_func fmc130m_get_acq_nsamples_func = {
   fmc130m_get_acq_nsamples
 };
 
-#define FMC130M_GET_ACQ_CHAN_ID 26
+#define FMC130M_GET_ACQ_CHAN_ID 28
 #define FMC130M_GET_ACQ_CHAN_IN 0
 #define FMC130M_GET_ACQ_CHAN_OUT 4
 
@@ -700,7 +742,7 @@ static struct bsmp_func fmc130m_get_acq_chan_func = {
   fmc130m_get_acq_chan
 };
 
-#define FMC130M_START_ACQ_ID 27
+#define FMC130M_START_ACQ_ID 29
 #define FMC130M_START_ACQ_IN 0
 #define FMC130M_START_ACQ_OUT 4
 
@@ -1030,6 +1072,9 @@ int main(int argc, const char **argv) {
   // Register functions
   tcp_server_p->register_func(&fmc130m_blink_leds_func);
   tcp_server_p->register_func(&fmc130m_config_defaults_func);
+  tcp_server_p->register_func(&fmc130m_get_temp1_func);
+  tcp_server_p->register_func(&fmc130m_get_temp2_func);
+
   tcp_server_p->register_func(&fmc130m_set_kx_func);
   tcp_server_p->register_func(&fmc130m_get_kx_func);
   tcp_server_p->register_func(&fmc130m_set_ky_func);

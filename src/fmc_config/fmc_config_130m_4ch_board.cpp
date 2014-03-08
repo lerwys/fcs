@@ -144,7 +144,6 @@ int fmc_config_130m_4ch_board::config_defaults() {
           "============================================" << endl;
   // lm75 i2c have timeout
 
-  // Why is it not working?????
   LM75A_drv::LM75A_setCommLink(_commLink, LM75A_I2C_DRV);
   printf("LM75A chip number 1, chip ID: 0x%02x (should be 0xA1)\n", LM75A_drv::LM75A_readID(LM75A_ADDR_1));
   printf("LM75A chip number 1, temperature: %f *C\n", LM75A_drv::LM75A_readTemp(LM75A_ADDR_1));
@@ -356,8 +355,8 @@ int fmc_config_130m_4ch_board::config_defaults() {
   for (i = 0; i < 10; ++i) {
     data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_CFG;
     // toggle valid signal for all four DDS's
-    data.data_send[0] = POS_CALC_DDS_CFG_VALID_CH0 | 
-          		POS_CALC_DDS_CFG_VALID_CH1 | 
+    data.data_send[0] = POS_CALC_DDS_CFG_VALID_CH0 |
+          		POS_CALC_DDS_CFG_VALID_CH1 |
           		POS_CALC_DDS_CFG_VALID_CH2 |
           		POS_CALC_DDS_CFG_VALID_CH3;
     _commLink->fmc_config_send(&data);
@@ -401,6 +400,20 @@ int fmc_config_130m_4ch_board::blink_leds() {
   _commLink->fmc_config_send(&data);
   usleep(500000);
 
+  return 0;
+}
+
+int fmc_config_130m_4ch_board::get_fmc_temp1(uint64_t *temp)
+{
+  LM75A_drv::LM75A_setCommLink(_commLink, LM75A_I2C_DRV);
+  *(double *)temp = LM75A_drv::LM75A_readTemp(LM75A_ADDR_1);
+  return 0;
+}
+
+int fmc_config_130m_4ch_board::get_fmc_temp2(uint64_t *temp)
+{
+  LM75A_drv::LM75A_setCommLink(_commLink, LM75A_I2C_DRV);
+  *(double *)temp = LM75A_drv::LM75A_readTemp(LM75A_ADDR_2);
   return 0;
 }
 
@@ -695,8 +708,8 @@ int fmc_config_130m_4ch_board::set_dds_freq(uint32_t dds_freq, uint32_t *dds_fre
     for (i = 0; i < 10; ++i) {
       data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_CFG;
       // toggle valid signal for all four DDS's
-      data.data_send[0] = POS_CALC_DDS_CFG_VALID_CH0 | 
-            		POS_CALC_DDS_CFG_VALID_CH1 | 
+      data.data_send[0] = POS_CALC_DDS_CFG_VALID_CH0 |
+            		POS_CALC_DDS_CFG_VALID_CH1 |
             		POS_CALC_DDS_CFG_VALID_CH2 |
             		POS_CALC_DDS_CFG_VALID_CH3;
       _commLink->fmc_config_send(&data);
@@ -704,22 +717,22 @@ int fmc_config_130m_4ch_board::set_dds_freq(uint32_t dds_freq, uint32_t *dds_fre
 
     data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH0;
     _commLink->fmc_config_read(&data);
-    printf ("DDS PINC CH0 set to: %d\n", 
+    printf ("DDS PINC CH0 set to: %d\n",
 	POS_CALC_DDS_PINC_CH0_VAL_R(data.data_read[0]));
 
     data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH1;
     _commLink->fmc_config_read(&data);
-    printf ("DDS PINC CH1 set to: %d\n", 
+    printf ("DDS PINC CH1 set to: %d\n",
 	POS_CALC_DDS_PINC_CH1_VAL_R(data.data_read[0]));
 
     data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH2;
     _commLink->fmc_config_read(&data);
-    printf ("DDS PINC CH2 set to: %d\n", 
+    printf ("DDS PINC CH2 set to: %d\n",
 	POS_CALC_DDS_PINC_CH2_VAL_R(data.data_read[0]));
 
     data.wb_addr = DSP_CTRL_REGS | POS_CALC_REG_DDS_PINC_CH3;
     _commLink->fmc_config_read(&data);
-    printf ("DDS PINC CH3 set to: %d\n", 
+    printf ("DDS PINC CH3 set to: %d\n",
 	POS_CALC_DDS_PINC_CH3_VAL_R(data.data_read[0]));
   }
 

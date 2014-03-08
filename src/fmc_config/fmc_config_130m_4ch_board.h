@@ -52,6 +52,8 @@ public:
   /* Exported functions */
   int blink_leds();
   int config_defaults();
+  int get_fmc_temp1(uint64_t *temp);
+  int get_fmc_temp2(uint64_t *temp);
   int set_kx(uint32_t kx, uint32_t *kx_out);
   int set_ky(uint32_t ky, uint32_t *ky_out);
   int set_ksum(uint32_t ksum, uint32_t *ksum_out);

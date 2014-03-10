@@ -1,5 +1,5 @@
 //============================================================================
-// Author      : Andrzej Wojenski
+// Author      : Andrzej Wojenski and Lucas Russo
 // Version     : 1.0
 // Description : Software driver for configuration FMC ADC 130M 4CH card (PASSIVE version)
 //               Also checks and tests avaiable chips on the board

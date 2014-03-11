@@ -266,6 +266,7 @@ int fmc_config_130m_4ch_board::config_defaults() {
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_DLY;
   data.data_send[0] = BPM_SWAP_DLY_1_W(210) |
                         BPM_SWAP_DLY_2_W(210);
+  _commLink->fmc_config_send(&data);
 
   printf("BPM Swap Delay 210\n");
 

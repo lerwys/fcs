@@ -82,7 +82,7 @@ static char * timestamp_str()
 
 uint8_t fmc130m_blink_leds(uint8_t *input, uint8_t *output)
 {
-     printf("[%s] "S"blinking leds...\n", timestamp_str());
+     fprintf(stderr, "[%s] "S"blinking leds...\n", timestamp_str());
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->blink_leds();
 
     return 0; // Success!!
@@ -105,7 +105,7 @@ static struct bsmp_func fmc130m_blink_leds_func = {
 
 uint8_t fmc130m_config_defaults(uint8_t *input, uint8_t *output)
 {
-     printf("[%s] "S"Configuring Defaults...\n", timestamp_str());
+     fprintf(stderr,"[%s] "S"Configuring Defaults...\n", timestamp_str());
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->config_defaults();
 
     return 0; // Success!!
@@ -129,7 +129,7 @@ static struct bsmp_func fmc130m_config_defaults_func = {
 uint8_t fmc130m_get_temp1(uint8_t *input, uint8_t *output)
 {
     fmc_config_130m_4ch_board_p->get_fmc_temp1((uint64_t *)output);
-     printf("[%s] "S"Getting FMC Temp 1: %f\n", timestamp_str(), *(double *)output);
+     fprintf(stderr,"[%s] "S"Getting FMC Temp 1: %f\n", timestamp_str(), *(double *)output);
 
     return 0; // Success!!
 }
@@ -148,7 +148,7 @@ static struct bsmp_func fmc130m_get_temp1_func = {
 uint8_t fmc130m_get_temp2(uint8_t *input, uint8_t *output)
 {
     fmc_config_130m_4ch_board_p->get_fmc_temp2((uint64_t *)output);
-     printf("[%s] "S"Getting FMC Temp 2: %f\n", timestamp_str(), *(double *)output);
+     fprintf(stderr,"[%s] "S"Getting FMC Temp 2: %f\n", timestamp_str(), *(double *)output);
 
     return 0; // Success!!
 }
@@ -173,7 +173,7 @@ uint8_t fmc130m_set_kx(uint8_t *input, uint8_t *output)
     uint32_t kx = *((uint32_t *) input);
 
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_kx(kx, NULL);
-     printf("[%s] "S"Setting Kx value to: %u\n", timestamp_str(), kx);
+     fprintf(stderr,"[%s] "S"Setting Kx value to: %u\n", timestamp_str(), kx);
 
     return 0; // Success!!
 }
@@ -195,7 +195,7 @@ uint8_t fmc130m_get_kx(uint8_t *input, uint8_t *output)
 
     fmc_config_130m_4ch_board_p->set_kx(NULL, &kx_out);
     *((uint32_t *)output) = kx_out;
-     printf("[%s] "S"Getting Kx value: %u\n", timestamp_str(), kx_out);
+     fprintf(stderr,"[%s] "S"Getting Kx value: %u\n", timestamp_str(), kx_out);
 
     return 0; // Success!!
 }
@@ -219,7 +219,7 @@ uint8_t fmc130m_set_ky(uint8_t *input, uint8_t *output)
 {
     uint32_t ky = *((uint32_t *) input);
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_ky(ky, NULL);
-     printf("[%s] "S"Setting Ky value to: %u\n", timestamp_str(), ky);
+     fprintf(stderr,"[%s] "S"Setting Ky value to: %u\n", timestamp_str(), ky);
 
     return 0; // Success!!
 }
@@ -241,7 +241,7 @@ uint8_t fmc130m_get_ky(uint8_t *input, uint8_t *output)
 
      fmc_config_130m_4ch_board_p->set_ky(NULL, &ky_out);
     *((uint32_t *)output) = ky_out;
-     printf("[%s] "S"Getting Ky value: %u\n", timestamp_str(), ky_out);
+     fprintf(stderr,"[%s] "S"Getting Ky value: %u\n", timestamp_str(), ky_out);
 
     return 0; // Success!!
 }
@@ -265,7 +265,7 @@ uint8_t fmc130m_set_ksum(uint8_t *input, uint8_t *output)
 {
     uint32_t ksum = *((uint32_t *) input);
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_ksum(ksum, NULL);
-     printf("[%s] "S"Setting Ksum value to: %u\n", timestamp_str(), ksum);
+     fprintf(stderr,"[%s] "S"Setting Ksum value to: %u\n", timestamp_str(), ksum);
 
     return 0; // Success!!
 }
@@ -287,7 +287,7 @@ uint8_t fmc130m_get_ksum(uint8_t *input, uint8_t *output)
 
      fmc_config_130m_4ch_board_p->set_ksum(NULL, &ksum_out);
     *((uint32_t *)output) = ksum_out;
-     printf("[%s] "S"Getting Ksum value: %u\n", timestamp_str(), ksum_out);
+     fprintf(stderr,"[%s] "S"Getting Ksum value: %u\n", timestamp_str(), ksum_out);
 
     return 0; // Success!!
 }
@@ -310,7 +310,7 @@ static struct bsmp_func fmc130m_get_ksum_func = {
 uint8_t fmc130m_set_sw_on(uint8_t *input, uint8_t *output)
 {
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_sw_on(NULL);
-     printf("[%s] "S"Setting FPGA Deswitching ON!\n", timestamp_str());
+     fprintf(stderr,"[%s] "S"Setting FPGA Deswitching ON!\n", timestamp_str());
 
     return 0; // Success!!
 }
@@ -329,7 +329,7 @@ static struct bsmp_func fmc130m_set_sw_on_func = {
 uint8_t fmc130m_set_sw_off(uint8_t *input, uint8_t *output)
 {
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_sw_off(NULL);
-     printf("[%s] "S"Setting FPGA Deswitching OFF!\n", timestamp_str());
+     fprintf(stderr,"[%s] "S"Setting FPGA Deswitching OFF!\n", timestamp_str());
 
     return 0; // Success!!
 }
@@ -351,7 +351,7 @@ uint8_t fmc130m_get_sw(uint8_t *input, uint8_t *output)
 
     fmc_config_130m_4ch_board_p->set_sw_on(&sw_state);
     *((uint32_t *)output) = sw_state;
-     printf("[%s] "S"Getting Switching State: %u\n", timestamp_str(), sw_state);
+     fprintf(stderr,"[%s] "S"Getting Switching State: %u\n", timestamp_str(), sw_state);
 
     return 0; // Success!!
 }
@@ -375,7 +375,7 @@ uint8_t fmc130m_set_sw_divclk(uint8_t *input, uint8_t *output)
 {
     uint32_t divclk = *((uint32_t *) input);
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_sw_divclk(divclk, NULL);
-     printf("[%s] "S"Setting DIVCLK value to: %u\n", timestamp_str(), divclk);
+     fprintf(stderr,"[%s] "S"Setting DIVCLK value to: %u\n", timestamp_str(), divclk);
 
     return 0; // Success!!
 }
@@ -397,7 +397,7 @@ uint8_t fmc130m_get_sw_divclk(uint8_t *input, uint8_t *output)
 
     fmc_config_130m_4ch_board_p->set_sw_divclk(NULL, &divclk);
     *((uint32_t *)output) = divclk;
-     printf("[%s] "S"Getting DIVCLK value: %u\n", timestamp_str(), divclk);
+     fprintf(stderr,"[%s] "S"Getting DIVCLK value: %u\n", timestamp_str(), divclk);
 
     return 0; // Success!!
 }
@@ -421,7 +421,7 @@ uint8_t fmc130m_set_sw_phaseclk(uint8_t *input, uint8_t *output)
 {
     uint32_t phaseclk = *((uint32_t *) input);
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_sw_phase(phaseclk, NULL);
-     printf("[%s] "S"Setting PHASECLK value to: %u\n", timestamp_str(), phaseclk);
+     fprintf(stderr,"[%s] "S"Setting PHASECLK value to: %u\n", timestamp_str(), phaseclk);
 
     return 0; // Success!!
 }
@@ -443,7 +443,7 @@ uint8_t fmc130m_get_sw_phaseclk(uint8_t *input, uint8_t *output)
 
     fmc_config_130m_4ch_board_p->set_sw_phase(NULL, &phaseclk);
     *((uint32_t *)output) = phaseclk;
-     printf("[%s] "S"Getting PHASECLK value: %u\n", timestamp_str(), phaseclk);
+     fprintf(stderr,"[%s] "S"Getting PHASECLK value: %u\n", timestamp_str(), phaseclk);
 
     return 0; // Success!!
 }
@@ -466,7 +466,7 @@ static struct bsmp_func fmc130m_get_sw_phaseclk_func = {
 uint8_t fmc130m_set_wdw_on(uint8_t *input, uint8_t *output)
 {
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_wdw_on(NULL);
-     printf("[%s] "S"Setting Windowing ON!\n", timestamp_str());
+     fprintf(stderr,"[%s] "S"Setting Windowing ON!\n", timestamp_str());
 
     return 0; // Success!!
 }
@@ -485,7 +485,7 @@ static struct bsmp_func fmc130m_set_wdw_on_func = {
 uint8_t fmc130m_set_wdw_off(uint8_t *input, uint8_t *output)
 {
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_wdw_off(NULL);
-     printf("[%s] "S"Setting Windowing OFF!\n", timestamp_str());
+     fprintf(stderr,"[%s] "S"Setting Windowing OFF!\n", timestamp_str());
 
     return 0; // Success!!
 }
@@ -507,7 +507,7 @@ uint8_t fmc130m_get_wdw(uint8_t *input, uint8_t *output)
 
     fmc_config_130m_4ch_board_p->set_wdw_on(&wdw_state);
     *((uint32_t *)output) = wdw_state;
-     printf("[%s] "S"Getting Windowing State: %u\n", timestamp_str(), wdw_state);
+     fprintf(stderr,"[%s] "S"Getting Windowing State: %u\n", timestamp_str(), wdw_state);
 
     return 0; // Success!!
 }
@@ -527,7 +527,7 @@ uint8_t fmc130m_set_wdw_dly(uint8_t *input, uint8_t *output)
 {
     uint32_t wdw_dly = *((uint32_t *) input);
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_wdw_dly(wdw_dly, NULL);
-     printf("[%s] "S"Setting Windowing Delay to: %u\n", timestamp_str(), wdw_dly);
+     fprintf(stderr,"[%s] "S"Setting Windowing Delay to: %u\n", timestamp_str(), wdw_dly);
 
     return 0; // Success!!
 }
@@ -549,7 +549,7 @@ uint8_t fmc130m_get_wdw_dly(uint8_t *input, uint8_t *output)
 
     fmc_config_130m_4ch_board_p->set_wdw_dly(NULL, &wdw_dly);
     *((uint32_t *)output) = wdw_dly;
-     printf("[%s] "S"Getting Windowing Delay value: %u\n", timestamp_str(), wdw_dly);
+     fprintf(stderr,"[%s] "S"Getting Windowing Delay value: %u\n", timestamp_str(), wdw_dly);
 
     return 0; // Success!!
 }
@@ -573,7 +573,7 @@ uint8_t fmc130m_set_adc_clk(uint8_t *input, uint8_t *output)
 {
     uint32_t adcclk = *((uint32_t *) input);
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_adc_clk(adcclk, NULL);
-     printf("[%s] "S"Setting ADC_CLK value to: %u\n", timestamp_str(), adcclk);
+     fprintf(stderr,"[%s] "S"Setting ADC_CLK value to: %u\n", timestamp_str(), adcclk);
 
     return 0; // Success!!
 }
@@ -595,7 +595,7 @@ uint8_t fmc130m_get_adc_clk(uint8_t *input, uint8_t *output)
 
     fmc_config_130m_4ch_board_p->set_adc_clk(NULL, &adcclk);
     *((uint32_t *)output) = adcclk;
-     printf("[%s] "S"Getting ADC_CLK value: %u\n", timestamp_str(), adcclk);
+     fprintf(stderr,"[%s] "S"Getting ADC_CLK value: %u\n", timestamp_str(), adcclk);
 
     return 0; // Success!!
 }
@@ -619,7 +619,7 @@ uint8_t fmc130m_set_dds_freq(uint8_t *input, uint8_t *output)
 {
     uint32_t ddsfreq = *((uint32_t *) input);
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_dds_freq(ddsfreq, NULL);
-     printf("[%s] "S"Setting DDS_FREQ value to: %u\n", timestamp_str(), ddsfreq);
+     fprintf(stderr,"[%s] "S"Setting DDS_FREQ value to: %u\n", timestamp_str(), ddsfreq);
 
     return 0; // Success!!
 }
@@ -641,7 +641,7 @@ uint8_t fmc130m_get_dds_freq(uint8_t *input, uint8_t *output)
 
     fmc_config_130m_4ch_board_p->set_dds_freq(NULL, &ddsfreq);
     *((uint32_t *)output) = ddsfreq;
-     printf("[%s] "S"Getting DDS_FREQ value: %u\n", timestamp_str(), ddsfreq);
+     fprintf(stderr,"[%s] "S"Getting DDS_FREQ value: %u\n", timestamp_str(), ddsfreq);
 
     return 0; // Success!!
 }
@@ -665,7 +665,7 @@ uint8_t fmc130m_set_acq_params(uint8_t *input, uint8_t *output)
 {
     uint32_t nsamples = *((uint32_t *) input);
     uint32_t acq_chan = *((uint32_t *) input + 1);
-     printf("[%s] "S"Setting DATA_ACQ values: ", timestamp_str());
+     fprintf(stderr,"[%s] "S"Setting DATA_ACQ values: ", timestamp_str());
 
     // Do some checking
     if (acq_chan > END_CHAN_ID-1) {
@@ -676,7 +676,7 @@ uint8_t fmc130m_set_acq_params(uint8_t *input, uint8_t *output)
         return -2; // invalid number of samples
     }
 
-    printf("acq_chan to %d, num_samples to %d and offset to 0x%X\n", acq_chan,
+    fprintf(stderr,"acq_chan to %d, num_samples to %d and offset to 0x%X\n", acq_chan,
             nsamples, ddr3_acq_chan[acq_chan].start_addr);
 
     fmc_config_130m_4ch_board_p->set_acq_nsamples(nsamples);
@@ -704,7 +704,7 @@ uint8_t fmc130m_get_acq_nsamples(uint8_t *input, uint8_t *output)
 
     fmc_config_130m_4ch_board_p->get_acq_nsamples(&nsamples);
     *((uint32_t *)output) = nsamples;
-     printf("[%s] "S"Getting AACQ_NSAMPLES: %d\n", timestamp_str(), nsamples);
+     fprintf(stderr,"[%s] "S"Getting AACQ_NSAMPLES: %d\n", timestamp_str(), nsamples);
 
     return 0; // Success!!
 }
@@ -726,7 +726,7 @@ uint8_t fmc130m_get_acq_chan(uint8_t *input, uint8_t *output)
 
     fmc_config_130m_4ch_board_p->get_acq_chan(&acq_chan);
     *((uint32_t *)output) = acq_chan;
-     printf("[%s] "S"Getting ACQ_CHAN: %u\n", timestamp_str(), acq_chan);
+     fprintf(stderr,"[%s] "S"Getting ACQ_CHAN: %u\n", timestamp_str(), acq_chan);
 
     return 0; // Success!!
 }
@@ -744,9 +744,9 @@ static struct bsmp_func fmc130m_get_acq_chan_func = {
 
 uint8_t fmc130m_start_acq(uint8_t *input, uint8_t *output)
 {
-     printf("[%s] "S"Starting ACQ...\n", timestamp_str());
+     fprintf(stderr,"[%s] "S"Starting ACQ...\n", timestamp_str());
     *((uint32_t *)output) = fmc_config_130m_4ch_board_p->set_data_acquire();
-     printf("[%s] "S"ACQ finished...\n", timestamp_str());
+     fprintf(stderr,"[%s] "S"ACQ finished...\n", timestamp_str());
 
     return 0; // Success!!
 }
@@ -783,8 +783,8 @@ static void curve_read_block (struct bsmp_curve *curve, uint16_t block,
     uint32_t curve_id = *((uint32_t*)curve->user);
 
     if (block == 0) {
-      printf("[%s] "S"Reading curve: ", timestamp_str());
-      printf("curve id = %d, block_size = %d\n", curve_id, block_size);
+      fprintf(stderr,"[%s] "S"Reading curve: ", timestamp_str());
+      fprintf(stderr,"curve id = %d, block_size = %d\n", curve_id, block_size);
     }
 
     if (curve_id > END_CHAN_ID-1) {
@@ -1056,7 +1056,7 @@ int main(int argc, const char **argv) {
     return 1;
   }
 
-  fprintf(stdout, "%s: platform (%s) set!\n", program, platform_name);
+  fprintf(stderr, "%s: platform (%s) set!\n", program, platform_name);
 
   fmc_config_130m_4ch_board_p = new fmc_config_130m_4ch_board(new pcie_link_driver(0),
                                                   delay_data_l,

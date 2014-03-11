@@ -111,17 +111,17 @@ int tcp_server::recvall(int fd, uint8_t *buf, uint32_t *len)
 void tcp_server::print_packet (char* pre, uint8_t *data, uint32_t size)
 {
 #ifdef DEBUG
-    printf("%s: [", pre);
+    fprintf(stderr,"%s: [", pre);
 
     if(size < 32)
     {
         unsigned int i;
         for(i = 0; i < size; ++i)
-            printf("%02X ", data[i]);
-        printf("]\n");
+            fprintf(stderr,"%02X ", data[i]);
+        fprintf(stderr,"]\n");
     }
     else
-        printf("%d bytes ]\n", size);
+        fprintf(stderr,"%d bytes ]\n", size);
 #endif
 }
 
@@ -257,7 +257,7 @@ int tcp_server::bsmp_init (void)
      * Great! Now our server is up and ready to receive some commands.
      * This will be done in the function server_process_message.
      */
-    fprintf(stdout, "[%s] "S"Initialized!\n", timestamp_str());
+    fprintf(stderr,"[%s] "S"Initialized!\n", timestamp_str());
     return 0;
 }
 
@@ -383,7 +383,7 @@ int tcp_server::start(void)
       exit(1);
   }
 
-  printf("[%s] "S"waiting for connections...\n", timestamp_str());
+  fprintf(stderr, "[%s] "S"waiting for connections...\n", timestamp_str());
 
   while(1) {  // main accept() loop
       sin_size = sizeof their_addr;
@@ -396,7 +396,7 @@ int tcp_server::start(void)
       inet_ntop(their_addr.ss_family,
           get_in_addr((struct sockaddr *)&their_addr),
           s, sizeof s);
-      printf("[%s] "S"got connection from %s\n", timestamp_str(), s);
+      fprintf(stderr, "[%s] "S"got connection from %s\n", timestamp_str(), s);
 
       tcp_server_hdr.fd = new_fd;
       tcp_server_hdr.server = this;

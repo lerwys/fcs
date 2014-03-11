@@ -8,13 +8,22 @@
 #include "tcp_server.h"
 #include "debug.h"
 
-#define S "bsmp_server: "
+#define S "tcp_server: "
+
+static char buffer[80];
+static char * timestamp_str()
+{
+    time_t ltime; /* calendar time */
+    ltime = time (NULL); /* get current cal time */
+    strftime (buffer, 80, "%F %T", localtime(&ltime));
+    return buffer;
+}
 
 #define TRY(name, func)\
     do {\
         enum bsmp_err err = func;\
         if(err) {\
-            fprintf(stderr, S name": %s\n", bsmp_error_str(err));\
+            fprintf(stderr, "[%s] "S name": %s\n", timestamp_str(), bsmp_error_str(err));\
             return -1;\
         }\
     }while(0)
@@ -192,7 +201,7 @@ int tcp_server::tcp_server_handle_client(int s, int *disconnected)
   /* receive packet */
   ret = bpm_recv(s, (uint8_t *)&recv_pkt, &bytes_recv);
   if (ret < 0) {
-    fprintf(stderr, "recv err\n");
+    fprintf(stderr, "[%s] "S"recv err\n", timestamp_str());
     return -1;
   }
   // Client disconnected
@@ -216,7 +225,7 @@ int tcp_server::tcp_server_handle_client(int s, int *disconnected)
   //print_packet("SEND_CHECK", send_packet.data, len);
 
   if ((ret = bpm_send(s, (uint8_t *)&send_pkt, &len)) < 0) {
-    fprintf(stderr, "recv err\n");
+    fprintf(stderr, "[%s] "S"recv err\n", timestamp_str());
     return -1;
   }
 
@@ -240,7 +249,7 @@ int tcp_server::bsmp_init (void)
 
     if(!bsmp_server)
     {
-        fprintf(stderr, S"Couldn't allocate a BSMP Server instance\n");
+        fprintf(stderr, "[%s] "S"Couldn't allocate a BSMP Server instance\n", timestamp_str());
         return -1;
     }
 
@@ -248,7 +257,7 @@ int tcp_server::bsmp_init (void)
      * Great! Now our server is up and ready to receive some commands.
      * This will be done in the function server_process_message.
      */
-    fprintf(stdout, S"Initialized!\n");
+    fprintf(stdout, "[%s] "S"Initialized!\n", timestamp_str());
     return 0;
 }
 
@@ -272,13 +281,13 @@ void *tcp_thread (void *arg)
         ret = tcp_server->tcp_server_handle_client(fd, &disconnected);
 
         if (ret == -1) {
-            fprintf(stderr, "server: failed to handle client\n");
+            fprintf(stderr, "[%s] "S"failed to handle client\n", timestamp_str());
             break;
         }
 
         // Client disconnected
         if (disconnected) {
-            fprintf(stderr, "server: client disconnected\n");
+            fprintf(stderr, "[%s] "S" client disconnected\n", timestamp_str());
             break;
         }
     }
@@ -320,7 +329,7 @@ int tcp_server::start(void)
   hints.ai_flags = AI_PASSIVE; // use my IP
 
   if ((rv = getaddrinfo(NULL, this->port.c_str(), &hints, &servinfo)) != 0) {
-      fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+      fprintf(stderr, "[%s] "S"getaddrinfo: %s\n", gai_strerror(rv), timestamp_str());
       return -1;
   }
 
@@ -355,7 +364,7 @@ int tcp_server::start(void)
   }
 
   if (p == NULL)  {
-      fprintf(stderr, "server: failed to bind\n");
+      fprintf(stderr, "[%s] "S"failed to bind\n", timestamp_str());
       return -2;
   }
 
@@ -374,7 +383,7 @@ int tcp_server::start(void)
       exit(1);
   }
 
-  printf("server: waiting for connections...\n");
+  printf("[%s] "S"waiting for connections...\n", timestamp_str());
 
   while(1) {  // main accept() loop
       sin_size = sizeof their_addr;
@@ -387,42 +396,15 @@ int tcp_server::start(void)
       inet_ntop(their_addr.ss_family,
           get_in_addr((struct sockaddr *)&their_addr),
           s, sizeof s);
-      printf("server: got connection from %s\n", s);
+      printf("[%s] "S"got connection from %s\n", timestamp_str(), s);
 
       tcp_server_hdr.fd = new_fd;
       tcp_server_hdr.server = this;
 
       // Create thread
       if (pthread_create (&tid, NULL, tcp_thread, (void *)&tcp_server_hdr) != 0) {
-          fprintf(stderr, "server: error creating tcp thread\n");
+          fprintf(stderr, "[%s] "S"error creating tcp thread\n", timestamp_str());
       }
-
-      /*if (!fork()) { // this is the child process
-          close(sockfd); // child doesn't need the listener
-
-          // Receive packet
-          //if (send(new_fd, "Hello, world!", 13, 0) == -1) {
-          //    perror("send");
-          //}
-          while (1) {
-            int disconnected;
-            int ret = tcp_server_handle_client(new_fd, &disconnected);
-            if (ret == -1) {
-                fprintf(stderr, "server: failed to handle client\n");
-                return -3;
-            }
-
-            // Client disconnected
-            if (disconnected) {
-              fprintf(stderr, "server: client disconnected\n");
-              break;
-            }
-          }
-
-          close(new_fd);
-          exit(0);
-      }*/
-      //close(new_fd);  // parent doesn't need this
   }
 
   return 0;

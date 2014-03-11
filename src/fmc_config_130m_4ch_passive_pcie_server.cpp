@@ -45,8 +45,8 @@ using namespace std;
 fmc_config_130m_4ch_board *fmc_config_130m_4ch_board_p;
 tcp_server *tcp_server_p;
 
-char buffer[80];
-char * timestamp_str()
+static char buffer[80];
+static char * timestamp_str()
 {
     time_t ltime; /* calendar time */
     ltime = time (NULL); /* get current cal time */
@@ -777,22 +777,23 @@ static void curve_read_block (struct bsmp_curve *curve, uint16_t block,
      * can check the block limits yourself.
      */
 
-    DEBUGP(S"Reading curve block: ");
 
     uint8_t *block_data;
     uint16_t block_size = curve->info.block_size;
     uint32_t curve_id = *((uint32_t*)curve->user);
 
-    DEBUGP("curve id = %d, block_size = %d\n", curve_id, block_size);
+    if (block == 0) {
+      printf("[%s] "S"Reading curve: ", timestamp_str());
+      printf("curve id = %d, block_size = %d\n", curve_id, block_size);
+    }
 
     if (curve_id > END_CHAN_ID-1) {
-      fprintf(stderr,S"That's weird. I've got an unexpected Curve to read\n");
+      fprintf(stderr, "[%s] "S"Unexpected curve ID!\n", timestamp_str());
       return;
     }
 
     fmc_config_130m_4ch_board_p->get_acq_data_block(curve_id, block*block_size,
                         block_size, (uint32_t *)data, (uint32_t *)len);
-    //printf ("%d\n", *(uint32_t *)data);
 }
 
 //struct bsmp_curve_info
@@ -916,7 +917,7 @@ static void curve_read_monitamp_block (struct bsmp_curve *curve, uint16_t block,
     uint32_t curve_id = *((uint32_t*)curve->user);
 
     if (curve_id != MONITAMP_CHAN_ID) {
-      fprintf(stderr,S"That's weird. I've got an unexpected Curve to read\n");
+      fprintf(stderr, "[%s] "S"Unexpected curve ID!\n", timestamp_str());
       return;
     }
 
@@ -953,7 +954,7 @@ static void curve_read_monitpos_block (struct bsmp_curve *curve, uint16_t block,
     uint32_t curve_id = *((uint32_t*)curve->user);
 
     if (curve_id != MONITPOS_CHAN_ID) {
-      fprintf(stderr,S"That's weird. I've got an unexpected Curve to read\n");
+      fprintf(stderr, "[%s] "S"Unexpected curve ID!\n", timestamp_str());
       return;
     }
 
@@ -979,7 +980,7 @@ static struct bsmp_curve monitpos_curve = {
 int main(int argc, const char **argv) {
 
   cout << "FMC configuration software for FMC ADC 130M 4CH card (PASSIVE version)" << endl <<
-                  "Author: Andrzej Wojenski" << endl;
+                  "Author: Andrzej Wojenski (original idea) and Lucas Russo" << endl;
 
   //WBInt_drv* int_drv;
   wb_data data;

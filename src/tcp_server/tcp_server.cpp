@@ -292,7 +292,10 @@ void *tcp_thread (void *arg)
         }
     }
 
+    // Close socket
+    close(fd);
     pthread_exit(&ret);
+
     return NULL;
 }
 

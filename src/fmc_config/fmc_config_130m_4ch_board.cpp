@@ -251,10 +251,10 @@ int fmc_config_130m_4ch_board::config_defaults() {
 
   // Switching DIVCLK
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
-  data.data_send[0] = 500 << 8;
+  data.data_send[0] = 553 << 8;
   _commLink->fmc_config_send(&data);
 
-  printf("BPM Swap DIVCLK set to: %d\n", 500);
+  printf("BPM Swap DIVCLK set to: %d\n", 553);
 
   // Switching mode
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;

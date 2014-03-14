@@ -32,6 +32,7 @@ public:
   WBMaster_unit* regWBMaster(WBMaster_unit* wb_master_unit); // register software driver for Wishbone master (RS-232, PCI-E driver)
   WBInt_drv* regIntDrv(string interfaceName, uint32_t core_addr, WBInt_drv* interfaceDrv); // register software driver for communication interface (I2C, SPI)
 
+  int fmc_rst_int();
   // Config communication interface (FPGA core)
   int fmc_config_send(struct wb_data* data); // send interface config data
   int fmc_config_read(struct wb_data* data); // read interface config data

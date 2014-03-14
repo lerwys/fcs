@@ -29,6 +29,7 @@ public:
   rs232_syscon_driver();
   ~rs232_syscon_driver();
 
+  int wb_rst();
   // return - 1 error, 0 ok
   int wb_send_data(struct wb_data* data);
   // return - 1 error, 0 ok
@@ -40,6 +41,7 @@ private:
 
   int init();
   int reset();
+  int __reset2();
 
   int send_interface(string polecenie, struct wb_data* data = NULL);
   int read_interface(struct wb_data* data = NULL);

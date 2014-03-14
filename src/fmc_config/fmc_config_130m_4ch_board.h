@@ -88,6 +88,7 @@ public:
 private:
 
   commLink* _commLink;
+  commLink* _commLink_serial;
 
   WBInt_drv* int_drv;
   //wb_data data;

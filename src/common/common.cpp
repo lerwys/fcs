@@ -82,7 +82,10 @@ void set_fpga_delay(commLink* _commLink, uint32_t addr, uint32_t delay_val,
 {
   wb_data data;
 
-  data.data_send.resize(1);
+  data.data_send.resize(2);
+  data.extra.resize(2);
+  data.data_send[0] = 0;
+  data.data_send[1] = 0;
   data.wb_addr = addr;
 
   if (dly_type == DLY_DATA) {

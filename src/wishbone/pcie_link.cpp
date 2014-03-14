@@ -87,6 +87,10 @@ pcie_link_driver::~pcie_link_driver() {
 	dev->close();
 }
 
+int pcie_link_driver::wb_rst() {
+    reset();
+}
+
 int pcie_link_driver::reset() {
 
 	// reset function

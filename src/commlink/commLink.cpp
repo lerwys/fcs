@@ -13,6 +13,11 @@ WBMaster_unit* commLink::regWBMaster(WBMaster_unit* wb_master_unit) {
 	return wb_master_unit;
 }
 
+int commLink::fmc_rst_int() {
+    wb_master->wb_rst();
+    return 0;
+}
+
 WBInt_drv* commLink::regIntDrv(string interfaceName, uint32_t core_addr, WBInt_drv* interfaceDrv) {
 
 	// check if driver isn't already registered

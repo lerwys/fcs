@@ -34,6 +34,7 @@ public:
 	pcie_link_driver(int num); // PCIe device number
 	~pcie_link_driver();
 
+    int wb_rst();
 	// return - 1 error, 0 ok
 	int wb_send_data(struct wb_data* data);
 	// return - 1 error, 0 ok

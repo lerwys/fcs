@@ -53,6 +53,20 @@ int rs232_syscon_driver::reset() {
 
 }
 
+int rs232_syscon_driver::__reset2() {
+
+  send_interface((char*)"i\r", &dane_);
+
+  init_state = 0;
+  debug = 0;
+
+  return 0;
+}
+
+int rs232_syscon_driver::wb_rst() {
+    return __reset2();
+}
+
 int rs232_syscon_driver::init() {
 
   string rs232_port;

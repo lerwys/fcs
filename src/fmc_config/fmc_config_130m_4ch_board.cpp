@@ -14,6 +14,13 @@ fmc_config_130m_4ch_board::fmc_config_130m_4ch_board(WBMaster_unit* wb_master_un
 
 	init(wb_master_unit, delay_data_l, delay_clk_l);
 	config_defaults();
+    // FIXME: workaround to avoid reseting the FPGA to adjust delays!!!!
+    _commLink_serial = new commLink();
+    // FIXME: workaround to avoid reseting the FPGA to adjust delays!!!!
+    _commLink_serial->regWBMaster(new rs232_syscon_driver());
+    //usleep(100000);
+    // FIXME: workaround to avoid reseting the FPGA to adjust delays!!!!
+    config_defaults();
 
     this->acq_nsamples_n = 4096;
     this->acq_chan_n = 0;        //ADC

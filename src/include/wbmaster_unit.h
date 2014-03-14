@@ -16,6 +16,7 @@ class WBMaster_unit {
 public:
 	WBMaster_unit() {};
 	virtual ~WBMaster_unit() {};
+    virtual int wb_rst() { return 0; };
 
 	virtual int wb_send_data(struct wb_data* data) =0;
 	virtual int wb_read_data(struct wb_data* data) =0;

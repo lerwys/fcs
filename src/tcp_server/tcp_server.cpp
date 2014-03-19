@@ -45,12 +45,13 @@ tcp_server::tcp_server(string port/*, fmc_config_130m_4ch_board *_fmc_config_130
 {
   this->port = port;
   //this->_fmc_config_130m_4ch_board = _fmc_config_130m_4ch_board;
+  pthread_mutex_init(&tcp_mutex, NULL);
 
   bsmp_init();
 }
 
 tcp_server::~tcp_server() {
- // Null
+  pthread_mutex_destroy(&tcp_mutex);
 }
 
 // get sockaddr, IPv4 or IPv6:
@@ -192,9 +193,14 @@ int tcp_server::bpm_recv(int fd, uint8_t *data, uint32_t *count)
 
 int tcp_server::tcp_server_handle_client(int s, int *disconnected)
 {
+  // FIXME: Very-coarse grained lock!
+  // FIXME: Horrible critical-section!
+  pthread_mutex_lock (&tcp_mutex);
+
   uint32_t bytes_recv;
   uint32_t bytes_sent;
   int ret;
+  int err = 0;
 
   *disconnected = 0;
 
@@ -202,15 +208,16 @@ int tcp_server::tcp_server_handle_client(int s, int *disconnected)
   ret = bpm_recv(s, (uint8_t *)&recv_pkt, &bytes_recv);
   if (ret < 0) {
     fprintf(stderr, "[%s] "S"recv err\n", timestamp_str());
+    pthread_mutex_unlock (&tcp_mutex);
     return -1;
   }
   // Client disconnected
   if (bytes_recv == 0) {
     *disconnected = 1;
+    pthread_mutex_unlock (&tcp_mutex);
     return 0;
   }
 
-   //uint32_t len_recv = PACKET_HEADER + (recv_packet.data[2] << 8) + recv_packet.data[3];
    uint32_t len_recv = PACKET_HEADER + (recv_packet.data[1] << 8) + recv_packet.data[2];
    //fprintf(stderr, "bytes received check = %d\n", len_recv);
    //print_packet("RECV_CHECK", recv_packet.data, len_recv);
@@ -226,16 +233,11 @@ int tcp_server::tcp_server_handle_client(int s, int *disconnected)
 
   if ((ret = bpm_send(s, (uint8_t *)&send_pkt, &len)) < 0) {
     fprintf(stderr, "[%s] "S"recv err\n", timestamp_str());
+    pthread_mutex_unlock (&tcp_mutex);
     return -1;
   }
 
-  //if (bytes_sent = send(s, (char *)&send_pkt, len, 0) == -1) {
-  //  fprintf(stderr, "send err\n");
-  //  return -1;
-  //}
-
-  //fprintf(stderr, "bytes sent = %d\n", bytes_sent);
-
+  pthread_mutex_unlock (&tcp_mutex);
   return 0;
 }
 
@@ -290,6 +292,9 @@ void *tcp_thread (void *arg)
             fprintf(stderr, "[%s] "S" client disconnected\n", timestamp_str());
             break;
         }
+
+        // Sleep a short while to give a chance for another thread
+        usleep (100);
     }
 
     // Close socket
@@ -325,6 +330,7 @@ int tcp_server::start(void)
   int rv;
   tcp_server_hdr_t tcp_server_hdr;
   pthread_t tid;
+  pthread_attr_t attr;
 
   memset(&hints, 0, sizeof hints);
   hints.ai_family = AF_UNSPEC;
@@ -373,6 +379,11 @@ int tcp_server::start(void)
 
   freeaddrinfo(servinfo); // all done with this structure
 
+  pthread_attr_init(&attr); // Creating thread attributes
+  pthread_attr_setschedpolicy(&attr, SCHED_FIFO); // FIFO scheduling for threads
+  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED); // Don't want threads (particualrly main)
+                                                                     // waiting on each other
+
   if (listen(sockfd, BACKLOG) == -1) {
       perror("listen");
       exit(1);
@@ -405,7 +416,7 @@ int tcp_server::start(void)
       tcp_server_hdr.server = this;
 
       // Create thread
-      if (pthread_create (&tid, NULL, tcp_thread, (void *)&tcp_server_hdr) != 0) {
+      if (pthread_create (&tid, &attr, tcp_thread, (void *)&tcp_server_hdr) != 0) {
           fprintf(stderr, "[%s] "S"error creating tcp thread\n", timestamp_str());
       }
   }

@@ -71,6 +71,7 @@ private:
   //int sockfd;
   string port;
   bsmp_server_t *bsmp_server;
+  pthread_mutex_t tcp_mutex;
 
   /*fmc_config_130m_4ch_board *_fmc_config_130m_4ch_board;*/
 

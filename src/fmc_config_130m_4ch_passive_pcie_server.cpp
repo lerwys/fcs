@@ -41,9 +41,10 @@
 using namespace std;
 
 #define S "bsmp_server: "
+#define SMON "bsmp_server_monit: "
 
 fmc_config_130m_4ch_board *fmc_config_130m_4ch_board_p;
-tcp_server *tcp_server_p;
+//tcp_server *tcp_server_p;
 
 static char buffer[80];
 static char * timestamp_str()
@@ -910,14 +911,14 @@ static void curve_read_monitamp_block (struct bsmp_curve *curve, uint16_t block,
                               uint8_t *data, uint16_t *len)
 {
 
-    DEBUGP(S"Reading curve monit. amp block...\n");
+    DEBUGP(SMON"Reading curve monit. amp block...\n");
 
     uint8_t *block_data;
     uint16_t block_size = curve->info.block_size;
     uint32_t curve_id = *((uint32_t*)curve->user);
 
     if (curve_id != MONITAMP_CHAN_ID) {
-      fprintf(stderr, "[%s] "S"Unexpected curve ID!\n", timestamp_str());
+      fprintf(stderr, "[%s] "SMON"Unexpected curve ID!\n", timestamp_str());
       return;
     }
 
@@ -947,14 +948,14 @@ static void curve_read_monitpos_block (struct bsmp_curve *curve, uint16_t block,
                               uint8_t *data, uint16_t *len)
 {
 
-    DEBUGP(S"Reading curve monit. pos block...\n");
+    DEBUGP(SMON"Reading curve monit. pos block...\n");
 
     uint8_t *block_data;
     uint16_t block_size = curve->info.block_size;
     uint32_t curve_id = *((uint32_t*)curve->user);
 
     if (curve_id != MONITPOS_CHAN_ID) {
-      fprintf(stderr, "[%s] "S"Unexpected curve ID!\n", timestamp_str());
+      fprintf(stderr, "[%s] "SMON"Unexpected curve ID!\n", timestamp_str());
       return;
     }
 
@@ -988,7 +989,8 @@ int main(int argc, const char **argv) {
   vector<uint16_t> test_pattern;
   //commLink* _commLink = new commLink();
   //fmc_config_130m_4ch_board *fmc_config_130m_4ch_board_p;
-  //tcp_server *tcp_server_p;
+  tcp_server *tcp_server_p;
+  tcp_server *tcp_server_monit_p;
   uint32_t data_temp;
   int opt, error;
 
@@ -1109,6 +1111,8 @@ int main(int argc, const char **argv) {
   tcp_server_p->register_curve(&tbtpos_curve);
   tcp_server_p->register_curve(&fofbamp_curve);
   tcp_server_p->register_curve(&fofbpos_curve);
+
+  // Register monit curves functions
   tcp_server_p->register_curve(&monitamp_curve);
   tcp_server_p->register_curve(&monitpos_curve);
 

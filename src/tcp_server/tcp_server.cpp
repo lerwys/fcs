@@ -10,12 +10,17 @@
 
 #define S "tcp_server: "
 
-static char buffer[80];
-static char * timestamp_str()
+/* Thread-safe??? */
+char* tcp_server::timestamp_str()
 {
+    pthread_mutex_lock(&tmst_mutex);
     time_t ltime; /* calendar time */
+    struct tm result;
+
     ltime = time (NULL); /* get current cal time */
-    strftime (buffer, 80, "%F %T", localtime(&ltime));
+    localtime_r(&ltime, &result);
+    strftime (buffer, 80, "%F %T", &result);
+    pthread_mutex_unlock(&tmst_mutex);
     return buffer;
 }
 
@@ -31,27 +36,33 @@ static char * timestamp_str()
 #define PACKET_SIZE             BSMP_MAX_MESSAGE
 #define PACKET_HEADER           BSMP_HEADER_SIZE
 
-/* Our socket */
-int sockfd;
-
 /* Our receive packet */
-recv_pkt_t recv_pkt;
-send_pkt_t send_pkt;
-
-struct bsmp_raw_packet recv_packet = {.data = recv_pkt.data };
-struct bsmp_raw_packet send_packet = {.data = send_pkt.data };
+//recv_pkt_t recv_pkt;
+//send_pkt_t send_pkt;
+//
+//struct bsmp_raw_packet recv_packet = {.data = recv_pkt.data };
+//struct bsmp_raw_packet send_packet = {.data = send_pkt.data };
 
 tcp_server::tcp_server(string port/*, fmc_config_130m_4ch_board *_fmc_config_130m_4ch_board*/)
 {
   this->port = port;
-  //this->_fmc_config_130m_4ch_board = _fmc_config_130m_4ch_board;
-  pthread_mutex_init(&tcp_mutex, NULL);
 
-  bsmp_init();
+  // Init Mutexes
+  pthread_mutex_init(&send_mutex, NULL);
+  pthread_mutex_init(&recv_mutex, NULL);
+  pthread_mutex_init(&bsmp_mutex, NULL);
+  pthread_mutex_init(&tmst_mutex, NULL);
+
+  bsmp_init ();
 }
 
 tcp_server::~tcp_server() {
-  pthread_mutex_destroy(&tcp_mutex);
+  pthread_mutex_destroy(&send_mutex);
+  pthread_mutex_destroy(&recv_mutex);
+  pthread_mutex_destroy(&bsmp_mutex);
+  pthread_mutex_destroy(&tmst_mutex);
+
+  bsmp_destroy ();
 }
 
 // get sockaddr, IPv4 or IPv6:
@@ -195,28 +206,34 @@ int tcp_server::tcp_server_handle_client(int s, int *disconnected)
 {
   // FIXME: Very-coarse grained lock!
   // FIXME: Horrible critical-section!
-  pthread_mutex_lock (&tcp_mutex);
 
   uint32_t bytes_recv;
   uint32_t bytes_sent;
+  recv_pkt_t recv_pkt;
+  send_pkt_t send_pkt;
+  struct bsmp_raw_packet recv_packet = {.data = recv_pkt.data };
+  struct bsmp_raw_packet send_packet = {.data = send_pkt.data };
   int ret;
   int err = 0;
 
   *disconnected = 0;
 
   /* receive packet */
+  pthread_mutex_lock (&recv_mutex);
   ret = bpm_recv(s, (uint8_t *)&recv_pkt, &bytes_recv);
   if (ret < 0) {
     fprintf(stderr, "[%s] "S"recv err\n", timestamp_str());
-    pthread_mutex_unlock (&tcp_mutex);
+    pthread_mutex_unlock (&recv_mutex);
     return -1;
   }
+
   // Client disconnected
   if (bytes_recv == 0) {
     *disconnected = 1;
-    pthread_mutex_unlock (&tcp_mutex);
+    pthread_mutex_unlock (&recv_mutex);
     return 0;
   }
+  pthread_mutex_unlock (&recv_mutex);
 
    uint32_t len_recv = PACKET_HEADER + (recv_packet.data[1] << 8) + recv_packet.data[2];
    //fprintf(stderr, "bytes received check = %d\n", len_recv);
@@ -224,20 +241,23 @@ int tcp_server::tcp_server_handle_client(int s, int *disconnected)
 
   /* Pass it to bsmp */
   recv_packet.len = len_recv;
+  pthread_mutex_lock (&bsmp_mutex);
   bsmp_process_packet(this->bsmp_server, &recv_packet, &send_packet);
+  pthread_mutex_unlock (&bsmp_mutex);
 
   /* Calculate how many bytes to send */
    uint32_t len = send_packet.len;
   //fprintf(stderr, "bytes sent check = %d\n", len);
   //print_packet("SEND_CHECK", send_packet.data, len);
 
+  pthread_mutex_lock (&send_mutex);
   if ((ret = bpm_send(s, (uint8_t *)&send_pkt, &len)) < 0) {
     fprintf(stderr, "[%s] "S"recv err\n", timestamp_str());
-    pthread_mutex_unlock (&tcp_mutex);
+    pthread_mutex_unlock (&send_mutex);
     return -1;
   }
 
-  pthread_mutex_unlock (&tcp_mutex);
+  pthread_mutex_unlock (&send_mutex);
   return 0;
 }
 
@@ -263,6 +283,11 @@ int tcp_server::bsmp_init (void)
     return 0;
 }
 
+int tcp_server::bsmp_destroy (void)
+{
+  return 0;
+}
+
 typedef struct _tcp_server_hdr_t {
     int fd;
     tcp_server *server;
@@ -283,13 +308,13 @@ void *tcp_thread (void *arg)
         ret = tcp_server->tcp_server_handle_client(fd, &disconnected);
 
         if (ret == -1) {
-            fprintf(stderr, "[%s] "S"failed to handle client\n", timestamp_str());
+            fprintf(stderr, "[%s] "S"failed to handle client\n", tcp_server->timestamp_str());
             break;
         }
 
         // Client disconnected
         if (disconnected) {
-            fprintf(stderr, "[%s] "S" client disconnected\n", timestamp_str());
+            fprintf(stderr, "[%s] "S" client disconnected\n", tcp_server->timestamp_str());
             break;
         }
 
@@ -325,6 +350,7 @@ int tcp_server::start(void)
   struct sockaddr_storage their_addr; // connector's address information
   socklen_t sin_size;
   struct sigaction sa;
+  int sockfd;
   int yes=1;
   char s[INET6_ADDRSTRLEN];
   int rv;

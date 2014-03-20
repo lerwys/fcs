@@ -31,6 +31,10 @@ extern "C" {
 #include <bsmp/server.h>
 }
 
+#define BSMP_GEN_INST           0 // General BSMP isntance
+#define BSMP_MONIT_INST         1 // Monit. values BSMP instance
+#define BSMP_INSTANCES          2
+
 #if defined( __GNUC__)
 #define PACKED __attribute__ ((packed))
 #else
@@ -71,18 +75,24 @@ private:
   //int sockfd;
   string port;
   bsmp_server_t *bsmp_server;
-  pthread_mutex_t tcp_mutex;
+  pthread_mutex_t recv_mutex;
+  pthread_mutex_t send_mutex;
+  pthread_mutex_t bsmp_mutex;
+  pthread_mutex_t tmst_mutex;
 
   /*fmc_config_130m_4ch_board *_fmc_config_130m_4ch_board;*/
+  char buffer[80]; // Timestamp buffer
 
   /* Private functions */
   int tcp_server_handle_client(int s, int *disconnected);
   int bsmp_init (void);
+  int bsmp_destroy (void);
   int sendall(int fd, uint8_t *buf, uint32_t *len);
   int recvall(int fd, uint8_t *buf, uint32_t *len);
   void print_packet (char* pre, uint8_t *data, uint32_t size);
   int bpm_send(int fd, uint8_t *data, uint32_t *count);
   int bpm_recv(int fd, uint8_t *data, uint32_t *count);
+  char* timestamp_str();
 
   /* BSMP exported functions */
   //uint8_t fmc130m_blink_leds(uint8_t *input, uint8_t *output);

@@ -59,6 +59,8 @@ public:
   int set_ksum(uint32_t ksum, uint32_t *ksum_out);
   int set_sw_on(uint32_t *sw_on_out);
   int set_sw_off(uint32_t *sw_off_out);
+  int set_sw_clk_en_on(uint32_t *swclk_en_out);
+  int set_sw_clk_en_off(uint32_t *swclk_en_out);
   int set_sw_divclk(uint32_t divclk, uint32_t *divclk_out);
   int set_sw_phase(uint32_t phase, uint32_t *phase_out);
   int set_wdw_on(uint32_t *wdwon_out);

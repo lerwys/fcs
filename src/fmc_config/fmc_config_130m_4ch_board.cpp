@@ -18,7 +18,7 @@ fmc_config_130m_4ch_board::fmc_config_130m_4ch_board(WBMaster_unit* wb_master_un
     _commLink_serial = new commLink();
     // FIXME: workaround to avoid reseting the FPGA to adjust delays!!!!
     _commLink_serial->regWBMaster(new rs232_syscon_driver());
-    //usleep(100000);
+    usleep(100000);
     // FIXME: workaround to avoid reseting the FPGA to adjust delays!!!!
     config_defaults();
 
@@ -269,6 +269,11 @@ int fmc_config_130m_4ch_board::config_defaults() {
   _commLink->fmc_config_send(&data);
 
   printf("BPM Swap Switching set to OFF!\n");
+
+  // Disable switching clock
+  data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
+  data.data_send[0] &= ~BPM_SWAP_CTRL_CLK_SWAP_EN;
+  _commLink->fmc_config_send(&data);
 
   data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_DLY;
   data.data_send[0] = BPM_SWAP_DLY_1_W(210) |
@@ -531,6 +536,52 @@ int fmc_config_130m_4ch_board::set_sw_off(uint32_t *swoff_out) {
     data.data_send[0] = (data.data_read[0] & ~BPM_SWAP_CTRL_MODE1_MASK & ~BPM_SWAP_CTRL_MODE2_MASK) |
                           BPM_SWAP_CTRL_MODE1_W(0x1)  |
                           BPM_SWAP_CTRL_MODE2_W(0x1); // Switching mode for both sets of channels
+    _commLink->fmc_config_send(&data);
+  }
+
+  return 0;
+}
+
+int fmc_config_130m_4ch_board::set_sw_clk_en_on(uint32_t *swclk_en_out) {
+  wb_data data;
+
+  data.data_send.resize(10);
+  data.data_read.resize(1);
+  data.extra.resize(2);
+
+  // Switching mode
+  data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
+
+  if (swclk_en_out) {
+    _commLink->fmc_config_read(&data);
+    *swclk_en_out = (data.data_read[0] & BPM_SWAP_CTRL_CLK_SWAP_EN) >> 24;
+  }
+  else {
+    _commLink->fmc_config_read(&data);
+    data.data_send[0] = data.data_read[0] | BPM_SWAP_CTRL_CLK_SWAP_EN;
+    _commLink->fmc_config_send(&data);
+  }
+
+  return 0;
+}
+
+int fmc_config_130m_4ch_board::set_sw_clk_en_off(uint32_t *swclk_en_out) {
+  wb_data data;
+
+  data.data_send.resize(10);
+  data.data_read.resize(1);
+  data.extra.resize(2);
+
+  // Switching mode
+  data.wb_addr = DSP_BPM_SWAP | BPM_SWAP_REG_CTRL;
+
+  if (swclk_en_out) {
+    _commLink->fmc_config_read(&data);
+    *swclk_en_out = (data.data_read[0] & BPM_SWAP_CTRL_CLK_SWAP_EN) >> 24;
+  }
+  else {
+    _commLink->fmc_config_read(&data);
+    data.data_send[0] = data.data_read[0] & ~BPM_SWAP_CTRL_CLK_SWAP_EN;
     _commLink->fmc_config_send(&data);
   }
 

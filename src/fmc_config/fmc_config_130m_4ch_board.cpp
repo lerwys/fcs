@@ -10,7 +10,13 @@
 #define PLL_STATUS_MASK 0x04
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
-#define ACTIVE_BOARD
+#define SI57x_FOUT_DFLT 113040445
+
+#ifndef SI57x_FOUT
+#define SI57x_FOUT SI57x_FOUT_DFLT
+#endif
+
+//#define ACTIVE_BOARD
 
 fmc_config_130m_4ch_board::fmc_config_130m_4ch_board(WBMaster_unit* wb_master_unit, const delay_lines *delay_data_l,
                                         const delay_lines *delay_clk_l) {
@@ -177,6 +183,7 @@ int fmc_config_130m_4ch_board::config_defaults() {
 /*********************** START OF ACTIVE BOARD ONYLY! **********************/
 /*************************************************************************/
 #ifdef ACTIVE_BOARD
+#warning "Compiling for ACTIVE BOARD"
   // ======================================================
   //          Si571 configuration (clock generation)
   // ======================================================
@@ -449,7 +456,8 @@ int fmc_config_130m_4ch_board::config_defaults() {
   ////////////////////data.data_send.push_back(0x57);
   ////////////////////data.data_send.push_back(0x9F);
 
-  Si570_drv::si570_set_freq_hl(113040445, SI571_ADDR);
+  //////Si570_drv::si570_set_freq_hl(113040445, SI571_ADDR);
+  Si570_drv::si570_set_freq_hl(SI57x_FOUT, SI571_ADDR);
 
   // Configuration for 64.247 MHz output
 /*
@@ -875,6 +883,10 @@ int fmc_config_130m_4ch_board::config_defaults() {
 /*************************************************************************/
 /*********************** END OF ACTIVE BOARD ONYLY! **********************/
 /*************************************************************************/
+#elif PASSIVE_BOARD
+#warning "Compiling for PASSIVE BOARD"
+#else
+#error "Board not supported or not specified!"
 #endif
 
   // ======================================================

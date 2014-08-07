@@ -339,6 +339,8 @@ int Si570_drv::si570_set_freq_hl(unsigned long frequency, uint32_t addr) {
   int err;
   wb_data data;
 
+  cout << "Si570: Configuring frequency output to " << dec << frequency << " Hz" << endl;
+
   data.data_send.clear();
   data.data_read.clear();
   data.extra.clear();

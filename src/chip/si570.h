@@ -31,7 +31,8 @@
 #define RFREQ_31_28_MASK                    0xf0
 #define RFREQ_27_24_MASK                    0x0f
 
-#define SI570_FOUT_FACTORY_DFLT             125000000LL
+//#define SI570_FOUT_FACTORY_DFLT             125000000LL
+#define SI570_FOUT_FACTORY_DFLT             155490000LL
 #define SI598_FOUT_FACTORY_DFLT             10000000LL
 
 #define SI570_MIN_FREQ                      10000000L
@@ -63,7 +64,9 @@ public:
   // extra[0] - Si570 address
   // extra[1] - num of registers to read
   // data_send[0] - starting register
-  static int si570_read_freq(wb_data* data);
+  ///////////static int si570_read_freq(wb_data* data);
+  static int si570_read_freq(wb_data* data, uint64_t *rfreq,
+                                unsigned int *n1, unsigned int *hs_div);
 
   // extra[0] - Si570 address
   // data_send[0...6] - configuration registers
@@ -77,6 +80,9 @@ public:
   // reg - to read
   // val - expected val
   static void si570_assert(uint32_t chip_addr, uint8_t reg, uint8_t val);
+
+  static int si570_set_freq_hl(unsigned long frequency, uint32_t addr);
+  static int si570_get_defaults(uint32_t addr);
 
 private:
 

@@ -264,19 +264,16 @@ int fmc_config_130m_4ch_board::config_defaults() {
   // reg 12 = 0x84
   // fxtal = 114.159240844203 MHz
 
-//---------------FMC_130MSa_v3_Active_A1
-    // fxtal = (fxout * Ns * H1)/(hex2dec(RFreq/2^28))
+  //---------------FMC_130MSa_v3_Active_A1
+  // fxtal = (fxout * Ns * H1)/(hex2dec(RFreq/2^28))
   //
-
-
-
-   //RFreq  = hex2dec('2B8D479ED')/2^28
-   //RFreq  = 43.5518740899861
-   //fxout = 155.49
-   //Hs = 4
-   //N1 = 8
-   //fxtal = (fxout * Hs * N1)/(Rfreq)
-   //fxtal = 114.247207587883 MHz
+  //RFreq  = hex2dec('2B8D479ED')/2^28
+  //RFreq  = 43.5518740899861
+  //fxout = 155.49
+  //Hs = 4
+  //N1 = 8
+  //fxtal = (fxout * Hs * N1)/(Rfreq)
+  //fxtal = 114.247207587883 MHz
 
   cout << "============================================" << endl <<
       "   Si571 configuration (clock generation)   " << endl <<
@@ -295,7 +292,13 @@ int fmc_config_130m_4ch_board::config_defaults() {
   Si570_drv::si570_setCommLink(_commLink, SI571_I2C_DRV, GENERAL_GPIO_DRV);
   Si570_drv::si570_outputDisable(FPGA_CTRL_REGS | WB_CLK_CTRL);
 
-  //Si570_drv::si570_read_freq(&data);
+  uint64_t rfreq;
+  unsigned int n1;
+  unsigned int hs_div;
+
+  // Fill with factory defaults
+  Si570_drv::si570_get_defaults(SI571_ADDR);
+  //Si570_drv::si570_read_freq(&data, &rfreq, &n1, &hs_div);
   //exit(1);
 
   // Configuration for 130MHz output
@@ -438,14 +441,15 @@ int fmc_config_130m_4ch_board::config_defaults() {
    //Rfreq = dec2hex(round((fout*Hs*N1/fxtal)*2^28))
    //RFreq = 2B890579F
 
-  data.data_send.clear();
-  data.data_send.push_back(0xE0); // 1110 0000
-  data.data_send.push_back(0xC2); // 1100 0010
-  data.data_send.push_back(0xB8);
-  data.data_send.push_back(0x90);
-  data.data_send.push_back(0x57);
-  data.data_send.push_back(0x9F);
+  ////////////////////data.data_send.clear();
+  ////////////////////data.data_send.push_back(0xE0); // 1110 0000
+  ////////////////////data.data_send.push_back(0xC2); // 1100 0010
+  ////////////////////data.data_send.push_back(0xB8);
+  ////////////////////data.data_send.push_back(0x90);
+  ////////////////////data.data_send.push_back(0x57);
+  ////////////////////data.data_send.push_back(0x9F);
 
+  Si570_drv::si570_set_freq_hl(113040445, SI571_ADDR);
 
   // Configuration for 64.247 MHz output
 /*
@@ -607,15 +611,15 @@ int fmc_config_130m_4ch_board::config_defaults() {
   data.data_send.push_back(0x01);
 */
 
-  data.extra[0] = SI571_ADDR;
-  data.extra[1] = 6;
-
-  Si570_drv::si570_set_freq(&data);
-
-  sleep(1);
-
-  data.data_send.clear();
-  data.data_read.clear();
+  ///////////////////////data.extra[0] = SI571_ADDR;
+  ///////////////////////data.extra[1] = 6;
+  ///////////////////////
+  ///////////////////////Si570_drv::si570_set_freq(&data);
+  ///////////////////////
+  ///////////////////////sleep(1);
+  ///////////////////////
+  ///////////////////////data.data_send.clear();
+  ///////////////////////data.data_read.clear();
   //Si570_drv::si570_read_freq(&data); // check if data is the same, //not working
 
 // 125MHz
@@ -702,12 +706,12 @@ int fmc_config_130m_4ch_board::config_defaults() {
 
 // 113.040445 MHz output (v2 previously crystek)
 
-  Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
-  Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
-  Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xB8);
-  Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x90);
-  Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x57);
-  Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x9F);
+  /////////////////////////////////Si570_drv::si570_assert(SI571_ADDR, 0x07, 0xE0);
+  /////////////////////////////////Si570_drv::si570_assert(SI571_ADDR, 0x08, 0xC2);
+  /////////////////////////////////Si570_drv::si570_assert(SI571_ADDR, 0x09, 0xB8);
+  /////////////////////////////////Si570_drv::si570_assert(SI571_ADDR, 0x0A, 0x90);
+  /////////////////////////////////Si570_drv::si570_assert(SI571_ADDR, 0x0B, 0x57);
+  /////////////////////////////////Si570_drv::si570_assert(SI571_ADDR, 0x0C, 0x9F);
 
 
 // 64.247 MHz output

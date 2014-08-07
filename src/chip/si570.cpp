@@ -34,7 +34,7 @@ int Si570_drv::si570_read_freq(wb_data* data) {
   uint32_t RFFREQ_INTEGER_FLOAT;
   //uint64_t RFFREQ = 0; // 38 bits
   //uint64_t fdco = 0;
-  int err = 0, std_read = 1;
+  int err = 0, std_read = 0;
   //int data_size = data->data_send.size();
 
   data->data_send.resize(1);
@@ -52,7 +52,6 @@ int Si570_drv::si570_read_freq(wb_data* data) {
   //if (data->data_send.size() == 0)
   //  data->data_send[0] = 0x07; // starting register
 
-  std_read = 0;
   err = commLink_->fmc_send_read(i2c_id_, data);
 
   //data->data_send.resize(data_size);
@@ -71,12 +70,12 @@ int Si570_drv::si570_read_freq(wb_data* data) {
     N1 = ( (data->data_read[0] & 0x1F) << 2) | ((data->data_read[1] & 0xC0) >> 6);
 
     RFFREQ_INTEGER = ((data->data_read[1] & 0x3F) << 4) | ((data->data_read[2] & 0xF0) >> 4);
-    
+
     RFFREQ_INTEGER_FLOAT = (data->data_read[2] & 0x0F) << 3*8;
     RFFREQ_INTEGER_FLOAT |= data->data_read[3] << 2*8;
     RFFREQ_INTEGER_FLOAT |= data->data_read[4] << 1*8;
     RFFREQ_INTEGER_FLOAT |= data->data_read[5];
-    
+
     //RFFREQ = data->data_read[1] & 0x3F;
     //
     //RFFREQ = (RFFREQ << 8) + data->data_read[2];
@@ -89,7 +88,7 @@ int Si570_drv::si570_read_freq(wb_data* data) {
         "N1: 0x" << hex << N1 << endl <<
         "RFFREQ_INTEGER: 0x" << hex << RFFREQ_INTEGER << endl <<
         "RFFREQ_INTEGER_FLOAT: 0x" << hex << RFFREQ_INTEGER_FLOAT << endl;
-        
+
     //cout << "Si570: Read parameters: " << endl <<
     //    "HS_DIV: 0x" << hex << HS_DIV << endl <<
     //    "N1: 0x" << hex << N1 << endl <<

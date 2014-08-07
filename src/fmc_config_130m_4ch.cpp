@@ -72,15 +72,16 @@ int main(int argc, const char **argv) {
       // Simple lookup table for checking the platform name (case insensitive)
       switch (platform = lookupstring_i(optarg)) {
         case ML605:
-          delay_l = fmc_130m_ml605_delay_l;
+          delay_data_l = fmc_130m_ml605_delay_data_l;
+          delay_clk_l = fmc_130m_ml605_delay_clk_l;
           platform_name = ML605_STRING;
           break;
         case KC705:
-          delay_l = fmc_130m_kc705_delay_l;
+          delay_data_l = fmc_130m_kc705_delay_l;
           platform_name = KC705_STRING;
           break;
         case AFC:
-          delay_l = fmc_130m_afc_delay_l;
+          delay_data_l = fmc_130m_afc_delay_l;
           platform_name = AFC_STRING;
           break;
         case BAD_PLATFORM:
@@ -362,7 +363,7 @@ int main(int argc, const char **argv) {
   //HS = 001 -> HS = 5d
   //N1 = 000 0111 -> N1 = 8d
   // RFreq = 42.947412685 -> RFreq = 42.947412685*2^28 = 11528608308 = 2AF289A34h
-  data.data_send.clear();                                             
+  data.data_send.clear();
   data.data_send.push_back(0x21); // 0010 0001
   data.data_send.push_back(0xC2); // 1100 0010
   data.data_send.push_back(0xAF);
@@ -373,10 +374,10 @@ int main(int argc, const char **argv) {
 
   // Configuration for 112.583175675676 MHz MHz output
 /*
-  //HS = 111 -> HS = 11d 
+  //HS = 111 -> HS = 11d
   //N1 = 000 0011 -> N1 = 4d
   // RFreq = 43.35315652464 -> RFreq = 43.35315652464*2^28 = 11637524341 = 2B5A68775h
-  data.data_send.clear();                                             
+  data.data_send.clear();
   data.data_send.push_back(0xE0); // 1110 0000
   data.data_send.push_back(0xC2); // 1100 0010
   data.data_send.push_back(0xB5);
@@ -417,7 +418,7 @@ int main(int argc, const char **argv) {
   //HS = 001 -> HS = 5d
   //N1 = 000 0111 -> N1 = 8d
   // RFreq = 43.7578702892628 -> RFreq = 43.7578702892628*2^28 = 11746163865 = 2BC203C99h
-  data.data_send.clear();                                             
+  data.data_send.clear();
   data.data_send.push_back(0x21); // 0010 0001
   data.data_send.push_back(0xC2); // 1100 0010
   data.data_send.push_back(0xBC);
@@ -427,10 +428,10 @@ int main(int argc, const char **argv) {
 */
 /*
   // Configuration for 113.529121545 MHz output.
-  //HS = 111 -> HS = 11d 
+  //HS = 111 -> HS = 11d
   //N1 = 000 0011 -> N1 = 4d
   // RFreq = 43.7174182279586 -> RFreq = 43.7174182279586*2^28 = 11735305097 = 2BB7A8B89h
-  data.data_send.clear();                                             
+  data.data_send.clear();
   data.data_send.push_back(0xE0); // 1110 0000
   data.data_send.push_back(0xC2); // 1100 0010
   data.data_send.push_back(0xBB);
@@ -440,7 +441,7 @@ int main(int argc, const char **argv) {
 */
   // Configuration for 113.750000 MHz output. NOT LOCKING
 /*
-  //HS = 010 -> HS = 6d 
+  //HS = 010 -> HS = 6d
   //N1 = 000 0111 -> N1 = 8d
   // RFreq = 47.7845164059035 -> RFreq = 47.7845164059035*2^28 = 12827058451d = 2FC8D6113h
   data.data_send.clear();
@@ -454,7 +455,7 @@ int main(int argc, const char **argv) {
 
   // Configuration for 112 MHz MHz output.
 /*
-  //HS = 111 -> HS = 11d 
+  //HS = 111 -> HS = 11d
   //N1 = 000 0011 -> N1 = 4d
   // RFreq = 43.128589166354 -> RFreq = 43.128589166354*2^28 = 11577242500 = 2B20EB384h
   data.data_send.clear();
@@ -468,10 +469,10 @@ int main(int argc, const char **argv) {
 
   // Configuration for 114.222973 MHz output
 /*
-  //HS = 010 -> HS = 6d 
+  //HS = 010 -> HS = 6d
   //N1 = 000 0111 -> N1 = 8d
   // RFreq = 47.983204635 -> RFreq = 47.983204635*2^28 = 12880393416 = 2FFBB34C8h
-  data.data_send.clear();                                             
+  data.data_send.clear();
   data.data_send.push_back(0x41); // 0100 0001
   data.data_send.push_back(0xC2); // 1100 0010
   data.data_send.push_back(0xFF);
@@ -760,7 +761,7 @@ int main(int argc, const char **argv) {
   AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(AD9510_ADDR); // with config check included
 
   // Check PLL lock
-  
+
   data.wb_addr = FPGA_CTRL_REGS | WB_CLK_CTRL; // clock control
   _commLink->fmc_config_read(&data);
 
@@ -771,7 +772,7 @@ int main(int argc, const char **argv) {
 
   cout << "If the AD9510 PLL Status pin is configured for Digital Lock the " << endl <<
              "information below makes sense. Otherwise ignore that!"  << endl;
-  
+
   if (pll_status)
     cout << "Clock PLL Locked!" << endl;
   else

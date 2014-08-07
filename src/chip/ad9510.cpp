@@ -372,8 +372,10 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
    //AD9510_spi_write(chip_select, 0x05, 0x3F);
    // B counter (LSB) = 74 - N divider
   //AD9510_spi_write(chip_select, 0x06, 0x4A);
-   // B counter (LSB) = 35 - N divider
+  // B counter (LSB) = 35 - N divider
   //AD9510_spi_write(chip_select, 0x06, 0x23);
+  // B counter (LSB) = 50 - N divider
+  //AD9510_spi_write(chip_select, 0x06, 0x32);
   // B counter (LSB) = 10 - N divider
   AD9510_spi_write(chip_select, 0x06, 0x0A);
   // B counter (LSB) = 200 - N divider
@@ -406,6 +408,10 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
 
   // Charge Pump Current. I = 0.6mA
   AD9510_spi_write(chip_select, 0x09, 0x00);
+  //Charge Pump Current. I = 1.2mA
+  //AD9510_spi_write(chip_select, 0x09, 0x10);
+  // Charge Pump Current. I = 1.8mA
+  //AD9510_spi_write(chip_select, 0x09, 0x20);
   // Charge Pump Current. I = 4.8mA
   //AD9510_spi_write(chip_select, 0x09, 0x70);
 
@@ -430,7 +436,7 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
   // R divider = 1000
   //AD9510_spi_write(chip_select, 0x0B, 0x03);
   //AD9510_spi_write(chip_select, 0x0C, 0xE8);
-  
+
   // Antibacklash pulse. 6.0 ns
   AD9510_spi_write(chip_select, 0x0D, 0x02);
   // Antibacklash pulse. 1.3 ns
@@ -534,10 +540,11 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
   //AD9510_assert(chip_select, 0x06, 0xFC);
   //AD9510_assert(chip_select, 0x06, 0x4A);
   //AD9510_assert(chip_select, 0x06, 0x23);
+  //AD9510_assert(chip_select, 0x06, 0x32);
   //AD9510_assert(chip_select, 0x06, 0x05);
   //AD9510_assert(chip_select, 0x06, 0x02);
   //AD9510_assert(chip_select, 0x06, 0x01);
-  //AD9510_assert(chip_select, 0x08, 0x04 | 0x03 | 0x40);
+  AD9510_assert(chip_select, 0x08, 0x04 | 0x03 | 0x40);
   //AD9510_assert(chip_select, 0x08, 0x08 | 0x03 | 0x40);
   //AD9510_assert(chip_select, 0x08, 0x08 | 0x00 | 0x40);
   //AD9510_assert(chip_select, 0x08, 0x04 | 0x00);
@@ -546,6 +553,8 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
   //AD9510_assert(chip_select, 0x08, 0x10 | 0x03 | 0x40);
 
   AD9510_assert(chip_select, 0x09, 0x00);
+  //AD9510_assert(chip_select, 0x09, 0x10);
+  //AD9510_assert(chip_select, 0x09, 0x20);
   //AD9510_assert(chip_select, 0x09, 0x70);
 
   //AD9510_assert(chip_select, 0x0A, 0x04 | 0x00);
@@ -560,7 +569,7 @@ int AD9510_drv::AD9510_config_si570_pll_fmc_adc_130m_4ch(uint32_t chip_select) {
   //AD9510_assert(chip_select, 0x0C, 0x00);
   //AD9510_assert(chip_select, 0x0B, 0x06);
   //AD9510_assert(chip_select, 0x0C, 0x66);
-  
+
   AD9510_assert(chip_select, 0x0D, 0x02);
   //AD9510_assert(chip_select, 0x0D, 0x00);
 

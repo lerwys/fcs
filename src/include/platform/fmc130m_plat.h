@@ -24,19 +24,19 @@
 
 
 const struct delay_lines fmc_130m_ml605_delay_data_l[] = {
-  {DELAY_LINES_INIT,  31},
-  {DELAY_LINES_INIT,  10},
-  {DELAY_LINES_INIT,  0},
-  {DELAY_LINES_INIT,  21},
+  {DELAY_LINES_INIT,  21+5},
+  {DELAY_LINES_INIT,  0 +5},
+  {DELAY_LINES_INIT,  15+5},
+  {DELAY_LINES_INIT,  21+5},
   {DELAY_LINES_END,  -1}
 };
 
 // clk delay
 const struct delay_lines fmc_130m_ml605_delay_clk_l[] = {
-  {DELAY_LINES_INIT,  31},
-  {DELAY_LINES_INIT,  10},
-  {DELAY_LINES_INIT,  0},
-  {DELAY_LINES_INIT,  21},
+  {DELAY_LINES_INIT,  20 +5},
+  {DELAY_LINES_INIT,  0  +5},
+  {DELAY_LINES_INIT,  20 +5},
+  {DELAY_LINES_INIT,  20 +5},
   {DELAY_LINES_END,  -1}
 };
 
